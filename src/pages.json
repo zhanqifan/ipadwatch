@@ -41,7 +41,9 @@
     "navigationBarTextStyle": "black",
     "navigationBarTitleText": "",
     "navigationBarBackgroundColor": "#F8F8F8",
-    "backgroundColor": "#F8F8F8"
+    "backgroundColor": "#F8F8F8",
+    "pageOrientation": "landscape"
+
   },
   // 设置 TabBar
   "tabBar": {
@@ -51,23 +53,16 @@
     "borderStyle": "white",
     "list": [
       {
-        "text": "首页",
-        "pagePath": "pages/index/index",
-        "iconPath": "static/tabs/home_default.png",
-        "selectedIconPath": "static/tabs/home_selected.png"
-      },
-      {
-        "text": "分类",
-        "pagePath": "pages/category/category",
-        "iconPath": "static/tabs/category_default.png",
-        "selectedIconPath": "static/tabs/category_selected.png"
-      },
+        "pagePath": "pages/index/index"
 
+      },
       {
-        "text": "我的",
-        "pagePath": "pages/my/my",
-        "iconPath": "static/tabs/user_default.png",
-        "selectedIconPath": "static/tabs/user_selected.png"
+        "pagePath": "pages/category/category"
+
+      },
+      {
+        "pagePath": "pages/my/my"
+
       }
     ]
   }
