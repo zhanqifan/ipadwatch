@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import tabbar from '@/components/tabbar/tabbar.vue'
 import { getStyleByType } from './utils/heart'
 const src = ref('https://cdn.uviewui.com/uview/album/1.jpg')
 </script>
 
 <template>
-  <tabbar>
+  <tabBar>
     <view class="index">
       <!-- 顶部 -->
       <view class="flexBox top">
@@ -40,41 +39,63 @@ const src = ref('https://cdn.uviewui.com/uview/album/1.jpg')
         <up-button type="primary" class="custom-style" text="开始时间"></up-button>
       </view>
       <view class="main">
-        <view class="card_group">
-          <view
-            v-for="item in 11"
-            :key="item"
-            class="card_item"
-            :style="{ background: getStyleByType('heartRateBackground', 72) }"
-          >
-            <view
-              class="status"
-              :style="{ color: 72 > 150 ? '#4abc7a' : getStyleByType('heartRateColor', 70) }"
-              >{{ getStyleByType('statusColor', 72) }}</view
-            >
-            <view class="top">
-              <view>李莉莉</view>
-              <view class="battery-container">
-                <view class="shell" :style="{ width: 90 + '%' }">
-                  <view
-                    class="block"
-                    :style="{ background: getStyleByType('batteryColor', 90) }"
-                  ></view>
+        <scroll-view scroll-y style="height: 70vh">
+          <view class="card_group">
+            <view v-for="item in 20" :key="item" class="card_item">
+              <view class="top">
+                <view style="display: flex; align-items: center">
+                  <image src="@/static/images/stu.png" class="User_img" />李莉莉
+                  <text
+                    class="status"
+                    :style="{ color: 72 > 150 ? '#4abc7a' : getStyleByType('heartRateColor', 70) }"
+                    >{{ getStyleByType('statusColor', 72) }}
+                  </text>
                 </view>
-                <view style="color: #959aa0">90%</view>
+                <view class="battery-container">
+                  <view class="shell" :style="{ width: 90 + '%' }">
+                    <view
+                      class="block"
+                      :style="{ background: getStyleByType('batteryColor', 90) }"
+                    ></view>
+                  </view>
+                  <view style="color: #959aa0">90%</view>
+                </view>
+              </view>
+              <view class="heart_main">
+                <!-- 左侧heartrate +bmp -->
+                <view>
+                  <view style="margin-left: 20rpx; margin-top: 20rpx"
+                    ><image
+                      src="@/static/images/love.png"
+                      style="width: 40rpx; height: 40rpx"
+                      mode="scaleToFill"
+                    />
+                    <text style="font-size: 27rpx"> Heart rate</text></view
+                  >
+                  <view class="heart">
+                    <text
+                      class="heart_rate"
+                      :style="{ color: getStyleByType('heartRateColor', 72) }"
+                      >72
+                    </text>
+                    <text style="color: #959aa0; font-size: 25rpx">bpm</text>
+                  </view>
+                </view>
+                <!-- 右侧心率图 -->
+                <view>
+                  <image
+                    src="@/static/images/heartJump.png"
+                    style="width: 140rpx; height: 110rpx"
+                    mode="scaleToFill"
+                  />
+                </view>
               </view>
             </view>
-            <view class="heart">
-              <text class="heart_rate" :style="{ color: getStyleByType('heartRateColor', 72) }"
-                >72
-              </text>
-              <text style="color: #959aa0; font-size: 25rpx">bpm</text>
-            </view>
           </view>
-        </view>
+        </scroll-view>
       </view>
     </view>
-  </tabbar>
+  </tabBar>
 </template>
 
 <style lang="scss" scoped>
@@ -96,40 +117,42 @@ const src = ref('https://cdn.uviewui.com/uview/album/1.jpg')
   align-items: center;
 }
 .main {
-  // background-color: #f7f8fa;
+  background-color: #f5f9fa;
   border-radius: 20rpx;
+  margin-top: 30rpx;
+  padding: 3%;
+  min-height: 80vh;
   .card_group {
-    margin-top: 40rpx;
-    padding: 50rpx 90rpx;
-    display: flex;
-    flex-wrap: wrap; // 允许换行
-    gap: 90rpx; // 控制卡片之间的间距
+    display: grid;
+    justify-content: center;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 5%; // 控制卡片之间的间距
     .card_item {
-      flex: 1 1 20%; // 允许卡片占用 20% 的宽度，且可以缩小
       // width: 23%; // 每行两个卡片，减去间距的一半
-      max-width: 350rpx;
+      max-width: 500rpx;
       margin-bottom: 20rpx; // 控制行之间的间距
-      background-color: #f7f8fa;
+      background-color: #fff;
       border-radius: 16rpx;
       padding: 20rpx;
-      height: 164rpx;
-      position: relative;
       box-shadow: 0 0 10rpx rgba(0, 0, 0, 0.1);
 
       .status {
-        top: 5rpx;
-        left: 5rpx;
         font-size: 12px;
         color: #4abc7a;
-        position: absolute;
         width: 50rpx;
+        margin-left: 5rpx;
       }
       .top {
         display: flex;
         align-items: center;
-        margin-top: 10rpx;
+        margin-top: 20rpx;
         justify-content: space-between;
         padding: 0rpx 20rpx;
+        .User_img {
+          width: 45rpx;
+          border-radius: 25rpx;
+          height: 45rpx;
+        }
         .battery-container {
           width: 68rpx;
           height: 34rpx;
@@ -164,10 +187,15 @@ const src = ref('https://cdn.uviewui.com/uview/album/1.jpg')
           }
         }
       }
+      .heart_main {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
       .heart {
-        padding: 10rpx 20rpx;
+        padding: 10rpx 26rpx;
         .heart_rate {
-          font-size: 45rpx;
+          font-size: 75rpx;
         }
       }
     }

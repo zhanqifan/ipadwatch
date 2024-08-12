@@ -1,4 +1,10 @@
 <script setup lang="ts">
+defineProps({
+  selected: {
+    type: Number,
+    default: 0,
+  },
+})
 type itemType = {
   icon: string
   url: string
@@ -9,8 +15,8 @@ const sidebarItems = ref<
     url: string
   }[]
 >([
-  { icon: 'heart', url: 'pages/index/index' },
-  { icon: 'moments', url: 'pages/index/index' },
+  { icon: 'heart', url: '/pages/index/index' },
+  { icon: 'account-fill', url: '/pages/my/my' },
 ])
 const selected = ref(0)
 const itemClick = (item: itemType, index: number) => {
