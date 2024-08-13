@@ -85,7 +85,7 @@ const toLogin = async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  height: 80vh;
   padding: 0 16px;
 }
 

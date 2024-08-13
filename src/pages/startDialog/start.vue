@@ -49,10 +49,14 @@ const getTeamStudent = async () => {
   const res = await getTrainingTeam(trainingTeamId.value)
   studentList.value = res.data.studentList
 }
-const addTeamRef = ref()
 const addProjectRef = ref()
-const open = () => {
-  addProjectRef.value.open()
+const addTeamRef = ref()
+const open = (type: 'pro' | 'team') => {
+  if (type === 'pro') {
+    addProjectRef.value.open()
+  } else {
+    addTeamRef.value.open()
+  }
 }
 
 onMounted(() => {
@@ -61,7 +65,7 @@ onMounted(() => {
 })
 </script>
 <template>
-  <tabBar>
+  <tabBar :selected="0">
     <view class="sprot_box">
       <!-- 步骤条 -->
       <up-steps current="0" style="margin-bottom: 100rpx">
@@ -71,9 +75,11 @@ onMounted(() => {
       </up-steps>
       <!-- 选择项目 -->
       <view class="select_one">
-        <view class="project"> 选择项目<text class="add" @click="open">新增训练项目</text> </view>
+        <view class="project">
+          选择项目<text class="add" @click="open('pro')">新增训练项目</text>
+        </view>
         <scroll-view scroll-x style="width: 85vw; height: 150rpx">
-          <view class="project_group">
+          <view class="project_group" v-if="radiolist1.length">
             <up-radio-group
               v-model="exerciseTypeId"
               placement="column"
@@ -93,13 +99,16 @@ onMounted(() => {
               </up-radio>
             </up-radio-group>
           </view>
+          <view v-else> 暂无训练项目请先添加 </view>
         </scroll-view>
       </view>
       <!-- 选择队伍 -->
       <view class="select_tow">
-        <view class="project"> 选择队伍 <text class="add">新增训练队</text></view>
+        <view class="project">
+          选择队伍 <text class="add" @click="open('team')">新增训练队</text></view
+        >
         <scroll-view scroll-x style="width: 85vw">
-          <view class="project_group">
+          <view class="project_group" v-if="radiolist2.length">
             <up-radio-group
               v-model="trainingTeamId"
               scroll-left
@@ -120,6 +129,7 @@ onMounted(() => {
               </up-radio>
             </up-radio-group>
           </view>
+          <view v-else style="margin-bottom: 30rpx">暂无队伍请先添加</view>
         </scroll-view>
       </view>
       <!-- 训练人员 -->
@@ -129,12 +139,15 @@ onMounted(() => {
           <view>
             <up-icon name="account" color="black" size="28"></up-icon>
             <view style="display: flex; flex-direction: column">
-              <text>训练计划人数:</text> <text>({{ studentList?.length + '人' }})</text>
+              <text>训练计划人数:</text>
+              <text>({{ studentList?.length ? studentList.length : 0 + '人' }})</text>
             </view>
           </view>
           <scroll-view scroll-y style="max-height: 120rpx">
             <view class="plan_people">
-              <view style="color: #387ff2" v-for="item in studentList">{{ item.name }}&nbsp </view>
+              <view style="color: #387ff2" v-for="item in studentList" :key="item.id"
+                >{{ item.name }}&nbsp
+              </view>
             </view>
           </scroll-view>
         </view>

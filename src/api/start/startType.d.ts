@@ -6,7 +6,10 @@ export type Train = {
   exerciseTypeName: string
   exerciseTypeId: string
 }
-
+export interface pageQuery {
+  pageNum: number
+  pageSize: number
+}
 // 训练队列表 返回
 export interface TeamList {
   createDept: string
@@ -66,4 +69,28 @@ export interface exerciseType {
   exerciseName: string
   number: number
   remarks: string
+}
+// 新增训练队伍
+export interface trainingType {
+  teamName: string
+  studentIds: number[]
+}
+export interface studentListType {
+  total: number
+  rows: Row[]
+  code: number
+  msg: string
+}
+
+export interface Row {
+  createDept: null
+  parentId: string
+  createBy: string
+  createTime: string
+  updateBy: string
+  updateTime: string
+  tenantId: string
+  id: number
+  name: string
+  uuid: string
 }

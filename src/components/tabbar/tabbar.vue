@@ -19,9 +19,8 @@ const sidebarItems = ref<
   { icon: 'account-fill', url: '/pages/my/my' },
 ])
 let { selected } = toRefs(props)
-const itemClick = (item: itemType, index: number) => {
+const itemClick = (item: itemType) => {
   // 处理侧边栏菜单项点击事件
-  selected.value = index
   uni.switchTab({
     url: item.url,
   })
@@ -36,7 +35,7 @@ const itemClick = (item: itemType, index: number) => {
           class="sidebar-item"
           v-for="(item, index) in sidebarItems"
           :key="item.icon"
-          @click="itemClick(item, index)"
+          @click="itemClick(item)"
         >
           <u-icon
             :name="item.icon"

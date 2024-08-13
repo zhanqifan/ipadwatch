@@ -1,5 +1,13 @@
 import { request } from '@/utils/https'
-import type { TeamList, TrainType, TeamDetail, exerciseType } from './startType'
+import type {
+  TeamList,
+  TrainType,
+  TeamDetail,
+  exerciseType,
+  trainingType,
+  pageQuery,
+  studentListType,
+} from './startType'
 
 // 查询训练项目
 export const getTrainType = () => {
@@ -23,10 +31,27 @@ export const getTrainingTeam = (id: string | number) => {
   })
 }
 // 新增训练类型
-export const getexerciseType = (data: exerciseType) => {
+export const addExerciseType = (data: exerciseType) => {
   return request({
     url: '/teacher/exerciseType/add',
     method: 'POST',
     data,
+  })
+}
+// 新增训练队
+export const addTrainingTeam = (data: trainingType) => {
+  return request({
+    url: '/teacher/trainingTeam/add',
+    method: 'POST',
+    data,
+  })
+}
+
+// 获取学生列表
+export const getStudentList = (pageParams: pageQuery): studentListType => {
+  return request({
+    url: '/teacher/studentInfo/list',
+    method: 'GET',
+    data: pageParams,
   })
 }
