@@ -1,5 +1,5 @@
 <script setup lang="ts">
-defineProps({
+const props = defineProps({
   selected: {
     type: Number,
     default: 0,
@@ -15,10 +15,10 @@ const sidebarItems = ref<
     url: string
   }[]
 >([
-  { icon: 'heart', url: '/pages/index/index' },
+  { icon: 'heart', url: '/pages/startDialog/start' },
   { icon: 'account-fill', url: '/pages/my/my' },
 ])
-const selected = ref(0)
+let { selected } = toRefs(props)
 const itemClick = (item: itemType, index: number) => {
   // 处理侧边栏菜单项点击事件
   selected.value = index

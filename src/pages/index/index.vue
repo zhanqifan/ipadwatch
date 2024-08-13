@@ -4,7 +4,7 @@ const src = ref('https://cdn.uviewui.com/uview/album/1.jpg')
 </script>
 
 <template>
-  <tabBar>
+  <tabBar :selected="0">
     <view class="index">
       <!-- 顶部 -->
       <view class="flexBox top">
@@ -119,21 +119,21 @@ const src = ref('https://cdn.uviewui.com/uview/album/1.jpg')
 .main {
   background-color: #f5f9fa;
   border-radius: 20rpx;
-  margin-top: 30rpx;
+  margin-top: 20rpx;
   padding: 3%;
   min-height: 80vh;
   .card_group {
     display: grid;
     justify-content: center;
     grid-template-columns: 1fr 1fr 1fr 1fr;
-    gap: 5%; // 控制卡片之间的间距
+    gap: 0.5% 3%; // 控制卡片之间的间距
     .card_item {
       // width: 23%; // 每行两个卡片，减去间距的一半
       max-width: 500rpx;
       margin-bottom: 20rpx; // 控制行之间的间距
       background-color: #fff;
       border-radius: 16rpx;
-      padding: 20rpx;
+      padding: 15rpx 20rpx;
       box-shadow: 0 0 10rpx rgba(0, 0, 0, 0.1);
 
       .status {

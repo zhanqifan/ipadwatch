@@ -5,7 +5,7 @@ const memberStore = useMemberStore()
 </script>
 
 <template>
-  <tabBar>
+  <tabBar :selected="1">
     <view class="my">
       <view>会员信息：{{ memberStore.profile }}</view>
       <button

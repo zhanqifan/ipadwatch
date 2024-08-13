@@ -13,17 +13,10 @@ const httpInterceptor = {
     // 2. 请求超时
     options.timeout = 10000
 
-    //   if(method==='POST'||method==='PUT'){
-    //    // FormData数据去请求头Content-Type
-    //   if (options.data instanceof FormData) {
-    //   delete options.header['Content-Type'];
-    //  }
-    //  }else{
     options.header = {
       'Content-Type': 'application/json;charset=utf-8',
       ...options.header, //如有自定义请求头可覆盖
     }
-    // }
 
     // 4. 添加 token 请求头标识
     const memberStore = useMemberStore()
