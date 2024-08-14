@@ -152,7 +152,7 @@ onMounted(() => {
             <up-icon name="account" color="black" size="28"></up-icon>
             <view style="display: flex; flex-direction: column">
               <text>训练计划人数:</text>
-              <text>({{ studentList?.length ? studentList.length : 0 + '人' }})</text>
+              <text>({{ studentList?.length ? studentList.length : 0 }}人) </text>
             </view>
           </view>
           <scroll-view scroll-y style="max-height: 120rpx">

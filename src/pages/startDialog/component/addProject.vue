@@ -58,10 +58,11 @@ defineExpose({
             label="运动项目"
             labelWidth="70"
             prop="exerciseName"
+            placter
             borderBottom
             ref="item1"
           >
-            <up-input v-model="form.exerciseName"></up-input>
+            <up-input v-model="form.exerciseName" placeholder="请输入运动项目"></up-input>
           </up-form-item>
         </up-form>
       </view>

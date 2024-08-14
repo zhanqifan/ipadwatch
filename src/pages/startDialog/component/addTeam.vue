@@ -93,7 +93,7 @@ defineExpose({
       <view class="slot-content" style="height: 200px">
         <up-form labelPosition="left" :model="form" :rules="rules" ref="formRef">
           <up-form-item label="队伍名称" labelWidth="70" prop="teamName" borderBottom ref="item1">
-            <up-input v-model="form.teamName"></up-input>
+            <up-input v-model="form.teamName" placeholder="请输入队伍名称"></up-input>
           </up-form-item>
           <up-form-item label="训练人员" labelWidth="70" class="peo">
             <scroll-view
