@@ -1,3 +1,12 @@
+export interface common {
+  createDept: number
+  createBy: string
+  createTime: string
+  updateBy: string
+  updateTime: string
+  tenantId: null
+}
+
 export type Team = {
   trainingTeamName: string
   trainingTeamId: string
@@ -11,13 +20,7 @@ export interface pageQuery {
   pageSize: number
 }
 // 训练队列表 返回
-export interface TeamList {
-  createDept: string
-  createBy: string
-  createTime: string
-  updateBy: string
-  updateTime: string
-  tenantId: string
+export interface TeamList extends common {
   id: string
   teamName: string
 }
@@ -38,25 +41,13 @@ export interface addTeam {
   teacherName: string
 }
 // 训练队详情响应
-export interface TeamDetail {
-  createDept: number
-  createBy: string
-  createTime: string
-  updateBy: string
-  updateTime: string
-  tenantId: null
+export interface TeamDetail extends common {
   id: string
   teamName: string
   studentList: StudentList[]
 }
 // 训练队学生
-export interface StudentList {
-  createDept: number
-  createBy: string
-  createTime: string
-  updateBy: string
-  updateTime: string
-  tenantId: null
+export interface StudentList extends common {
   id: number
   name: string
   uuid: string
@@ -82,15 +73,52 @@ export interface studentListType {
   msg: string
 }
 
-export interface Row {
-  createDept: null
+export interface Row extends common {
   parentId: string
-  createBy: string
-  createTime: string
-  updateBy: string
-  updateTime: string
-  tenantId: string
   id: number
   name: string
   uuid: string
+}
+
+// 新增训练请求参数
+export interface trainingTask {
+  trainingTeamId: string | number
+  trainingTeamName: string
+  exerciseTypeName: string
+  number: number
+  teacherName: string
+}
+
+// 返回响应
+export interface trainingRespon {
+  id: string
+  taskName: string
+  trainingTeamId: string
+  trainingTeamName: string
+  exerciseTypeName: string
+  number: number
+  teacherName: string
+  trainingTime: null
+  students: number[]
+  studentInfoList: StudentInfoList[]
+  personNum: null
+  braceletsTotalNum: number
+  braceletsOnlineNum: number
+}
+export interface StudentInfoList {
+  id: string
+  studentId: number
+  studentName: string
+  braceletId: null
+  taskId: null
+  timestamp: null
+  totalSteps: null
+  totalDistance: null
+  matchingSpeed: null
+  totalCalories: null
+  heartRate: string
+  bloodPressure: null
+  bloodOxygen: null
+  number: null
+  battery: string
 }

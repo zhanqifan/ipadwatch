@@ -1,6 +1,88 @@
 <script setup lang="ts">
 import { getStyleByType } from './utils/heart'
+import { taskBaseInfo, detectionData, updateTask } from '@/api/heart/heart'
+import type { startData } from '@/api/heart/heartType'
+import type { MergedInterface } from '@/api/heart/heartType'
+import { useTimer } from './utils/Timer'
+import { useMemberStore } from '@/stores'
 const src = ref('https://cdn.uviewui.com/uview/album/1.jpg')
+const BaseInfo = ref<MergedInterface>() //基础学生卡片信息
+const btnShow = ref(true) //按钮开关状态
+const intervalId = ref<number | null>(null) //定时器id
+const user = useMemberStore()
+const clock = useTimer()
+const watchOnline = ref({
+  //手表在线信息
+  braceletsOnlineNum: 0,
+  braceletsTotalNum: 0,
+})
+// 开始记录传参
+const startParams = ref<startData>({
+  taskId: '',
+  studentIds: [],
+  isRecord: false,
+  number: 0,
+})
+// 获取学生列表
+const getHeartList = async (taskId: string) => {
+  const res = await taskBaseInfo(taskId)
+  BaseInfo.value = res.data
+}
+
+// 开始定时器
+const startInterval = async () => {
+  if (intervalId.value !== null) {
+    clearInterval(intervalId.value) // 避免多次启动定时器
+  }
+  intervalId.value = setInterval(async () => {
+    const res = await detectionData({
+      ...startParams.value,
+      studentIds: BaseInfo.value?.students as number[],
+    })
+    // 处理手环掉线  处理方法:只替换有返回的部分
+    res.data.taskHealthMetricsVoList.forEach((newData: any) => {
+      const existingData = BaseInfo.value?.studentInfoList.find(
+        (item) => item.studentId === newData.studentId,
+      )
+      if (existingData) {
+        Object.assign(existingData, newData) // 替换相同项
+      }
+    })
+    // const length = res.data.taskHealthMetricsVoList.length
+    // 在线状态实时替换
+    watchOnline.value = {
+      braceletsOnlineNum: res.data.braceletsOnlineNum,
+      braceletsTotalNum: res.data.braceletsTotalNum,
+    }
+  }, 1000) // 每1秒轮询一次
+  // ElMessage({
+  //   type: 'success',
+  //   message: '操作成功',
+  // })
+}
+const control = async (type: 'start' | 'end') => {
+  if (type === 'start') {
+    btnShow.value = false
+    startParams.value.isRecord = true //开始记录
+    clock.startTimer() //开启计时器
+  } else {
+    btnShow.value = true
+    clearInterval(intervalId.value!) //关闭记录
+    clock.stopTimer() //关闭计时器
+    const res = await updateTask({ id: startParams.value.taskId, trainingTime: clock.timer.value })
+    console.log(res)
+  }
+}
+onLoad((options) => {
+  startParams.value.taskId = options!.taskId
+  getHeartList(options!.taskId)
+  startInterval()
+})
+// 离开前确保销毁定时器
+onBeforeUnmount(() => {
+  clearInterval(intervalId.value as number)
+  intervalId.value = null
+})
 </script>
 
 <template>
@@ -11,12 +93,12 @@ const src = ref('https://cdn.uviewui.com/uview/album/1.jpg')
         <!-- 头像 -->
         <view class="flexBox">
           <up-avatar :src="src" shape="circle" />
-          <text style="padding-left: 10rpx">李天宇老师</text>
+          <text style="padding-left: 10rpx">{{ user.profile?.nickName }}</text>
         </view>
         <!-- 班级 -->
         <view class="flexBox"
-          ><image src="@/static/images/people.png" style="width: 50rpx; height: 50rpx" />训练班级:
-          一年级三班</view
+          ><image src="@/static/images/people.png" style="width: 50rpx; height: 50rpx" />训练队伍:
+          {{ BaseInfo?.trainingTeamName }}</view
         >
         <!-- 手环 -->
         <view class="flexBox"
@@ -25,7 +107,9 @@ const src = ref('https://cdn.uviewui.com/uview/album/1.jpg')
             style="width: 50rpx; height: 50rpx"
             mode="scaleToFill"
           />
-          <text>手环连接42/54</text>
+          <text
+            >手环连接{{ watchOnline.braceletsOnlineNum }}/{{ watchOnline.braceletsTotalNum }}</text
+          >
         </view>
         <!-- 开始时间 -->
         <view class="flexBox"
@@ -34,31 +118,43 @@ const src = ref('https://cdn.uviewui.com/uview/album/1.jpg')
             style="width: 50rpx; height: 50rpx"
             mode="scaleToFill"
           />
-          <text>开始时间: 10:15</text></view
+          <text>计时时间: {{ clock.formattedTime }}</text></view
         >
-        <up-button type="primary" class="custom-style" text="开始时间"></up-button>
+        <up-button
+          type="primary"
+          class="custom-style"
+          text="开始锻炼"
+          @click="control('start')"
+          v-if="btnShow"
+        ></up-button>
+        <up-button
+          v-else
+          type="error"
+          class="custom-style"
+          style="background: #f56c6c"
+          text="结束锻炼"
+          @click="control('end')"
+        ></up-button>
       </view>
       <view class="main">
-        <scroll-view scroll-y style="height: 70vh">
+        <scroll-view scroll-y style="height: 74vh">
           <view class="card_group">
-            <view v-for="item in 20" :key="item" class="card_item">
+            <view v-for="item in BaseInfo?.studentInfoList" :key="item.id" class="card_item">
               <view class="top">
                 <view style="display: flex; align-items: center">
-                  <image src="@/static/images/stu.png" class="User_img" />李莉莉
-                  <text
-                    class="status"
-                    :style="{ color: 72 > 150 ? '#4abc7a' : getStyleByType('heartRateColor', 70) }"
-                    >{{ getStyleByType('statusColor', 72) }}
-                  </text>
+                  <image src="@/static/images/stu.png" class="User_img" />{{ item.studentName }}
+                  <!-- 速度状态 -->
+                  <text class="status">{{ getStyleByType('statusColor', item.heartRate) }} </text>
                 </view>
+                <!-- 电量 -->
                 <view class="battery-container">
-                  <view class="shell" :style="{ width: 90 + '%' }">
+                  <view class="shell" :style="{ width: item.battery + '%' }">
                     <view
                       class="block"
-                      :style="{ background: getStyleByType('batteryColor', 90) }"
+                      :style="{ background: getStyleByType('batteryColor', item.battery) }"
                     ></view>
                   </view>
-                  <view style="color: #959aa0">90%</view>
+                  <view style="color: #959aa0">{{ item.battery ?? 0 }}%</view>
                 </view>
               </view>
               <view class="heart_main">
@@ -75,8 +171,8 @@ const src = ref('https://cdn.uviewui.com/uview/album/1.jpg')
                   <view class="heart">
                     <text
                       class="heart_rate"
-                      :style="{ color: getStyleByType('heartRateColor', 72) }"
-                      >72
+                      :style="{ color: getStyleByType('heartRateColor', item.heartRate) }"
+                      >{{ item.heartRate ?? 0 }}
                     </text>
                     <text style="color: #959aa0; font-size: 25rpx">bpm</text>
                   </view>
@@ -119,7 +215,6 @@ const src = ref('https://cdn.uviewui.com/uview/album/1.jpg')
 .main {
   background-color: #f5f9fa;
   border-radius: 20rpx;
-  margin-top: 20rpx;
   padding: 3%;
   min-height: 80vh;
   .card_group {

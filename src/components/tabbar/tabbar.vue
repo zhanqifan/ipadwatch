@@ -16,7 +16,7 @@ const sidebarItems = ref<
   }[]
 >([
   { icon: 'heart', url: '/pages/startDialog/start' },
-  { icon: 'account-fill', url: '/pages/my/my' },
+  { icon: 'account-fill', url: '/pages/report/report' },
 ])
 let { selected } = toRefs(props)
 const itemClick = (item: itemType) => {

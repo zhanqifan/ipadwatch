@@ -21,7 +21,7 @@ onHide(() => {
 @import '@/styles/fonts.scss';
 @font-face {
   font-family: 'test';
-  src: url('http://38.55.232.204:8087/images/Alimama.woff');
+  src: url('https://blt.yukexx.com/images/Alimama.woff');
 }
 view,
 navigator,

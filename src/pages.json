@@ -32,9 +32,9 @@
     },
 
     {
-      "path": "pages/category/category",
+      "path": "pages/report/report",
       "style": {
-        "navigationBarTitleText": "分类"
+        "navigationBarTitleText": "报告"
       }
     },
     {
@@ -65,7 +65,7 @@
 
       },
       {
-        "pagePath": "pages/category/category"
+        "pagePath": "pages/report/report"
 
       },
       {

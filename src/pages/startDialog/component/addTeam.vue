@@ -9,6 +9,9 @@ const form = ref({
   teamName: '',
   studentIds: [],
 })
+const status = ref('loading')
+const loadingText = ref('努力加载中')
+const nomoreText = ref('实在没有了~')
 const formRef = ref()
 const emit = defineEmits<{
   success: [] // 定义 'success' 事件，不需要参数
@@ -20,20 +23,11 @@ const rules = ref({
     trigger: 'blur',
   },
 })
-const options2 = ref([
-  {
-    label: '去冰',
-    value: 1,
-  },
-  {
-    label: '加冰',
-    value: 2,
-  },
-])
 const pageParams = reactive({
   pageNum: 1,
-  pageSize: 15,
+  pageSize: 10,
 })
+const maxpageNum = ref() //总共分几页
 const studentList = ref<Row[]>([])
 const open = () => {
   show.value = true
@@ -42,6 +36,7 @@ const open = () => {
 const getStudent = async () => {
   const res = await getStudentList(pageParams)
   studentList.value = res.rows
+  maxpageNum.value = Math.ceil(res.total / pageParams.pageSize)
 }
 const commit = () => {
   formRef.value
@@ -59,6 +54,24 @@ const commit = () => {
       console.log('33')
     })
 }
+const upToLower = async () => {
+  if (pageParams.pageNum <= maxpageNum.value) {
+    pageParams.pageNum = pageParams.pageNum + 1
+    const res = await getStudentList(pageParams)
+    studentList.value = [...studentList.value, ...res.rows]
+  } else {
+    status.value = 'nomore'
+  }
+}
+// 关闭初始化
+const close = () => {
+  show.value = false
+  // 重置分页参数
+  pageParams.pageNum = 1
+  maxpageNum.value = undefined
+  // 清空学生列表
+  studentList.value = []
+}
 defineExpose({
   open,
 })
@@ -71,7 +84,7 @@ defineExpose({
       @confirm="commit"
       width="1200rpx"
       :showCancelButton="true"
-      @cancel="show = false"
+      @cancel="close"
     >
       <view class="slot-content" style="height: 200px">
         <up-form labelPosition="left" :model="form" :rules="rules" ref="formRef">
@@ -79,7 +92,12 @@ defineExpose({
             <up-input v-model="form.teamName"></up-input>
           </up-form-item>
           <up-form-item label="训练人员" labelWidth="70" class="peo">
-            <scroll-view scroll-y style="height: 230rpx">
+            <scroll-view
+              scroll-y
+              style="height: 240rpx"
+              v-if="studentList.length"
+              @scrolltolower="upToLower"
+            >
               <up-checkbox-group v-model="form.studentIds" placement="column">
                 <up-checkbox
                   :customStyle="{ marginBottom: '8px' }"
@@ -90,7 +108,9 @@ defineExpose({
                 >
                 </up-checkbox>
               </up-checkbox-group>
+              <up-loadmore :status="status" :loading-text="loadingText" :nomore-text="nomoreText" />
             </scroll-view>
+            <view v-else>暂无训练人员,请先去添加</view>
           </up-form-item>
         </up-form>
       </view>
@@ -121,5 +141,12 @@ defineExpose({
   ::v-deep .u-checkbox[data-v-abd63d8e] {
     margin-top: 0;
   }
+}
+::v-deep .u-checkbox-group--column[data-v-504cd728] {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  width: 180px;
 }
 </style>

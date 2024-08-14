@@ -1,10 +1,16 @@
 <script setup lang="ts">
-import { getTeamList, getTrainType, getTrainingTeam } from '@/api/start/start'
+import { getTeamList, getTrainType, getTrainingTeam, addExercise } from '@/api/start/start'
 import type { Team, Train, StudentList } from '@/api/start/startType.d.ts'
 import addTeam from './component/addTeam.vue'
 import addProject from './component/addProject.vue'
-const exerciseTypeId = ref() //训练项目类型id
+import { useMemberStore } from '@/stores'
+const user = useMemberStore()
+const exerciseTypeId = ref<string | number>() //训练项目类型id
+const exerciseTypeName = ref<string>('')
 const radiolist1 = ref<Train[]>([])
+const studentList = ref<StudentList[]>()
+const addProjectRef = ref()
+const addTeamRef = ref()
 // 获取项目
 const getTrain = async () => {
   const res = await getTrainType()
@@ -16,8 +22,10 @@ const getTrain = async () => {
     }
   })
   exerciseTypeId.value = res.data[0].id
+  exerciseTypeName.value = res.data[0].exerciseName
 }
-const trainingTeamId = ref() //训练队id
+const trainingTeamId = ref<string | number>() //训练队id
+const trainingTeamName = ref<string>()
 const radiolist2 = ref<Team[]>([])
 // 获取队伍
 const getTeam = async () => {
@@ -28,29 +36,40 @@ const getTeam = async () => {
       trainingTeamName: item.teamName,
     }
   })
-  trainingTeamId.value = res.data[0].id
+  trainingTeamId.value = res.data[0].id //默认选中第一个
+  trainingTeamName.value = res.data[0].teamName
   getTeamStudent()
 }
-
-const groupChange = (e: string, type: string) => {
+// 按钮切换事件
+const groupChange = (e: string, type: string, name: string) => {
   if (type === 'pro') {
     exerciseTypeId.value = e
+    exerciseTypeName.value = name
   } else {
     trainingTeamId.value = e
+    trainingTeamName.value = name
     getTeamStudent()
   }
 }
-// 下一步
-const nextStep = () => {
-  uni.navigateTo({ url: '/pages/index/index' })
-}
-const studentList = ref<StudentList[]>()
+// 获取学生列表
 const getTeamStudent = async () => {
-  const res = await getTrainingTeam(trainingTeamId.value)
+  const res = await getTrainingTeam(trainingTeamId.value!)
   studentList.value = res.data.studentList
 }
-const addProjectRef = ref()
-const addTeamRef = ref()
+// 开始训练
+const nextStep = async () => {
+  if (exerciseTypeId.value && trainingTeamId.value) {
+    const res = await addExercise({
+      trainingTeamId: trainingTeamId.value,
+      trainingTeamName: trainingTeamName.value!,
+      exerciseTypeName: exerciseTypeName.value,
+      number: 0,
+      teacherName: user.profile!.nickName,
+    })
+    uni.navigateTo({ url: `/pages/index/index?taskId=${res.data.id}` })
+  }
+}
+
 const open = (type: 'pro' | 'team') => {
   if (type === 'pro') {
     addProjectRef.value.open()
@@ -80,11 +99,7 @@ onMounted(() => {
         </view>
         <scroll-view scroll-x style="width: 85vw; height: 150rpx">
           <view class="project_group" v-if="radiolist1.length">
-            <up-radio-group
-              v-model="exerciseTypeId"
-              placement="column"
-              @change="(e) => groupChange(e, 'pro')"
-            >
+            <up-radio-group v-model="exerciseTypeId" placement="column">
               <up-radio
                 v-for="(item, index) in radiolist1"
                 :customStyle="{
@@ -95,6 +110,7 @@ onMounted(() => {
                 :key="index"
                 :label="item.exerciseTypeName"
                 :name="item.exerciseTypeId"
+                @change="(e) => groupChange(e, 'pro', item.exerciseTypeName)"
               >
               </up-radio>
             </up-radio-group>
@@ -109,12 +125,7 @@ onMounted(() => {
         >
         <scroll-view scroll-x style="width: 85vw">
           <view class="project_group" v-if="radiolist2.length">
-            <up-radio-group
-              v-model="trainingTeamId"
-              scroll-left
-              placement="column"
-              @change="(e) => groupChange(e, 'team')"
-            >
+            <up-radio-group v-model="trainingTeamId" scroll-left placement="column">
               <up-radio
                 v-for="(item, index) in radiolist2"
                 :customStyle="{
@@ -122,6 +133,7 @@ onMounted(() => {
                   width: '300rpx',
                   marginRight: '50rpx',
                 }"
+                @change="(e) => groupChange(e, 'team', item.trainingTeamName)"
                 :key="index"
                 :label="item.trainingTeamName"
                 :name="item.trainingTeamId"
@@ -159,7 +171,7 @@ onMounted(() => {
         @click="nextStep"
       />
       <addProject ref="addProjectRef" @success="() => getTrain()" />
-      <addTeam ref="addTeamRef" />
+      <addTeam ref="addTeamRef" @success="() => getTeam()" />
     </view>
   </tabBar>
 </template>

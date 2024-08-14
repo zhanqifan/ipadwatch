@@ -7,6 +7,8 @@ import type {
   trainingType,
   pageQuery,
   studentListType,
+  trainingRespon,
+  trainingTask,
 } from './startType'
 
 // 查询训练项目
@@ -46,12 +48,19 @@ export const addTrainingTeam = (data: trainingType) => {
     data,
   })
 }
-
 // 获取学生列表
 export const getStudentList = (pageParams: pageQuery): studentListType => {
   return request({
     url: '/teacher/studentInfo/list',
     method: 'GET',
     data: pageParams,
+  })
+}
+// 新增训练队
+export const addExercise = (data: trainingTask) => {
+  return request<trainingRespon>({
+    url: '/teacher/trainingTask/add',
+    method: 'POST',
+    data,
   })
 }
