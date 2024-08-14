@@ -1,5 +1,5 @@
 import { request } from '@/utils/https'
-import type { MergedInterface, startData, updataData } from './heartType'
+import type { MergedInterface, startData, updataData, detectionResponse } from './heartType'
 
 // 基础信息
 export const taskBaseInfo = (taskId: string) => {
@@ -11,7 +11,7 @@ export const taskBaseInfo = (taskId: string) => {
 
 // 实时监听心率
 export const detectionData = (data: startData) => {
-  return request({
+  return request<detectionResponse>({
     url: '/teacher/trainingTask/detectionData',
     method: 'POST',
     data,

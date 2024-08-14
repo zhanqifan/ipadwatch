@@ -14,3 +14,27 @@ export interface updataData {
   id: string
   trainingTime: number
 }
+// 开始任务响应体
+export interface detectionResponse {
+  braceletsTotalNum: number
+  braceletsOnlineNum: number
+  taskHealthMetricsVoList: TaskHealthMetricsVoList[]
+}
+
+export interface TaskHealthMetricsVoList {
+  id: null
+  studentId: string
+  studentName: string
+  braceletId: string
+  taskId: null
+  timestamp: number
+  totalSteps: null
+  totalDistance: null
+  matchingSpeed: null
+  totalCalories: null
+  heartRate: number
+  bloodPressure: null
+  bloodOxygen: null
+  number: null
+  battery: number
+}
