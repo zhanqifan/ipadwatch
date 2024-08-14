@@ -36,6 +36,11 @@ const open = () => {
 const getStudent = async () => {
   const res = await getStudentList(pageParams)
   studentList.value = res.rows
+  // 只有一页 情况直接判定没有更多
+  if (res.total < pageParams.pageSize) {
+    status.value = 'nomore'
+    return
+  }
   maxpageNum.value = Math.ceil(res.total / pageParams.pageSize)
 }
 const commit = () => {
@@ -70,7 +75,6 @@ const close = () => {
   pageParams.pageNum = 1
   maxpageNum.value = undefined
   // 清空学生列表
-  studentList.value = []
 }
 defineExpose({
   open,
