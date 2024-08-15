@@ -26,7 +26,11 @@ const startParams = ref<startData>({
 // 获取学生列表
 const getHeartList = async (taskId: string) => {
   const res = await taskBaseInfo(taskId)
+  res.data.studentInfoList.forEach((item) => {
+    item.status = 1 //增加字段用于离线判定
+  })
   BaseInfo.value = res.data
+  console.log(res.data.studentInfoList)
 }
 
 // 开始定时器
@@ -53,18 +57,25 @@ const startInterval = async () => {
     //     return { ...newData, status: 0 }
     //   }
     // })
-    BaseInfo.value.studentInfoList = res.data.taskHealthMetricsVoList
-    // const length = res.data.taskHealthMetricsVoList.length
-    // 在线状态实时替换
-    watchOnline.value = {
-      braceletsOnlineNum: res.data.braceletsOnlineNum,
-      braceletsTotalNum: res.data.braceletsTotalNum,
+    if (BaseInfo.value?.studentInfoList) {
+      BaseInfo.value.studentInfoList = BaseInfo.value?.studentInfoList.map((item) => {
+        const existItem = res.data.taskHealthMetricsVoList.find(
+          (newItem) => newItem.studentId === item.studentId,
+        )
+        if (existItem) {
+          return { ...existItem, status: 1 }
+        } else {
+          return { ...item, status: 0 }
+        }
+      })
+
+      // 在线状态实时替换
+      watchOnline.value = {
+        braceletsOnlineNum: res.data.braceletsOnlineNum,
+        braceletsTotalNum: res.data.braceletsTotalNum,
+      }
     }
   }, 1000) // 每1秒轮询一次
-  // ElMessage({
-  //   type: 'success',
-  //   message: '操作成功',
-  // })
 }
 // 开始/结束
 const control = async (type: 'start' | 'end') => {
@@ -148,51 +159,93 @@ onBeforeUnmount(() => {
       <view class="main">
         <scroll-view scroll-y style="height: 74vh">
           <view class="card_group">
-            <view v-for="item in BaseInfo?.studentInfoList" :key="item.id" class="card_item">
-              <view class="top">
-                <view style="display: flex; align-items: center">
-                  <image src="@/static/images/stu.png" class="User_img" />{{ item.studentName }}
-                  <!-- 速度状态 -->
-                  <text class="status">{{ getStyleByType('statusColor', item.heartRate) }} </text>
-                </view>
-                <!-- 电量 -->
-                <view class="battery-container">
-                  <view class="shell" :style="{ width: item.battery + '%' }">
-                    <view
-                      class="block"
-                      :style="{ background: getStyleByType('batteryColor', item.battery) }"
-                    ></view>
+            <view
+              v-for="item in BaseInfo?.studentInfoList"
+              :key="item.id"
+              class="card_item"
+              :style="{ background: item?.status ? '#fff' : '#ebedee' }"
+            >
+              <!-- 在线卡片 -->
+              <view v-show="item?.status === 1">
+                <view class="top">
+                  <view style="display: flex; align-items: center">
+                    <image src="@/static/images/stu.png" class="User_img" />{{ item.studentName }}
+                    <!-- 速度状态 -->
+                    <text class="status">{{ getStyleByType('statusColor', item.heartRate) }} </text>
                   </view>
-                  <view style="color: #959aa0">{{ item.battery ?? 0 }}%</view>
+                  <!-- 电量 -->
+                  <view class="battery-container">
+                    <view class="shell" :style="{ width: item.battery + '%' }">
+                      <view
+                        class="block"
+                        :style="{ background: getStyleByType('batteryColor', item.battery) }"
+                      ></view>
+                    </view>
+                    <view style="color: #959aa0">{{ item.battery ?? 0 }}%</view>
+                  </view>
                 </view>
-              </view>
-              <view class="heart_main">
-                <!-- 左侧heartrate +bmp -->
-                <view>
-                  <view style="margin-left: 20rpx; margin-top: 20rpx"
-                    ><image
-                      src="@/static/images/love.png"
-                      style="width: 40rpx; height: 40rpx"
+                <view class="heart_main">
+                  <!-- 左侧heartrate +bmp -->
+                  <view>
+                    <view style="margin-left: 20rpx; margin-top: 20rpx"
+                      ><image
+                        src="@/static/images/love.png"
+                        style="width: 40rpx; height: 40rpx"
+                        mode="scaleToFill"
+                      />
+                      <text style="font-size: 27rpx"> Heart rate</text></view
+                    >
+                    <view class="heart">
+                      <text
+                        class="heart_rate"
+                        :style="{ color: getStyleByType('heartRateColor', item.heartRate) }"
+                        >{{ item.heartRate ?? 0 }}
+                      </text>
+                      <text style="color: #959aa0; font-size: 25rpx">bpm</text>
+                    </view>
+                  </view>
+                  <!-- 右侧心率图 -->
+                  <view>
+                    <image
+                      src="@/static/images/heartJump.png"
+                      style="width: 140rpx; height: 110rpx"
                       mode="scaleToFill"
                     />
-                    <text style="font-size: 27rpx"> Heart rate</text></view
-                  >
-                  <view class="heart">
-                    <text
-                      class="heart_rate"
-                      :style="{ color: getStyleByType('heartRateColor', item.heartRate) }"
-                      >{{ item.heartRate ?? 0 }}
-                    </text>
-                    <text style="color: #959aa0; font-size: 25rpx">bpm</text>
                   </view>
                 </view>
-                <!-- 右侧心率图 -->
-                <view>
+              </view>
+              <!-- 离线卡片 -->
+              <view v-show="item?.status === 0">
+                <view class="top">
+                  <view style="display: flex; align-items: center">
+                    <image src="@/static/images/stu.png" class="User_img" />{{ item.studentName }}
+                    <!-- 速度状态 -->
+                    <text class="offLine">离线</text>
+                  </view>
+                  <!-- 电量 -->
                   <image
-                    src="@/static/images/heartJump.png"
-                    style="width: 140rpx; height: 110rpx"
+                    src="@/static/images/leave.png"
+                    style="width: 40rpx; height: 40rpx"
                     mode="scaleToFill"
                   />
+                </view>
+                <view class="heart_main">
+                  <!-- 左侧heartrate +bmp -->
+                  <view>
+                    <view style="margin-left: 20rpx; margin-top: 20rpx"
+                      ><image
+                        src="@/static/images/love.png"
+                        style="width: 40rpx; height: 40rpx"
+                        mode="scaleToFill"
+                      />
+                      <text style="font-size: 27rpx"> Heart rate</text></view
+                    >
+                    <view class="heart">
+                      <text class="heart_rate">- </text>
+                      <text style="color: #959aa0; font-size: 25rpx">bpm</text>
+                    </view>
+                  </view>
+                  <!-- 右侧心率图 -->
                 </view>
               </view>
             </view>
@@ -232,14 +285,16 @@ onBeforeUnmount(() => {
     grid-template-columns: 1fr 1fr 1fr 1fr;
     gap: 0.5% 3%; // 控制卡片之间的间距
     .card_item {
-      // width: 23%; // 每行两个卡片，减去间距的一半
       max-width: 500rpx;
       margin-bottom: 20rpx; // 控制行之间的间距
       background-color: #fff;
       border-radius: 16rpx;
       padding: 15rpx 20rpx;
       box-shadow: 0 0 10rpx rgba(0, 0, 0, 0.1);
-
+      .offLine {
+        font-size: 24rpx;
+        margin-left: 5rpx;
+      }
       .status {
         font-size: 12px;
         color: #4abc7a;

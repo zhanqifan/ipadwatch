@@ -1,5 +1,5 @@
 import type { common, trainingRespon } from '../start/startType'
-
+import type { StudentInfoList } from '../start/startType'
 // 查询任务基础数据响应
 export interface MergedInterface extends common, trainingRespon {}
 
@@ -18,23 +18,5 @@ export interface updataData {
 export interface detectionResponse {
   braceletsTotalNum: number
   braceletsOnlineNum: number
-  taskHealthMetricsVoList: TaskHealthMetricsVoList[]
-}
-
-export interface TaskHealthMetricsVoList {
-  id: null
-  studentId: string
-  studentName: string
-  braceletId: string
-  taskId: null
-  timestamp: number
-  totalSteps: null
-  totalDistance: null
-  matchingSpeed: null
-  totalCalories: null
-  heartRate: number
-  bloodPressure: null
-  bloodOxygen: null
-  number: null
-  battery: number
+  taskHealthMetricsVoList: StudentInfoList[]
 }

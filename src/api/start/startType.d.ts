@@ -106,6 +106,7 @@ export interface trainingRespon {
   braceletsOnlineNum: number
 }
 export interface StudentInfoList {
+  status?: number
   id: string
   studentId: number
   studentName: string
