@@ -4,10 +4,13 @@ import { addExerciseType } from '@/api/start/start'
 // 创建响应式数据
 const show = ref(false)
 const title = ref('新增训练项目')
-const form = ref({
-  exerciseName: '',
-  number: 0,
-})
+const initialValue = () => {
+  return {
+    exerciseName: '',
+    number: 0,
+  }
+}
+const form = ref(initialValue())
 const formRef = ref()
 const emit = defineEmits<{
   success: [] // 定义 'success' 事件，不需要参数
@@ -21,6 +24,7 @@ const rules = ref({
 })
 const open = () => {
   show.value = true
+  form.value = initialValue()
 }
 const commit = () => {
   formRef.value

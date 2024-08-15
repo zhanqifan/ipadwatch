@@ -16,7 +16,7 @@ const sidebarItems = ref<
   }[]
 >([
   { icon: 'heart', url: '/pages/startDialog/start' },
-  { icon: 'account-fill', url: '/pages/report/report' },
+  { icon: 'calendar-fill', url: '/pages/report/report' },
 ])
 let { selected } = toRefs(props)
 const itemClick = (item: itemType) => {
@@ -54,13 +54,13 @@ const itemClick = (item: itemType) => {
 <style lang="scss" scoped>
 .sidebar-container {
   display: flex;
+  height: 100vh;
 }
-
 .sidebar {
   border-radius: 20rpx;
   margin: 15rpx 0;
   background-color: #304056;
-  height: 93vh;
+  height: 100vh;
 }
 
 .sidebar-header {

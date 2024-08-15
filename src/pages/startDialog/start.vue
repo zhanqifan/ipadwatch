@@ -238,10 +238,10 @@ onMounted(() => {
     }
   }
 }
-::v-deep .u-radio-group--column[data-v-272bb654] {
+::v-deep .u-radio-group--column {
   display: flex;
   flex-direction: row;
-  .u-radio[data-v-edf95844] {
+  .u-radio {
     padding: 20rpx;
     // border: 1rpx solid #387ff2;
     margin-right: 20rpx;

@@ -5,10 +5,13 @@ import type { Row } from '@/api/start/startType'
 // 创建响应式数据
 const show = ref(false)
 const title = ref('新增训练项目')
-const form = ref({
-  teamName: '',
-  studentIds: [],
-})
+const initialValue = () => {
+  return {
+    teamName: '',
+    studentIds: [],
+  }
+}
+const form = ref(initialValue())
 const status = ref('loading')
 const loadingText = ref('努力加载中')
 const nomoreText = ref('实在没有了~')
@@ -31,6 +34,7 @@ const maxpageNum = ref() //总共分几页
 const studentList = ref<Row[]>([])
 const open = () => {
   show.value = true
+  form.value = initialValue()
   getStudent()
 }
 const getStudent = async () => {
@@ -60,7 +64,7 @@ const commit = () => {
     })
 }
 const upToLower = async () => {
-  if (pageParams.pageNum <= maxpageNum.value) {
+  if (pageParams.pageNum < maxpageNum.value) {
     pageParams.pageNum = pageParams.pageNum + 1
     const res = await getStudentList(pageParams)
     studentList.value = [...studentList.value, ...res.rows]
@@ -123,30 +127,30 @@ defineExpose({
 </template>
 
 <style lang="scss" scoped>
-::v-deep .u-dropdown__content__popup[data-v-d45d1d94] {
+::v-deep .u-dropdown__content__popup {
   background-color: #fff;
   margin-top: 20rpx;
 }
-::v-deep .u-dropdown__content__mask[data-v-d45d1d94] {
+::v-deep .u-dropdown__content__mask {
   background: none;
 }
 .dropdown {
   border: 1px solid #dadbde;
   border-radius: 5px;
 }
-::v-deep .u-dropdown__menu__item[data-v-d45d1d94] {
+::v-deep .u-dropdown__menu__item {
   justify-content: end;
   margin-right: 10rpx;
 }
 .peo {
-  ::v-deep .u-form-item__body[data-v-b4fd400b] {
+  ::v-deep .u-form-item__body {
     align-items: start;
   }
-  ::v-deep .u-checkbox[data-v-abd63d8e] {
+  ::v-deep .u-checkbox {
     margin-top: 0;
   }
 }
-::v-deep .u-checkbox-group--column[data-v-504cd728] {
+::v-deep .u-checkbox-group--column {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;

@@ -3,16 +3,20 @@ import dayjs from 'dayjs'
 import type { reportResponse } from '@/api/report/reportType'
 import { getTeamList, getTrainType } from '@/api/start/start'
 import { getReport } from '@/api/report/report'
+import emptyBox from '@/components/emptyBox/index.vue'
 const show = ref(false)
 const teamType = ref(false)
 const trainType = ref(false)
-const params = ref({
-  pageSize: 10,
-  pageNum: 1,
-  trainingTeamName: '', //训练队名称
-  exerciseTypeName: '', //训练类型
-})
-const dateTime = ref(dayjs().format('YYYY-MM-DD'))
+const initialValue = () => {
+  return {
+    pageSize: 10,
+    pageNum: 1,
+    trainingTeamName: '', //训练队名称
+    exerciseTypeName: '', //训练类型
+    dateTime: dayjs().format('YYYY-MM-DD'),
+  }
+}
+const params = ref(initialValue())
 const teamColumns = ref<[string[]]>([[]])
 const trainColumns = ref<[string[]]>([[]])
 const reportList = ref<reportResponse[]>()
@@ -36,20 +40,31 @@ const confirm = ({ value }, type: 'team' | 'train') => {
   }
 }
 const getReportList = async () => {
-  console.log(dateTime.value)
   const newParams = filterOutEmptyFields(params.value)
-  console.log(newParams)
   const res = await getReport({
     ...newParams,
-    'params[beginTime]': dayjs(dateTime.value).startOf('day').format('YYYY-MM-DD HH:mm:ss'),
-    'params[endTime]': dayjs(dateTime.value).endOf('day').format('YYYY-MM-DD HH:mm:ss'),
+    'params[beginTime]': dayjs(params.value.dateTime).startOf('day').format('YYYY-MM-DD HH:mm:ss'),
+    'params[endTime]': dayjs(params.value.dateTime).endOf('day').format('YYYY-MM-DD HH:mm:ss'),
   })
   reportList.value = res.rows
 }
+// 过滤空字段
 const filterOutEmptyFields = (obj: Object) => {
   return Object.fromEntries(
     Object.entries(obj).filter(([key, value]) => value), // 过滤掉值为空的键值对
   )
+}
+const search = () => {
+  getReportList()
+}
+const reset = () => {
+  params.value = initialValue()
+  getReportList()
+}
+const toDetail = (item: reportResponse) => {
+  uni.navigateTo({
+    url: `/pages/report/reportdetail?taskId=${item.id}`,
+  })
 }
 const scrolltolower = () => {
   console.log('触底')
@@ -86,16 +101,36 @@ onMounted(() => {
             params.exerciseTypeName ? params.exerciseTypeName : '选择训练类型'
           }}</up-button>
         </view>
-        <view><up-datetime-picker hasInput :show="show" v-model="dateTime" mode="date" /></view>
-        <view><up-button type="primary" style="width: 150rpx" text="搜索"></up-button></view>
-        <view><up-button type="success" style="width: 150rpx" text="重置"></up-button></view>
+        <view
+          ><up-datetime-picker hasInput :show="show" v-model="params.dateTime" mode="date"
+        /></view>
+        <view
+          ><up-button type="primary" style="width: 150rpx" text="搜索" @click="search"></up-button
+        ></view>
+        <view
+          ><up-button type="success" style="width: 150rpx" text="重置" @click="reset"></up-button
+        ></view>
       </view>
-      <up-list @scrolltolower="scrolltolower">
-        <up-list-item v-for="(item, index) in reportList" :key="item.id" style="margin-top: 40rpx">
+      <up-list
+        v-if="reportList?.length"
+        @scrolltolower="scrolltolower"
+        style="margin-top: 40rpx"
+        height="600"
+        :pagingEnabled="true"
+      >
+        <up-list-item
+          v-for="(item, index) in reportList"
+          :key="item.id"
+          style="margin-bottom: 40rpx"
+          class="card"
+        >
           <up-cell
-            :title="`队名：${item.taskName}  -- 人数：${item.personNum}人 --  运动类型：${
-              item.exerciseTypeName
-            } -- 时间：${dayjs(item.createTime).format('YYYY-MM-DD')} `"
+            @click="toDetail(item)"
+            :title="`队名：${item.taskName}  ------- 训练人数：${
+              item.personNum
+            }人 -------  运动类型：${item.exerciseTypeName} ------- 时间：${dayjs(
+              item.createTime,
+            ).format('YYYY-MM-DD')} `"
           >
             <!-- <template #icon>
               <up-avatar
@@ -108,6 +143,7 @@ onMounted(() => {
           </up-cell>
         </up-list-item>
       </up-list>
+      <emptyBox v-else :size="{ width: 300, height: 300 }" />
     </view>
   </tabBar>
 </template>
@@ -116,5 +152,12 @@ onMounted(() => {
 .top {
   display: flex;
   gap: 50rpx;
+}
+.card {
+  background-color: #409eff;
+  border-radius: 15rpx;
+}
+::v-deep.u-cell__title-text {
+  color: #fdf0f0;
 }
 </style>

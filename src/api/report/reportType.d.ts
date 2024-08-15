@@ -5,7 +5,7 @@ export interface reportType {
   code: number
   msg: string
 }
-
+// 报告列表传参
 export interface reportData {
   /**
    * 训练类型
@@ -36,7 +36,7 @@ export interface reportData {
    */
   trainingTeamName?: string
 }
-
+// 报告列表响应
 export interface reportResponse extends common {
   id: string
   taskName: string
@@ -49,4 +49,25 @@ export interface reportResponse extends common {
   trainingTime: null
   personNum: number
   students: null
+}
+
+// 报告详情
+export interface ReportDetail {
+  trainingName: string
+  trainingType: string
+  teacherName: string
+  trainingDate: number
+  personNum: number
+  fullDetailsReportVoList: FullDetailsReportVoList[]
+}
+
+export interface FullDetailsReportVoList {
+  studentName: string
+  averageHeartRate: number
+  averagePace: number
+  averageBloodOxygen: number
+  maxHeartRate: number
+  maxPace: number
+  maxBloodOxygen: number
+  minHeartRate: number
 }

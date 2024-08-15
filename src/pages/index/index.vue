@@ -39,15 +39,21 @@ const startInterval = async () => {
       ...startParams.value,
       studentIds: BaseInfo.value?.students as number[],
     })
-    // 处理手环掉线  处理方法:只替换有返回的部分
-    res.data.taskHealthMetricsVoList.forEach((newData: any) => {
-      const existingData = BaseInfo.value?.studentInfoList.find(
-        (item) => item.studentId === newData.studentId,
-      )
-      if (existingData) {
-        Object.assign(existingData, newData) // 替换相同项
-      }
-    })
+    // // 处理手环掉线  处理方法:只替换有返回的部分
+    // BaseInfo.value.studentInfoList = res.data.taskHealthMetricsVoList.map((newData: any) => {
+    //   const currentItem = BaseInfo.value?.studentInfoList.find(
+    //     (item) => {
+    //       item.studentId === newData.studentId
+    //     }
+    //   )
+    //   if (currentItem) {
+    //     // Object.assign(existingData, newData) // 替换相同项
+    //     return currentItem
+    //   } else {
+    //     return { ...newData, status: 0 }
+    //   }
+    // })
+    BaseInfo.value.studentInfoList = res.data.taskHealthMetricsVoList
     // const length = res.data.taskHealthMetricsVoList.length
     // 在线状态实时替换
     watchOnline.value = {
@@ -60,6 +66,7 @@ const startInterval = async () => {
   //   message: '操作成功',
   // })
 }
+// 开始/结束
 const control = async (type: 'start' | 'end') => {
   if (type === 'start') {
     btnShow.value = false
@@ -69,8 +76,10 @@ const control = async (type: 'start' | 'end') => {
     btnShow.value = true
     clearInterval(intervalId.value!) //关闭记录
     clock.stopTimer() //关闭计时器
-    const res = await updateTask({ id: startParams.value.taskId, trainingTime: clock.timer.value })
-    console.log(res)
+    await updateTask({ id: startParams.value.taskId, trainingTime: clock.timer.value })
+    uni.redirectTo({
+      url: `/pages/report/reportdetail?taskId=${startParams.value.taskId}`,
+    })
   }
 }
 onLoad((options) => {
@@ -216,7 +225,7 @@ onBeforeUnmount(() => {
   background-color: #f5f9fa;
   border-radius: 20rpx;
   padding: 3%;
-  min-height: 80vh;
+  min-height: 70vh;
   .card_group {
     display: grid;
     justify-content: center;
