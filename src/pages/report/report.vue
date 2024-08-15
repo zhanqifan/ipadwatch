@@ -119,7 +119,7 @@ onMounted(() => {
         :pagingEnabled="true"
       >
         <up-list-item
-          v-for="(item, index) in reportList"
+          v-for="item in reportList"
           :key="item.id"
           style="margin-bottom: 40rpx"
           class="card"
@@ -132,14 +132,6 @@ onMounted(() => {
               item.createTime,
             ).format('YYYY-MM-DD')} `"
           >
-            <!-- <template #icon>
-              <up-avatar
-                shape="square"
-                size="35"
-                :src="item.url"
-                customStyle="margin: -3px 5px -3px 0"
-              ></up-avatar>
-            </template> -->
           </up-cell>
         </up-list-item>
       </up-list>
