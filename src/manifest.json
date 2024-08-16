@@ -82,7 +82,7 @@
                 }
             },
             "splashscreen" : {
-                "useOriginalMsgbox" : false
+                "useOriginalMsgbox" : true
             }
         }
     },

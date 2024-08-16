@@ -1,30 +1,20 @@
 <script setup lang="ts">
 import { useMemberStore } from '@/stores'
-
-const memberStore = useMemberStore()
+const user = useMemberStore()
+const exit = () => {
+  user.clearProfile()
+}
 </script>
 
 <template>
-  <tabBar :selected="1">
+  <tabBar :selected="3">
     <view class="my">
-      <view>会员信息：{{ memberStore.profile }}</view>
-      <button
-        @tap="
-          memberStore.setProfile({
-            nickname: '黑马先锋',
-          })
-        "
-        size="mini"
-        plain
-        type="primary"
-      >
-        保存用户信息
-      </button>
-      <button @tap="memberStore.clearProfile()" size="mini" plain type="warn">清理用户信息</button>
+      <view>教师信息：{{ user.profile?.nickName }}</view>
+      <view>账号:{{ user.profile?.userName }}</view>
+      <view></view>
+      <button @click="exit" size="mini" plain type="warn">退出登录</button>
     </view>
   </tabBar>
 </template>
 
-<style lang="scss">
-//
-</style>
+<style lang="scss"></style>

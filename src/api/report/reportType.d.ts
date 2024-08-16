@@ -71,3 +71,17 @@ export interface FullDetailsReportVoList {
   maxBloodOxygen: number
   minHeartRate: number
 }
+
+// 强度传参
+interface SportType {
+  teamId: string
+  number: number
+  dateTime?: string
+  startTime: string
+  endTime: string
+}
+// 强度分部图
+export interface HeartMap {
+  grade: 'LOW' | 'MIDDLE' | 'HIGH' | 'HIGHER' | 'HIGHEST' | 'HIGHEST_HIGHER'
+  time?: number
+}

@@ -63,7 +63,7 @@ const reset = () => {
 }
 const toDetail = (item: reportResponse) => {
   uni.navigateTo({
-    url: `/pages/report/reportdetail?taskId=${item.id}`,
+    url: `/pages/report/reportdetail?taskId=${item.id}&number=${item.number}`,
   })
 }
 const scrolltolower = () => {
@@ -76,7 +76,7 @@ onMounted(() => {
 })
 </script>
 <template>
-  <tabBar :selected="1">
+  <tabBar :selected="2">
     <view>
       <view class="top">
         <view>

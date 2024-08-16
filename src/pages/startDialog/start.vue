@@ -84,7 +84,7 @@ onMounted(() => {
 })
 </script>
 <template>
-  <tabBar :selected="0">
+  <tabBar :selected="1">
     <view class="sprot_box">
       <!-- 步骤条 -->
       <up-steps current="0" style="margin-bottom: 100rpx">
