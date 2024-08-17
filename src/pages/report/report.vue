@@ -30,7 +30,7 @@ const getTrain = async () => {
   const res = await getTrainType()
   trainColumns.value[0] = res.data.map((item) => item.exerciseName)
 }
-const confirm = ({ value }, type: 'team' | 'train') => {
+const confirm = ({ value }: { value: Array<any> }, type: 'team' | 'train') => {
   if (type === 'team') {
     params.value.trainingTeamName = value[0]
     teamType.value = false
@@ -63,7 +63,7 @@ const reset = () => {
 }
 const toDetail = (item: reportResponse) => {
   uni.navigateTo({
-    url: `/pages/report/reportdetail?taskId=${item.id}&number=${item.number}`,
+    url: `/pages/report/reportdetail?taskId=${item.id}`,
   })
 }
 const scrolltolower = () => {
@@ -76,7 +76,7 @@ onMounted(() => {
 })
 </script>
 <template>
-  <tabBar :selected="2">
+  <tabBar :selected="1">
     <view>
       <view class="top">
         <view>

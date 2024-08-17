@@ -15,7 +15,6 @@ const sidebarItems = ref<
     url: string
   }[]
 >([
-  { icon: 'account-fill', url: '/pages/map/map' },
   { icon: 'heart', url: '/pages/startDialog/start' },
   { icon: 'calendar-fill', url: '/pages/report/report' },
   { icon: 'account-fill', url: '/pages/my/my' },
@@ -48,7 +47,9 @@ const itemClick = (item: itemType) => {
       </view>
     </view>
     <view class="main-content">
-      <slot />
+      <scroll-view scroll-y style="height: 100%">
+        <slot />
+      </scroll-view>
     </view>
   </view>
 </template>
@@ -56,12 +57,23 @@ const itemClick = (item: itemType) => {
 <style lang="scss" scoped>
 .sidebar-container {
   display: flex;
-  height: 720px;
+  /*  #ifdef  APP-PLUS	 */
+  height: 100vh;
+  /*  #endif  */
+  /*  #ifdef  H5 */
+  height: calc(100vh - 59px); // 减去导航栏的高度
+  /*  #endif  */
 }
 .sidebar {
   border-radius: 20rpx;
   margin: 15rpx 0;
   background-color: #304056;
+  /*  #ifdef  APP-PLUS	 */
+  height: 100vh;
+  /*  #endif  */
+  /*  #ifdef  H5 */
+  height: calc(100vh - 59px); // 减去导航栏的高度
+  /*  #endif  */
 }
 
 .sidebar-header {
@@ -90,5 +102,6 @@ const itemClick = (item: itemType) => {
 .main-content {
   flex: 1;
   padding: 20px;
+  max-height: max-content;
 }
 </style>

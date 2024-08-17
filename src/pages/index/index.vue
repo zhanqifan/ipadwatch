@@ -85,6 +85,7 @@ const control = async (type: 'start' | 'end') => {
     clock.startTimer() //开启计时器
   } else {
     btnShow.value = true
+    startParams.value.isRecord = false //开始记录
     clearInterval(intervalId.value!) //关闭记录
     clock.stopTimer() //关闭计时器
     await updateTask({ id: startParams.value.taskId, trainingTime: clock.timer.value })

@@ -7,7 +7,7 @@ const exit = () => {
 </script>
 
 <template>
-  <tabBar :selected="3">
+  <tabBar :selected="2">
     <view class="my">
       <view>教师信息：{{ user.profile?.nickName }}</view>
       <view>账号:{{ user.profile?.userName }}</view>

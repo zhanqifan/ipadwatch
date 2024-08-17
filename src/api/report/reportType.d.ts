@@ -72,16 +72,62 @@ export interface FullDetailsReportVoList {
   minHeartRate: number
 }
 
-// 强度传参
+// echart统一传参
 interface SportType {
-  teamId: string
-  number: number
+  taskId?: string
+  teamId?: string
+  number?: number
   dateTime?: string
-  startTime: string
-  endTime: string
+  startTime?: string
+  endTime?: string
 }
 // 强度分部图
 export interface HeartMap {
   grade: 'LOW' | 'MIDDLE' | 'HIGH' | 'HIGHER' | 'HIGHEST' | 'HIGHEST_HIGHER'
   time?: number
+}
+// 心率对比图
+export interface RealTimeHeartRate {
+  time: string
+  maxHeartRate: number
+  minHeartRate: number
+}
+
+// 运动达成图响应
+export interface SportRingType {
+  sportDensity: number
+  averageHeartRate: number
+  averageIntensity: number
+  heartRateGreaterThan120Time: number
+  maxHeartRateTime: number
+  achievementRate: null
+  completionNum: number
+  totalNum: number
+  achievementRate: number
+}
+// 运动排行响应
+export interface SportRankType {
+  maxHeartRateRankAsc: MaxHeartRateRankAsc[]
+  maxHeartRateRankDesc: MaxHeartRateRankAsc[]
+  intensityRankAsc: MaxHeartRateRankAsc[]
+  intensityRankDesc: MaxHeartRateRankAsc[]
+}
+
+export interface MaxHeartRateRankAsc {
+  name: string
+  density: number
+  intensity: number
+  maxHeartRate: number
+}
+
+// 运动负荷响应
+export interface SportLoadType {
+  averageIntensity: number
+  intensityQualifiedNum: number
+  intensityQualifiedRate: number
+  effectiveTrainingDensity: number
+  effectiveTrainingDensityQualifiedNum: number
+  effectiveTrainingDensityQualifiedRate: number
+  averageHeartRate: number
+  averageMaxHeartRate: number
 }
