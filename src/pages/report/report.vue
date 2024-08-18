@@ -71,7 +71,6 @@ type ee = {
 const handlePage = (e: ee) => {
   if (e.type === 'next') {
     params.value.pageNum = e.current
-    console.log(e.type, e.current)
     getReportList()
   } else {
     params.value.pageNum = e.current

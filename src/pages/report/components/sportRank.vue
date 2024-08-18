@@ -14,6 +14,12 @@ const controlShow = (data: DataObject) => {
 onMounted(() => {
   controlShow(props.sportRanks)
 })
+watch(
+  () => props.sportRanks,
+  () => {
+    controlShow(props.sportRanks)
+  },
+)
 </script>
 <template>
   <view class="main">

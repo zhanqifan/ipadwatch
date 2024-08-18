@@ -63,9 +63,7 @@ const option = ref({
     },
   ],
 })
-
-onMounted(async () => {
-  // 组件能被调用必须是组件的节点已经被渲染到页面上
+const getData = async () => {
   const e = props.heartMap.every((item) => item.time === 0) //都是空数据0
   if (e) {
     isShow.value = false
@@ -74,6 +72,11 @@ onMounted(async () => {
   if (!chartRef.value) return
   const myChart = await chartRef.value.init(echarts)
   myChart.setOption(option.value)
+}
+watch(props.heartMap, () => {})
+onMounted(async () => {
+  // 组件能被调用必须是组件的节点已经被渲染到页面上
+  getData()
 })
 </script>
 

@@ -50,9 +50,7 @@ const option = ref({
         position: 'center',
         formatter: (params) => {
           // 设置默认显示第一个数据,函数接收一个参数，拿到所有配置项，遍历所有配置项，判断,下标为0的，第一个配置项信息，return 出去设置为默认值。
-          console.log(params)
           if (params.dataIndex === 0) {
-            console.log(params.percent)
             return `${params.percent + '%' + '\n'}(${params.value + '人'})`
           } else {
             return ''
@@ -97,10 +95,17 @@ const option = ref({
     },
   ],
 })
+watch(
+  () => props.sportComplate,
+  async () => {
+    if (!chartRef.value) return
+    const myChart = await chartRef.value.init(echarts)
+    myChart.setOption(option.value)
+  },
+)
 
 onMounted(async () => {
   // 组件能被调用必须是组件的节点已经被渲染到页面上
-
   if (!chartRef.value) return
   const myChart = await chartRef.value.init(echarts)
   myChart.setOption(option.value)

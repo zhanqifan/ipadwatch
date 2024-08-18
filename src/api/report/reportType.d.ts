@@ -76,7 +76,7 @@ export interface FullDetailsReportVoList {
 interface SportType {
   taskId?: string
   teamId?: string
-  number?: number
+  number?: number | null
   dateTime?: string
   startTime?: string
   endTime?: string

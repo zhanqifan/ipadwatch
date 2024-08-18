@@ -4,6 +4,14 @@ const props = defineProps<{
   SportLoads: SportLoadType
 }>()
 const isShow = ref(false)
+watch(
+  () => props.SportLoads,
+  () => {
+    isShow.value = Object.values(props.SportLoads).some(
+      (value) => value !== null && value !== undefined && value !== '',
+    )
+  },
+)
 onMounted(() => {
   isShow.value = Object.values(props.SportLoads).some(
     (value) => value !== null && value !== undefined && value !== '',
@@ -25,9 +33,9 @@ onMounted(() => {
           ><image src="@/static/images/heart_buil.png" class="imageSize" />平均运动强度</view
         >
         <view class="row"
-          ><text>{{ SportLoads.averageIntensity * 100 ?? 0 }}%&nbsp</text
+          ><text>{{ SportLoads.averageIntensity ?? 0 }}%&nbsp</text
           ><up-line-progress
-            :percentage="SportLoads.intensityQualifiedRate * 100 ?? 0"
+            :percentage="SportLoads.averageIntensity ?? 0"
             active-color="#942cfc"
             :showText="false"
           ></up-line-progress>

@@ -6,7 +6,7 @@ import pressure from './components/pressure.vue'
 import { customOrder, categorySort } from './utils/sort'
 import dayjs from 'dayjs'
 import type { SportType, SportRingType, ReportDetail } from '@/api/report/reportType'
-import { getTeamList } from '@/api/start/start'
+import { getTeamList, getTrainingTeam } from '@/api/start/start'
 import {
   HearComplate,
   getSportIntensity,
@@ -17,37 +17,49 @@ import {
 } from '@/api/report/report'
 import { sportDict, secondsToMinutes } from './utils/sportComplate'
 import sportRank from './components/sportRank.vue'
-
-const show = ref(false)
+import { useMemberStore } from '@/stores/modules/user'
+const user = useMemberStore()
 const teamType = ref(false)
 const initialValue = () => {
   return {
-    teamId: '1823528763637948418', //训练队名称
-    number: 4,
-    dateTime: dayjs('2024-08-14').format('YYYY-MM-DD'),
+    teamId: '', //训练队名称
+    number: null,
+    dateTime: dayjs().format('YYYY-MM-DD'),
   }
 }
-const params = ref(initialValue())
+const taskId = ref()
+const teamName = ref() //训练队名
+const formRef = ref()
+const params = ref(initialValue()) //搜索传参
 const sportComplate = ref<SportRingType>() //运动达成情况
 const heartMap = ref() //运动强度分布图
 const heartCompare = ref() //心率对比图
 const sportRanks = ref() //运动排行
-const SportLoads = ref()
-const teamColumns = ref<[string[]]>([[]])
+const SportLoads = ref() //负荷图
+const teamColumns = ref<[any[]]>([[]]) //选择器
 const studentList = ref<ReportDetail>()
+
+const rules = {
+  teamId: [{ required: true, message: '选择训练队', trigger: ['change'] }],
+  number: [{ required: true, message: '请输入输入次数', trigger: ['blur'] }],
+  dateTime: [{ required: true, message: '请输入输入时间', trigger: ['change'] }],
+}
 const getTeam = async () => {
   const res = await getTeamList()
   teamColumns.value[0] = res.data.map((item) => {
-    return item.teamName
+    return {
+      label: item.teamName,
+      id: item.id,
+    }
   })
 }
+const confirm = ({ value }: { value: { id: string; label: string }[] }) => {
+  params.value.teamId = value[0].id
+  teamName.value = value[0].label
+  teamType.value = false
+}
 
-// const confirm = ({ value }) => {
-//   params.value.trainingTeamName = value[0]
-//   teamType.value = false
-// }
-
-// // 过滤空字段
+// 过滤空字段
 // const filterOutEmptyFields = (obj: Object) => {
 //   return Object.fromEntries(
 //     Object.entries(obj).filter(([key, value]) => value), // 过滤掉值为空的键值对
@@ -57,8 +69,28 @@ const getTeam = async () => {
 // 重置
 const reset = () => {
   params.value = initialValue()
+  teamName.value = ''
+  PromiseList({ taskId: taskId.value })
 }
-const search = () => {}
+const search = () => {
+  formRef.value.validate().then((valid: Boolean) => {
+    if (valid) {
+      BaseInfo()
+      PromiseList({
+        ...params.value,
+        startTime: dayjs(params.value.dateTime).startOf('day').format('YYYY-MM-DD HH:mm:ss'),
+        endTime: dayjs(params.value.dateTime).endOf('day').format('YYYY-MM-DD HH:mm:ss'),
+      })
+    }
+  })
+}
+const BaseInfo = async () => {
+  const res = await getTrainingTeam(params.value.teamId)
+  studentList.value!.trainingName = res.data.teamName + ` ${params.value.number}次训练`
+  studentList.value!.fullDetailsReportVoList = res.data.studentList.map((item) => {
+    return { studentName: item.name }
+  })
+}
 // 运动强度分布图
 const getSportMap = async (data: SportType) => {
   const res = await getSportIntensity(data)
@@ -110,15 +142,15 @@ onBackPress((e) => {
   })
   return true
 })
-onLoad((options) => {
+// 请求队列
+const PromiseList = (data: SportType) => {
   try {
     Promise.all([
-      getStudentList({ taskId: options?.taskId }),
-      getSportMap({ taskId: options?.taskId }),
-      getHearComplate({ taskId: options?.taskId }),
-      getHeartCompare({ taskId: options?.taskId }),
-      getSportRank({ taskId: options?.taskId }),
-      getSportLoad({ taskId: options?.taskId }),
+      getSportMap(data),
+      getHearComplate(data),
+      getHeartCompare(data),
+      getSportRank(data),
+      getSportLoad(data),
     ])
   } catch (error) {
     uni.showToast({
@@ -128,34 +160,53 @@ onLoad((options) => {
     })
     console.error('请求失败:', error)
   }
+}
+onLoad((options) => {
+  taskId.value = options!.taskId
+  getTeam(), getStudentList({ taskId: options!.taskId }), PromiseList({ taskId: options!.taskId })
 })
 </script>
 
 <template>
   <tabBar :selected="1">
     <!-- 搜索 -->
-    <view class="top">
-      <view>
-        <up-picker
-          :show="teamType"
-          :columns="teamColumns"
-          @cancel="teamType = false"
-          @confirm="confirm"
-        />
-        <up-button @click="teamType = true">{{
-          params.trainingTeamName ? params.trainingTeamName : '选择训练队'
-        }}</up-button>
+    <up-form labelPosition="left" :model="params" :rules="rules" ref="formRef">
+      <view class="top">
+        <up-form-item label="训练队:" labelWidth="60" prop="teamId">
+          <up-picker
+            :show="teamType"
+            :columns="teamColumns"
+            @cancel="teamType = false"
+            @confirm="confirm"
+            keyName="label"
+          />
+          <up-button @click="teamType = true">{{ teamName ? teamName : '选择训练队' }}</up-button>
+        </up-form-item>
+        <up-form-item label="次数:" labelWidth="40" prop="number">
+          <up-input placeholder="请输入次数" border="surround" v-model="params.number" />
+        </up-form-item>
+        <up-form-item label="时间:" labelWidth="40" prop="dateTime">
+          <uni-datetime-picker
+            type="date"
+            :clear-icon="false"
+            style="width: 300rpx"
+            v-model="params.dateTime"
+          />
+        </up-form-item>
+        <view>
+          <up-form-item>
+            <up-button
+              type="primary"
+              style="width: 150rpx; margin-right: 10rpx"
+              text="搜索"
+              @click="search"
+            />
+            <up-button type="success" style="width: 150rpx" text="重置" @click="reset" />
+          </up-form-item>
+        </view>
       </view>
-      <view style="display: flex; align-items: center">
-        <text>次数:</text>
-        <up-input placeholder="请输入次数" border="surround" v-model="params.number"
-      /></view>
-      <view style="display: flex">
-        <up-datetime-picker hasInput :show="show" v-model="params.dateTime" mode="date"
-      /></view>
-      <view> <up-button type="primary" style="width: 150rpx" text="搜索" @click="search" /></view>
-      <view><up-button type="success" style="width: 150rpx" text="重置" @click="reset" /></view>
-    </view>
+    </up-form>
+
     <!-- 主体 -->
     <view class="main">
       <up-row gutter="10">
@@ -164,14 +215,14 @@ onLoad((options) => {
             <view class="title">基础信息</view>
             <view class="Base_team"
               ><text>{{ studentList?.trainingName }}</text
-              ><text>授课教师:{{ studentList?.teacherName }}</text></view
+              ><text>授课教师:{{ user.profile?.nickName }}</text></view
             >
             <scroll-view scroll-y style="height: 133rpx">
               <view class="students">
                 <text
                   class="name"
-                  v-for="item in studentList?.fullDetailsReportVoList"
-                  :key="item.studentName"
+                  v-for="(item, index) in studentList?.fullDetailsReportVoList"
+                  :key="index"
                   >{{ item.studentName }}</text
                 >
               </view>
@@ -250,7 +301,7 @@ onLoad((options) => {
   gap: 50rpx;
 }
 .main {
-  margin-top: 20rpx;
+  margin-top: 0rpx;
   padding: 3rpx;
   .Base_info {
     box-shadow: 0rpx 0rpx 16rpx 0rpx rgba(0, 0, 0, 0.1);

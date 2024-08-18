@@ -45,10 +45,7 @@ const option = ref({
     },
   ],
 })
-
-onMounted(async () => {
-  // 组件能被调用必须是组件的节点已经被渲染到页面上
-
+const getData = async () => {
   if (props.heartCompare.length === 0) {
     isShow.value = false
     return
@@ -56,6 +53,22 @@ onMounted(async () => {
   if (!chartRef.value) return
   const myChart = await chartRef.value.init(echarts)
   myChart.setOption(option.value)
+  isShow.value = true
+  console.log(isShow.value)
+}
+
+watch(
+  () => props.heartCompare,
+  async () => {
+    getData()
+  },
+  { deep: true },
+)
+
+onMounted(() => {
+  // 组件能被调用必须是组件的节点已经被渲染到页面上
+  console.log(props.heartCompare)
+  getData()
 })
 </script>
 
