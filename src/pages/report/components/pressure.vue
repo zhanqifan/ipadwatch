@@ -57,14 +57,14 @@ onMounted(() => {
           ><image src="@/static/images/hear_avg.png" class="imageSize" />平均心率</view
         >
         <view class="row"
-          ><text>{{ SportLoads.averageHeartRate ?? 0 }}%&nbsp</text
+          ><text>{{ SportLoads.averageHeartRate ?? 0 }}&nbsp&nbsp</text
           ><up-line-progress
             :percentage="(SportLoads.averageHeartRate / 170) * 100 ?? 0"
             active-color="#942cfc"
             :showText="false"
           ></up-line-progress>
         </view>
-        <view>130-170次/分</view>
+        <view style="white-space: nowrap">130-170次/分</view>
         <view>/</view>
         <view>/</view>
       </view>
@@ -73,7 +73,7 @@ onMounted(() => {
           ><image src="@/static/images/heart_max.png" class="imageSize" />平均最大心率</view
         >
         <view class="row"
-          ><text>{{ SportLoads.averageMaxHeartRate ?? 0 }}%&nbsp</text
+          ><text>{{ SportLoads.averageMaxHeartRate ?? 0 }}&nbsp</text
           ><up-line-progress
             :percentage="(SportLoads.averageMaxHeartRate / 200) * 100 ?? 0"
             active-color="#942cfc"
@@ -106,6 +106,8 @@ onMounted(() => {
 }
 .left-align {
   justify-self: start;
+  white-space: nowrap;
+  margin-top: 13rpx;
 }
 .row {
   display: flex;

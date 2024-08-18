@@ -9,6 +9,12 @@ const props = defineProps<{
   sportComplate: SportRingType
 }>()
 const chartRef = ref(null)
+const completionNum = computed(() => {
+  return props.sportComplate.completionNum ?? 0
+})
+const UncompletionNum = computed(() => {
+  return props.sportComplate.totalNum - props.sportComplate.completionNum
+})
 const option = ref({
   legend: {
     top: '0%', // 设置图例距离顶部的距离
@@ -19,6 +25,7 @@ const option = ref({
       fontSize: 10, // 设置图例文字的大小
     },
   },
+
   title: {
     text: '训练负荷达成率',
     textStyle: {
@@ -33,19 +40,38 @@ const option = ref({
   },
   series: [
     {
-      name: '访问来源',
       type: 'pie',
       radius: ['40%', '60%'],
       avoidLabelOverlap: false,
       label: {
         show: false,
+        fontSize: 16,
+        lineHeight: 20,
         position: 'center',
+        formatter: (params) => {
+          // 设置默认显示第一个数据,函数接收一个参数，拿到所有配置项，遍历所有配置项，判断,下标为0的，第一个配置项信息，return 出去设置为默认值。
+          console.log(params)
+          if (params.dataIndex === 0) {
+            console.log(params.percent)
+            return `${params.percent + '%' + '\n'}(${params.value + '人'})`
+          } else {
+            return ''
+          }
+        },
       },
       emphasis: {
         label: {
           show: true,
           fontSize: '10',
-          formatter: '{b}\n{c}', // 标签内容格式
+          formatter: (params) => {
+            //切换非默认选项配置数据展示
+            if (params.dataIndex != 0) {
+              return `${params.percent + '%' + '\n'}(${params.value + '人'})`
+            } else {
+              return
+            }
+          },
+
           fontWeight: 'bold',
         },
       },
@@ -54,14 +80,14 @@ const option = ref({
       },
       data: [
         {
-          value: props.sportComplate.completionNum,
+          value: completionNum,
           name: '达成人数',
           itemStyle: {
             color: '#fc8923', // 设置圆环图的第一个扇区颜色
           },
         },
         {
-          value: props.sportComplate.totalNum - props.sportComplate.completionNum,
+          value: UncompletionNum,
           name: '未达成人数',
           itemStyle: {
             color: '#6c64fc', // 设置圆环图的第二个扇区颜色
@@ -74,29 +100,10 @@ const option = ref({
 
 onMounted(async () => {
   // 组件能被调用必须是组件的节点已经被渲染到页面上
-  setTimeout(async () => {
-    if (!chartRef.value) return
-    const myChart = await chartRef.value.init(echarts)
-    myChart.setOption(option.value)
-    // 添加点击事件处理
-    myChart.on('click', (params: any) => {
-      // 高亮显示
-      myChart.dispatchAction({
-        type: 'highlight',
-        seriesIndex: params.seriesIndex,
-        dataIndex: params.dataIndex,
-      })
 
-      // 1秒后取消高亮
-      setTimeout(() => {
-        myChart.dispatchAction({
-          type: 'downplay',
-          seriesIndex: params.seriesIndex,
-          dataIndex: params.dataIndex,
-        })
-      }, 1000)
-    })
-  }, 1000)
+  if (!chartRef.value) return
+  const myChart = await chartRef.value.init(echarts)
+  myChart.setOption(option.value)
 })
 </script>
 

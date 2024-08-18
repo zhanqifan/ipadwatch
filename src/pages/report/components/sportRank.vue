@@ -92,6 +92,7 @@ onMounted(() => {
   }
   .row1 {
     font-size: 23rpx;
+    align-items: center;
     display: grid;
     text-align: center;
     margin-top: 20rpx;

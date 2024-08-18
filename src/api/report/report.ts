@@ -18,9 +18,9 @@ export const getReport = (data: reportData): reportType => {
   })
 }
 // 全部明细
-export const getDetail = (taskId: string) => {
+export const getDetail = (data: SportType) => {
   return request<ReportDetail>({
-    url: `/teacher/training/report/fullDetails/${taskId}`,
+    url: `/teacher/training/report/fullDetails/${data.taskId}`,
     method: 'GET',
   })
 }

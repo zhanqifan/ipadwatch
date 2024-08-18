@@ -5,7 +5,7 @@ import lineChart1 from './components/lineChart1.vue'
 import pressure from './components/pressure.vue'
 import { customOrder, categorySort } from './utils/sort'
 import dayjs from 'dayjs'
-import type { SportType, SportRingType } from '@/api/report/reportType'
+import type { SportType, SportRingType, ReportDetail } from '@/api/report/reportType'
 import { getTeamList } from '@/api/start/start'
 import {
   HearComplate,
@@ -13,6 +13,7 @@ import {
   HeartCompare,
   SportRank,
   sportLoad,
+  getDetail,
 } from '@/api/report/report'
 import { sportDict, secondsToMinutes } from './utils/sportComplate'
 import sportRank from './components/sportRank.vue'
@@ -33,6 +34,7 @@ const heartCompare = ref() //心率对比图
 const sportRanks = ref() //运动排行
 const SportLoads = ref()
 const teamColumns = ref<[string[]]>([[]])
+const studentList = ref<ReportDetail>()
 const getTeam = async () => {
   const res = await getTeamList()
   teamColumns.value[0] = res.data.map((item) => {
@@ -85,21 +87,47 @@ const getHeartCompare = async (data: SportType) => {
     return item
   })
 }
+// 强度分布排名
 const getSportRank = async (data: SportType) => {
   const res = await SportRank(data)
   sportRanks.value = res.data
   console.log(res.data)
 }
+// 运动负荷项目
 const getSportLoad = async (data: SportType) => {
   const res = await sportLoad(data)
   SportLoads.value = res.data
 }
+// 学生列表
+const getStudentList = async (data: SportType) => {
+  const res = await getDetail(data)
+  studentList.value = res.data
+}
+// 修改返回去向
+onBackPress((e) => {
+  uni.switchTab({
+    url: '/pages/report/report',
+  })
+  return true
+})
 onLoad((options) => {
-  getSportMap({ taskId: options?.taskId })
-  getHearComplate({ taskId: options?.taskId })
-  getHeartCompare({ taskId: options?.taskId })
-  getSportRank({ taskId: options?.taskId })
-  getSportLoad({ taskId: options?.taskId })
+  try {
+    Promise.all([
+      getStudentList({ taskId: options?.taskId }),
+      getSportMap({ taskId: options?.taskId }),
+      getHearComplate({ taskId: options?.taskId }),
+      getHeartCompare({ taskId: options?.taskId }),
+      getSportRank({ taskId: options?.taskId }),
+      getSportLoad({ taskId: options?.taskId }),
+    ])
+  } catch (error) {
+    uni.showToast({
+      title: '请求失败',
+      icon: 'success',
+      mask: true,
+    })
+    console.error('请求失败:', error)
+  }
 })
 </script>
 
@@ -134,10 +162,18 @@ onLoad((options) => {
         <up-col span="3">
           <view class="Base_info">
             <view class="title">基础信息</view>
-            <view class="Base_team"><text>训练1队</text><text>授课教师:林老师</text></view>
-            <scroll-view scroll-y>
+            <view class="Base_team"
+              ><text>{{ studentList?.trainingName }}</text
+              ><text>授课教师:{{ studentList?.teacherName }}</text></view
+            >
+            <scroll-view scroll-y style="height: 133rpx">
               <view class="students">
-                <text class="name" v-for="(item, index) in 10" :key="index">李天宇</text>
+                <text
+                  class="name"
+                  v-for="item in studentList?.fullDetailsReportVoList"
+                  :key="item.studentName"
+                  >{{ item.studentName }}</text
+                >
               </view>
             </scroll-view>
           </view>
@@ -215,10 +251,12 @@ onLoad((options) => {
 }
 .main {
   margin-top: 20rpx;
+  padding: 3rpx;
   .Base_info {
     box-shadow: 0rpx 0rpx 16rpx 0rpx rgba(0, 0, 0, 0.1);
     border-radius: 20rpx;
     padding: 30rpx 20rpx;
+    min-height: 300rpx;
     .title {
       padding: 0rpx 0rpx;
       margin-bottom: 40rpx;

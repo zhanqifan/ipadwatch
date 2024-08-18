@@ -61,6 +61,8 @@
     "backgroundColor": "#F8F8F8",
     "pageOrientation": "landscape"
 
+
+
   },
   // 设置 TabBar
   "tabBar": {

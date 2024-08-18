@@ -20,6 +20,7 @@ const params = ref(initialValue())
 const teamColumns = ref<[string[]]>([[]])
 const trainColumns = ref<[string[]]>([[]])
 const reportList = ref<reportResponse[]>()
+const total = ref()
 const getTeam = async () => {
   const res = await getTeamList()
   teamColumns.value[0] = res.data.map((item) => {
@@ -47,6 +48,7 @@ const getReportList = async () => {
     'params[endTime]': dayjs(params.value.dateTime).endOf('day').format('YYYY-MM-DD HH:mm:ss'),
   })
   reportList.value = res.rows
+  total.value = res.total
 }
 // 过滤空字段
 const filterOutEmptyFields = (obj: Object) => {
@@ -55,11 +57,26 @@ const filterOutEmptyFields = (obj: Object) => {
   )
 }
 const search = () => {
+  params.value.pageNum = 1
   getReportList()
 }
 const reset = () => {
   params.value = initialValue()
   getReportList()
+}
+type ee = {
+  type: 'next' | 'pre'
+  current: number
+}
+const handlePage = (e: ee) => {
+  if (e.type === 'next') {
+    params.value.pageNum = e.current
+    console.log(e.type, e.current)
+    getReportList()
+  } else {
+    params.value.pageNum = e.current
+    getReportList()
+  }
 }
 const toDetail = (item: reportResponse) => {
   uni.navigateTo({
@@ -67,7 +84,7 @@ const toDetail = (item: reportResponse) => {
   })
 }
 const scrolltolower = () => {
-  console.log('触底')
+  params.value.pageNum++
 }
 onMounted(() => {
   getTeam()
@@ -111,30 +128,38 @@ onMounted(() => {
           ><up-button type="success" style="width: 150rpx" text="重置" @click="reset"></up-button
         ></view>
       </view>
-      <up-list
-        v-if="reportList?.length"
-        @scrolltolower="scrolltolower"
-        style="margin-top: 40rpx"
-        height="600"
-        :pagingEnabled="true"
-      >
-        <up-list-item
-          v-for="item in reportList"
-          :key="item.id"
-          style="margin-bottom: 40rpx"
-          class="card"
+      <view v-if="reportList?.length">
+        <up-list
+          @scrolltolower="scrolltolower"
+          style="margin-top: 40rpx"
+          height="550"
+          :pagingEnabled="true"
         >
-          <up-cell
-            @click="toDetail(item)"
-            :title="`队名：${item.taskName}  ------- 训练人数：${
-              item.personNum
-            }人 -------  运动类型：${item.exerciseTypeName} ------- 时间：${dayjs(
-              item.createTime,
-            ).format('YYYY-MM-DD')} `"
+          <up-list-item
+            v-for="item in reportList"
+            :key="item.id"
+            style="margin-bottom: 40rpx"
+            class="card"
           >
-          </up-cell>
-        </up-list-item>
-      </up-list>
+            <up-cell
+              @click="toDetail(item)"
+              :title="`队名：${item.taskName}  ------- 训练人数：${
+                item.personNum
+              }人 -------  运动类型：${item.exerciseTypeName} ------- 时间：${dayjs(
+                item.createTime,
+              ).format('YYYY-MM-DD')} `"
+            >
+            </up-cell>
+          </up-list-item>
+        </up-list>
+        <uni-pagination
+          :total="total"
+          title="标题文字"
+          prev-text="前一页"
+          next-text="后一页"
+          @change="handlePage"
+        />
+      </view>
       <emptyBox v-else :size="{ width: 300, height: 300 }" />
     </view>
   </tabBar>
