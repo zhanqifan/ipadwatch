@@ -114,16 +114,17 @@ const getHearComplate = async (data: SportType) => {
 // 训练队心率对比图
 const getHeartCompare = async (data: SportType) => {
   const res = await HeartCompare(data)
-  heartCompare.value = res.data.map((item) => {
-    item.time = dayjs(item.time).format('HH时')
-    return item
-  })
+  heartCompare.value = res.data
+    .map((item) => {
+      item.time = dayjs(item.time).format('HH时')
+      return item
+    })
+    .reverse()
 }
 // 强度分布排名
 const getSportRank = async (data: SportType) => {
   const res = await SportRank(data)
   sportRanks.value = res.data
-  console.log(res.data)
 }
 // 运动负荷项目
 const getSportLoad = async (data: SportType) => {

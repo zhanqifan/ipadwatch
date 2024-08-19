@@ -33,10 +33,10 @@ onMounted(() => {
           ><image src="@/static/images/heart_buil.png" class="imageSize" />平均运动强度</view
         >
         <view class="row"
-          ><text>{{ SportLoads.averageIntensity ?? 0 }}%&nbsp</text
-          ><up-line-progress
-            :percentage="SportLoads.averageIntensity ?? 0"
-            active-color="#942cfc"
+          ><view class="text">{{ SportLoads.averageIntensity * 100 ?? 0 }}%</view>
+          <up-line-progress
+            :percentage="SportLoads.averageIntensity * 100 ?? 0"
+            active-color="#ac5bff"
             :showText="false"
           ></up-line-progress>
         </view>
@@ -49,26 +49,26 @@ onMounted(() => {
           ><image src="@/static/images/hear_add.png" class="imageSize" />有效运动密度</view
         >
         <view class="row"
-          ><text>{{ SportLoads.effectiveTrainingDensity ?? 0 }}%&nbsp</text
-          ><up-line-progress
-            :percentage="SportLoads.effectiveTrainingDensityQualifiedRate * 100 ?? 0"
-            active-color="#942cfc"
+          ><view class="text">{{ SportLoads.effectiveTrainingDensity * 100 ?? 0 }}%</view>
+          <up-line-progress
+            :percentage="SportLoads.effectiveTrainingDensity * 100 ?? 0"
+            active-color="#48daf3"
             :showText="false"
           ></up-line-progress>
         </view>
         <view>30%-95%</view>
         <view>{{ SportLoads.effectiveTrainingDensityQualifiedNum ?? 0 }}</view>
-        <view>{{ SportLoads.effectiveTrainingDensityQualifiedRate * 100 ?? 0 }}%</view>
+        <view>{{ SportLoads.effectiveTrainingDensityQualifiedRate ?? 0 }}%</view>
       </view>
       <view class="title">
         <view class="left-align"
-          ><image src="@/static/images/hear_avg.png" class="imageSize" />平均心率</view
+          ><image src="@/static/images/hear_avg.png" class="imageSize" /><text>平均心率</text></view
         >
         <view class="row"
-          ><text>{{ SportLoads.averageHeartRate ?? 0 }}&nbsp&nbsp</text
-          ><up-line-progress
+          ><view class="text">{{ SportLoads.averageHeartRate ?? 0 }}</view>
+          <up-line-progress
             :percentage="(SportLoads.averageHeartRate / 170) * 100 ?? 0"
-            active-color="#942cfc"
+            active-color="#569dfe"
             :showText="false"
           ></up-line-progress>
         </view>
@@ -81,10 +81,10 @@ onMounted(() => {
           ><image src="@/static/images/heart_max.png" class="imageSize" />平均最大心率</view
         >
         <view class="row"
-          ><text>{{ SportLoads.averageMaxHeartRate ?? 0 }}&nbsp</text
-          ><up-line-progress
+          ><view class="text">{{ SportLoads.averageMaxHeartRate ?? 0 }}</view>
+          <up-line-progress
             :percentage="(SportLoads.averageMaxHeartRate / 200) * 100 ?? 0"
-            active-color="#942cfc"
+            active-color="#f361ce"
             :showText="false"
           ></up-line-progress>
         </view>
@@ -110,7 +110,7 @@ onMounted(() => {
   display: grid;
   text-align: center;
   align-items: center;
-  grid-template-columns: 1fr 2fr 1fr 1fr 1fr;
+  grid-template-columns: 180rpx 2fr 1fr 1fr 1fr;
 }
 .left-align {
   justify-self: start;
@@ -122,5 +122,9 @@ onMounted(() => {
   padding-left: 20rpx;
   align-items: center;
   margin-top: 13rpx;
+  .text {
+    min-width: 55rpx;
+    text-align: center;
+  }
 }
 </style>

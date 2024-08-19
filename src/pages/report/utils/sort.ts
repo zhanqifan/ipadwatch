@@ -1,27 +1,13 @@
 import type { HeartMap } from '@/types/home'
-export const customOrder = [
-  'LOW',
-  'MIDDLE',
-  'HIGH',
-  'HIGHER',
-  'HIGHEST',
-  'HIGHEST_HIGHER',
-  'HIGHEST_HIGHEST',
-  'HIGHEST_HIGHEST_HIGHER',
-  'HIGHEST_HIGHEST_HIGHEST',
-] //排序规则
+export const customOrder = ['LOW', 'MIDDLE', 'HIGH', 'HIGHER', 'HIGHEST'] //排序规则
 
 // 转换字典
 export const exchangeHeart = {
-  LOW: { num: '<86次/分', name: '放松身体' },
-  MIDDLE: { num: '87-113次/分', name: '暖身激活' },
-  HIGH: { num: '114-142次/分', name: '高效燃脂' },
-  HIGHER: { num: '143-159次/分', name: '心肺提升' },
-  HIGHEST: { num: '160-170次/分', name: '强度冲击' },
-  HIGHEST_HIGHER: { num: '171-180次/分', name: '极限突破' },
-  HIGHEST_HIGHEST: { num: '181-190次/分', name: '超越极限' },
-  HIGHEST_HIGHEST_HIGHER: { num: '191-200次/分', name: '出神入化' },
-  HIGHEST_HIGHEST_HIGHEST: { num: '>200次/分', name: '绝对巅峰' },
+  LOW: { num: '<120', name: '精修热身' },
+  MIDDLE: { num: '120-140', name: '减压状态' },
+  HIGH: { num: '140-160', name: '燃脂状态' },
+  HIGHER: { num: '160-180', name: '心肺锻炼' },
+  HIGHEST: { num: '180-200', name: '极限训练' },
 }
 type key = 'grade' | 'time'
 type CustomOrderType = (typeof customOrder)[number]

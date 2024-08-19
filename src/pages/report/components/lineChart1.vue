@@ -17,6 +17,15 @@ const props = defineProps<{
 }>()
 const chartRef = ref(null)
 const isShow = ref(true)
+const xAxis = computed(() => {
+  return props.heartCompare.map((item) => item.time)
+})
+const max = computed(() => {
+  return props.heartCompare.map((item) => item.maxHeartRate)
+})
+const min = computed(() => {
+  return props.heartCompare.map((item) => item.minHeartRate)
+})
 const option = ref({
   tooltip: {
     trigger: 'axis',
@@ -27,7 +36,7 @@ const option = ref({
   xAxis: {
     type: 'category',
     boundaryGap: false,
-    data: props.heartCompare.map((item) => item.time),
+    data: xAxis,
   },
   yAxis: {
     type: 'value',
@@ -35,12 +44,12 @@ const option = ref({
   series: [
     {
       name: '最高心率',
-      data: props.heartCompare.map((item) => item.maxHeartRate),
+      data: max,
       type: 'line',
     },
     {
       name: '最低心率',
-      data: props.heartCompare.map((item) => item.minHeartRate),
+      data: min,
       type: 'line',
     },
   ],
@@ -50,24 +59,25 @@ const getData = async () => {
     isShow.value = false
     return
   }
+  isShow.value = true
+  // 使用 nextTick 确保视图更新完成
+  await nextTick()
   if (!chartRef.value) return
+  console.log(chartRef.value)
   const myChart = await chartRef.value.init(echarts)
   myChart.setOption(option.value)
   isShow.value = true
-  console.log(isShow.value)
 }
 
 watch(
   () => props.heartCompare,
-  async () => {
+  () => {
     getData()
   },
-  { deep: true },
 )
 
 onMounted(() => {
   // 组件能被调用必须是组件的节点已经被渲染到页面上
-  console.log(props.heartCompare)
   getData()
 })
 </script>
