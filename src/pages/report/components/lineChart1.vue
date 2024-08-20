@@ -1,6 +1,6 @@
 <template>
   <view>
-    <view v-if="isShow" style="width: 100%; height: 100%"
+    <view v-if="isShow" style="width: 100%; height: 30vh"
       ><l-echart ref="chartRef"></l-echart
     ></view>
     <view v-else>
@@ -27,8 +27,14 @@ const min = computed(() => {
   return props.heartCompare.map((item) => item.minHeartRate)
 })
 const option = ref({
+  animationDuration: 3000,
   tooltip: {
     trigger: 'axis',
+  },
+  grid: {
+    left: '1%', // Increase left margin
+    bottom: '3%',
+    containLabel: true,
   },
   legend: {
     data: ['最高心率', '最低心率'],
@@ -38,18 +44,23 @@ const option = ref({
     boundaryGap: false,
     data: xAxis,
   },
+
   yAxis: {
+    name: '次/分',
     type: 'value',
+    splitNumber: 5,
   },
   series: [
     {
       name: '最高心率',
       data: max,
       type: 'line',
+      showSymbol: false,
     },
     {
       name: '最低心率',
       data: min,
+      showSymbol: false,
       type: 'line',
     },
   ],

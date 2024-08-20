@@ -58,14 +58,6 @@ const confirm = ({ value }: { value: { id: string; label: string }[] }) => {
   teamName.value = value[0].label
   teamType.value = false
 }
-
-// 过滤空字段
-// const filterOutEmptyFields = (obj: Object) => {
-//   return Object.fromEntries(
-//     Object.entries(obj).filter(([key, value]) => value), // 过滤掉值为空的键值对
-//   )
-// }
-
 // 重置
 const reset = () => {
   params.value = initialValue()
@@ -114,12 +106,10 @@ const getHearComplate = async (data: SportType) => {
 // 训练队心率对比图
 const getHeartCompare = async (data: SportType) => {
   const res = await HeartCompare(data)
-  heartCompare.value = res.data
-    .map((item) => {
-      item.time = dayjs(item.time).format('HH时')
-      return item
-    })
-    .reverse()
+  heartCompare.value = res.data.map((item) => {
+    item.time = dayjs(item.time).format('H:mm')
+    return item
+  })
 }
 // 强度分布排名
 const getSportRank = async (data: SportType) => {
@@ -218,7 +208,7 @@ onLoad((options) => {
               ><text>{{ studentList?.trainingName }}</text
               ><text>授课教师:{{ user.profile?.nickName }}</text></view
             >
-            <scroll-view scroll-y style="height: 133rpx">
+            <scroll-view scroll-y style="height: 132rpx">
               <view class="students">
                 <text
                   class="name"
@@ -235,8 +225,8 @@ onLoad((options) => {
           <view class="Base_right">
             <view class="condition">训练运动达成情况</view>
             <up-row>
-              <up-col span="3" :offset="1">
-                <view>
+              <up-col span="3">
+                <view style="padding-left: 30rpx">
                   <ringChart v-if="sportComplate" :sportComplate="sportComplate" />
                 </view>
               </up-col>
@@ -339,11 +329,10 @@ onLoad((options) => {
     .container {
       display: grid;
       grid-template-columns: repeat(3, 1fr); // 设定每行 3 列
-      margin: 10px; // 容器的外边距
       .item {
         display: flex;
         align-items: center;
-        padding: 7px; // 内边距
+        padding: 10px; // 内边距
         border-radius: 4px; // 圆角（可选）
       }
 

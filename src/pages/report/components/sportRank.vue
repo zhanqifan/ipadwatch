@@ -79,7 +79,8 @@ watch(
 
 <style lang="scss" scoped>
 .main {
-  min-height: 240rpx;
+  height: 20vh;
+  height: 15vh;
 }
 .rank {
   display: flex;

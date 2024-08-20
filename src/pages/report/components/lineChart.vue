@@ -1,6 +1,6 @@
 <template>
   <view>
-    <view v-if="isShow" style="width: 100%; height: 100%"
+    <view v-if="isShow" style="width: 100%; height: 30vh"
       ><l-echart ref="chartRef"></l-echart
     ></view>
     <view v-else>
@@ -26,13 +26,14 @@ const yAxis = computed(() => {
   return Object.values(exchangeHeart).map((item) => `${item.name}`)
 })
 const gradientColors = [
-  { start: '#3c9cff', end: '#66ccff' },
-  { start: '#ffcc00', end: '#ff9900' },
-  { start: '#ff9966', end: '#ff6600' },
-  { start: '#66cc66', end: '#339933' },
-  { start: '#ff6699', end: '#cc3366' },
+  { start: '#DFEAFF', end: '#4B84FA' }, // 浅蓝到蓝
+  { start: '#D8F3E3', end: '#4ABC7A' }, // 浅黄到黄
+  { start: '#FFF6D6', end: '#FF9933' }, // 浅粉色到粉色
+  { start: '#FFE4FA', end: '#EA78D7' }, // 浅绿到绿
+  { start: 'rgba(255, 102, 102, 0.3)', end: '#EC675F' }, // 浅红到红
 ]
 const option = ref({
+  animationDuration: 3000,
   grid: {
     top: '1%',
     left: '1%', // Increase left margin
@@ -75,6 +76,7 @@ const option = ref({
         fontSize: 12, // 标签字体大小
         formatter: (params) => {
           // 使用 dayjs 对数据进行格式化
+          if (!params.value) return ''
           return params.value + '秒' // 修改为你需要的日期格式
         },
       },

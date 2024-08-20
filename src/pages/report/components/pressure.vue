@@ -100,7 +100,7 @@ onMounted(() => {
 <style lang="scss" scoped>
 .main {
   font-size: 24rpx;
-  min-height: 240rpx;
+  min-height: 15vh;
 }
 .imageSize {
   width: 30rpx;

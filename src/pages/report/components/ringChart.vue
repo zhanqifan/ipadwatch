@@ -88,7 +88,7 @@ const option = ref({
           value: UncompletionNum,
           name: '未达成人数',
           itemStyle: {
-            color: '#6c64fc', // 设置圆环图的第二个扇区颜色
+            color: '#4fa2fd', // 设置圆环图的第二个扇区颜色
           },
         },
       ],

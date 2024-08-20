@@ -35,7 +35,8 @@ export const getpressure = (data: SportType) => {
 // 运动强度分部图
 export const getSportIntensity = (data: SportType) => {
   return request<HeartMap[]>({
-    url: '/teacher/team/sportIntensity',
+    // url: '/teacher/team/sportIntensity',
+    url: 'https://apifoxmock.com/m2/3773810-3405678-default/205795946',
     method: 'POST',
     data,
   })
@@ -43,7 +44,8 @@ export const getSportIntensity = (data: SportType) => {
 // 运动心率对比图
 export const HeartCompare = (data: SportType) => {
   return request<RealTimeHeartRate[]>({
-    url: '/teacher/team/heartRateCompare',
+    // url: '/teacher/team/heartRateCompare',
+    url: 'https://apifoxmock.com/m2/3773810-3405678-default/206743189',
     method: 'POST',
     data,
   })

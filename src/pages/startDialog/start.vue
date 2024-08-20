@@ -209,7 +209,7 @@ onMounted(() => {
   margin-bottom: 40rpx;
 }
 .sprot_box {
-  margin-top: 10%;
+  padding-top: 10rpx;
   margin-left: 100rpx;
 }
 .Cur_people {

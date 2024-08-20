@@ -128,30 +128,42 @@ onMounted(() => {
         ></view>
       </view>
       <view v-if="reportList?.length">
-        <up-list
-          @scrolltolower="scrolltolower"
-          style="margin-top: 40rpx"
-          height="550"
-          :pagingEnabled="true"
-        >
-          <up-list-item
-            v-for="item in reportList"
-            :key="item.id"
-            style="margin-bottom: 40rpx"
-            class="card"
-          >
-            <up-cell
-              @click="toDetail(item)"
-              :title="`队名：${item.taskName}  ------- 训练人数：${
-                item.personNum
-              }人 -------  运动类型：${item.exerciseTypeName} ------- 时间：${dayjs(
-                item.createTime,
-              ).format('YYYY-MM-DD')} `"
-            >
-            </up-cell>
-          </up-list-item>
-        </up-list>
+        <view class="card_box">
+          <view class="card">
+            <view class="card_content">
+              <view>力量队4次训练</view>
+              <view>运动类型:100米短跑</view>
+              <view>2024-07-15 00:00</view>
+            </view>
+            <view>查看详情</view>
+          </view>
+          <view class="card">
+            <view class="card_content">
+              <view>力量队4次训练</view>
+              <view>运动类型:100米短跑</view>
+              <view>2024-07-15 00:00</view>
+            </view>
+            <view>查看详情</view>
+          </view>
+          <view class="card">
+            <view class="card_content">
+              <view>力量队4次训练</view>
+              <view>运动类型:100米短跑</view>
+              <view>2024-07-15 00:00</view>
+            </view>
+            <view>查看详情</view>
+          </view>
+          <view class="card">
+            <view class="card_content">
+              <view>力量队4次训练</view>
+              <view>运动类型:100米短跑</view>
+              <view>2024-07-15 00:00</view>
+            </view>
+            <view>查看详情</view>
+          </view>
+        </view>
         <uni-pagination
+          class="pagination"
           :total="total"
           title="标题文字"
           prev-text="前一页"
@@ -169,9 +181,31 @@ onMounted(() => {
   display: flex;
   gap: 50rpx;
 }
-.card {
-  background-color: #409eff;
-  border-radius: 15rpx;
+.card_box {
+  display: grid;
+  padding: 20rpx;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30rpx;
+
+  .card {
+    border-radius: 10rpx;
+    margin-top: 20rpx;
+    background-color: #f7f8fa;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 25rpx;
+    .card_content {
+      view {
+        margin-bottom: 10rpx;
+      }
+    }
+  }
+}
+.pagination {
+  position: absolute;
+  bottom: 5vh;
+  left: 38%;
 }
 ::v-deep.u-cell__title-text {
   color: #fdf0f0;

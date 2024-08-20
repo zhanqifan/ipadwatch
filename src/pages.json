@@ -17,12 +17,7 @@
         "navigationBarTitleText": "选择训练"
       }
     },
-    {
-      "path": "pages/map/map",
-      "style": {
-        "navigationBarTitleText": "训练分析"
-      }
-    },
+
     {
       "path": "pages/index/index",
       "style": {
