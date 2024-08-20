@@ -19,7 +19,7 @@ const initialValue = () => {
 const params = ref(initialValue())
 const teamColumns = ref<[string[]]>([[]])
 const trainColumns = ref<[string[]]>([[]])
-const reportList = ref<reportResponse[]>()
+const reportList = ref<reportResponse[]>() //报告列表
 const total = ref()
 const getTeam = async () => {
   const res = await getTeamList()
@@ -82,9 +82,7 @@ const toDetail = (item: reportResponse) => {
     url: `/pages/report/reportdetail?taskId=${item.id}`,
   })
 }
-const scrolltolower = () => {
-  params.value.pageNum++
-}
+
 onMounted(() => {
   getTeam()
   getTrain()
@@ -129,37 +127,13 @@ onMounted(() => {
       </view>
       <view v-if="reportList?.length">
         <view class="card_box">
-          <view class="card">
+          <view class="card" v-for="(item, index) in reportList" :key="index">
             <view class="card_content">
-              <view>力量队4次训练</view>
-              <view>运动类型:100米短跑</view>
-              <view>2024-07-15 00:00</view>
+              <view class="title">{{ item.taskName }}</view>
+              <view class="type">运动类型:{{ item.exerciseTypeName }}</view>
+              <view class="type">{{ item.createTime }}</view>
             </view>
-            <view>查看详情</view>
-          </view>
-          <view class="card">
-            <view class="card_content">
-              <view>力量队4次训练</view>
-              <view>运动类型:100米短跑</view>
-              <view>2024-07-15 00:00</view>
-            </view>
-            <view>查看详情</view>
-          </view>
-          <view class="card">
-            <view class="card_content">
-              <view>力量队4次训练</view>
-              <view>运动类型:100米短跑</view>
-              <view>2024-07-15 00:00</view>
-            </view>
-            <view>查看详情</view>
-          </view>
-          <view class="card">
-            <view class="card_content">
-              <view>力量队4次训练</view>
-              <view>运动类型:100米短跑</view>
-              <view>2024-07-15 00:00</view>
-            </view>
-            <view>查看详情</view>
+            <view class="detail" @click="toDetail(item)">查看详情</view>
           </view>
         </view>
         <uni-pagination
@@ -185,27 +159,37 @@ onMounted(() => {
   display: grid;
   padding: 20rpx;
   grid-template-columns: repeat(2, 1fr);
-  gap: 30rpx;
+  gap: 20rpx;
 
   .card {
     border-radius: 10rpx;
-    margin-top: 20rpx;
+    margin-top: 15rpx;
     background-color: #f7f8fa;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 25rpx;
     .card_content {
+      .type {
+        color: #5c5c5cc4;
+        font-size: 25rpx;
+      }
       view {
         margin-bottom: 10rpx;
       }
+    }
+    .detail {
+      background-color: #4b84fa;
+      padding: 10rpx;
+      border-radius: 10rpx;
+      color: #fff;
     }
   }
 }
 .pagination {
   position: absolute;
-  bottom: 5vh;
-  left: 38%;
+  bottom: 0%;
+  left: 35%;
 }
 ::v-deep.u-cell__title-text {
   color: #fdf0f0;

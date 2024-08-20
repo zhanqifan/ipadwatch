@@ -131,3 +131,10 @@ export interface SportLoadType {
   averageHeartRate: number
   averageMaxHeartRate: number
 }
+
+// 训练队次数
+export interface trainTimes {
+  trainingTeamId: string
+  startTime: string
+  endTime: string
+}

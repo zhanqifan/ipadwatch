@@ -8,6 +8,7 @@ import type {
   SportRingType,
   RealTimeHeartRate,
   SportRankType,
+  trainTimes,
 } from './reportType'
 // 报告列表
 export const getReport = (data: reportData): reportType => {
@@ -70,6 +71,14 @@ export const SportRank = (data: SportType) => {
 export const sportLoad = (data: SportType) => {
   return request({
     url: '/teacher/team/sportLoad',
+    method: 'POST',
+    data,
+  })
+}
+// 报告次数
+export const getNumber = (data: trainTimes) => {
+  return request({
+    url: '/teacher/training/report/trainingTimes',
     method: 'POST',
     data,
   })

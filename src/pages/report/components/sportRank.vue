@@ -80,7 +80,7 @@ watch(
 <style lang="scss" scoped>
 .main {
   height: 20vh;
-  height: 15vh;
+  min-height: 15vh;
 }
 .rank {
   display: flex;
