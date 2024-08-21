@@ -5,16 +5,17 @@ import lineChart1 from './components/lineChart1.vue'
 import pressure from './components/pressure.vue'
 import { customOrder, categorySort } from './utils/sort'
 import dayjs from 'dayjs'
-import type { SportType, SportRingType, ReportDetail } from '@/api/report/reportType'
-import { getTeamList, getTrainingTeam } from '@/api/start/start'
-import {
-  HearComplate,
-  getSportIntensity,
-  HeartCompare,
-  SportRank,
-  sportLoad,
-  getDetail,
-} from '@/api/report/report'
+import type {
+  SportType,
+  SportRingType,
+  ReportDetail,
+  TrainingReportGrade,
+  TrainingRealTimeHeartRate,
+} from '@/api/report/reportType'
+import { getTeamList } from '@/api/start/start'
+
+import type { SportParams, BasicInfoDTOS, SportAchievementVO } from '@/api/report/reportType'
+import { getDateReport } from '@/api/report/report'
 import { sportDict, secondsToMinutes } from './utils/sportComplate'
 import sportRank from './components/sportRank.vue'
 import { useMemberStore } from '@/stores/modules/user'
@@ -31,13 +32,13 @@ const taskId = ref()
 const teamName = ref() //训练队名
 const formRef = ref()
 const params = ref(initialValue()) //搜索传参
-const sportComplate = ref<SportRingType>() //运动达成情况
+const sportComplate = ref<SportAchievementVO>() //运动达成情况
 const heartMap = ref() //运动强度分布图
 const heartCompare = ref() //心率对比图
 const sportRanks = ref() //运动排行
 const SportLoads = ref() //负荷图
 const teamColumns = ref<[any[]]>([[]]) //选择器
-const studentList = ref<ReportDetail>()
+const studentList = ref<BasicInfoDTOS>()
 
 const rules = {
   teamId: [{ required: true, message: '选择训练队', trigger: ['change'] }],
@@ -76,56 +77,32 @@ const search = () => {
     }
   })
 }
-const BaseInfo = async () => {
-  const res = await getTrainingTeam(params.value.teamId)
-  studentList.value!.trainingName = res.data.teamName + ` ${params.value.number}次训练`
-  studentList.value!.fullDetailsReportVoList = res.data.studentList.map((item) => {
-    return { studentName: item.name }
-  })
-}
-// 运动强度分布图
-const getSportMap = async (data: SportType) => {
-  const res = await getSportIntensity(data)
+
+// // 运动强度分布图
+const getSportMap = async (data: TrainingReportGrade[]) => {
   customOrder.forEach((grade) => {
-    const found = res.data.some((item) => item.grade === grade)
+    const found = data.some((item) => item.grade === grade)
     if (!found) {
-      res.data.push({
+      data.push({
         grade,
         time: 0,
       })
     }
   })
-  heartMap.value = categorySort(res.data, 'grade', customOrder)
+  heartMap.value = categorySort(data, 'grade', customOrder)
 }
-// 获取运动强度达成情况
-const getHearComplate = async (data: SportType) => {
-  const res = await HearComplate(data)
-  sportComplate.value = res.data
-}
-
-// 训练队心率对比图
-const getHeartCompare = async (data: SportType) => {
-  const res = await HeartCompare(data)
-  heartCompare.value = res.data.map((item) => {
+// // 训练队心率对比图
+const getHeartCompare = async (data: TrainingRealTimeHeartRate[]) => {
+  heartCompare.value = data.map((item) => {
     item.time = dayjs(item.time).format('H:mm')
     return item
   })
 }
-// 强度分布排名
-const getSportRank = async (data: SportType) => {
-  const res = await SportRank(data)
-  sportRanks.value = res.data
-}
-// 运动负荷项目
-const getSportLoad = async (data: SportType) => {
-  const res = await sportLoad(data)
-  SportLoads.value = res.data
-}
-// 学生列表
-const getStudentList = async (data: SportType) => {
-  const res = await getDetail(data)
-  studentList.value = res.data
-}
+// const getNumber = async () => {
+//   if(params.value.dateTime&&params.value.teamId){
+//   const res = await getInpNumber()
+//   }
+// }
 // 修改返回去向
 onBackPress((e) => {
   uni.switchTab({
@@ -134,27 +111,23 @@ onBackPress((e) => {
   return true
 })
 // 请求队列
-const PromiseList = (data: SportType) => {
-  try {
-    Promise.all([
-      getSportMap(data),
-      getHearComplate(data),
-      getHeartCompare(data),
-      getSportRank(data),
-      getSportLoad(data),
-    ])
-  } catch (error) {
-    uni.showToast({
-      title: '请求失败',
-      icon: 'success',
-      mask: true,
-    })
-    console.error('请求失败:', error)
+const PromiseList = async (data: SportParams) => {
+  const res = await getDateReport(data)
+  studentList.value = res.data.basicInfoDTOS
+  sportComplate.value = res.data.sportAchievementVO
+  sportRanks.value = {
+    trainingIntensityListASC: res.data.trainingIntensityListASC,
+    trainingIntensityListDEAS: res.data.trainingIntensityListDEAS,
+    trainingHeartRateListASC: res.data.trainingHeartRateListASC,
+    trainingHeartRateListDEAS: res.data.trainingHeartRateListDEAS,
   }
+  SportLoads.value = res.data.sportLoadVO
+  getSportMap(res.data.trainingReportGrades)
+  getHeartCompare(res.data.trainingRealTimeHeartRates)
 }
 onLoad((options) => {
   taskId.value = options!.taskId
-  getTeam(), getStudentList({ taskId: options!.taskId }), PromiseList({ taskId: options!.taskId })
+  getTeam(), PromiseList({ taskId: options!.taskId })
 })
 </script>
 
@@ -173,9 +146,7 @@ onLoad((options) => {
           />
           <up-button @click="teamType = true">{{ teamName ? teamName : '选择训练队' }}</up-button>
         </up-form-item>
-        <up-form-item label="次数:" labelWidth="40" prop="number">
-          <up-input placeholder="请输入次数" border="surround" v-model="params.number" />
-        </up-form-item>
+
         <up-form-item label="时间:" labelWidth="40" prop="dateTime">
           <uni-datetime-picker
             type="date"
@@ -183,6 +154,9 @@ onLoad((options) => {
             style="width: 300rpx"
             v-model="params.dateTime"
           />
+        </up-form-item>
+        <up-form-item label="次数:" labelWidth="40" prop="number">
+          <up-input placeholder="请输入次数" border="surround" v-model="params.number" />
         </up-form-item>
         <view>
           <up-form-item>
@@ -205,16 +179,16 @@ onLoad((options) => {
           <view class="Base_info">
             <view class="title">基础信息</view>
             <view class="Base_team"
-              ><text>{{ studentList?.trainingName }}</text
-              ><text>授课教师:{{ user.profile?.nickName }}</text></view
+              ><text>{{ studentList?.teamName }}</text
+              ><text>授课教师:{{ studentList?.teacherName }}</text></view
             >
             <scroll-view scroll-y style="height: 132rpx">
               <view class="students">
                 <text
                   class="name"
-                  v-for="(item, index) in studentList?.fullDetailsReportVoList"
+                  v-for="(item, index) in studentList?.studentNameList"
                   :key="index"
-                  >{{ item.studentName }}</text
+                  >{{ item.name }}</text
                 >
               </view>
             </scroll-view>

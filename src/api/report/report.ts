@@ -4,10 +4,13 @@ import type {
   reportData,
   reportType,
   SportType,
-  HeartMap,
-  SportRingType,
-  RealTimeHeartRate,
+  SportParams,
+
+  // HeartMap,
+  // SportRingType,
+  // RealTimeHeartRate,
   SportRankType,
+  SportData,
   trainTimes,
 } from './reportType'
 // 报告列表
@@ -79,6 +82,14 @@ export const sportLoad = (data: SportType) => {
 export const getNumber = (data: trainTimes) => {
   return request({
     url: '/teacher/training/report/trainingTimes',
+    method: 'POST',
+    data,
+  })
+}
+// 报表数据
+export const getDateReport = (data: SportParams) => {
+  return request<SportData>({
+    url: 'https://apifoxmock.com/m2/3773810-3405678-default/207147190',
     method: 'POST',
     data,
   })

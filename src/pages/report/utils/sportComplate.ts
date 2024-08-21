@@ -30,6 +30,9 @@ export const secondsToMinutes = (value: number, key: string) => {
     const minutes = Math.floor(value / 60)
     const remainingSeconds = value % 60
     return `${minutes}分${remainingSeconds}秒`
+  } else if (key === 'sportDensity' || key === 'averageIntensity') {
+    return value * 100
   }
+
   return value ?? 0
 }

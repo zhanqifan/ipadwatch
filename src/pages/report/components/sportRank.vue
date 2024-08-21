@@ -7,7 +7,7 @@ type DataObject = {
   [key: string]: MaxHeartRateRankAsc[]
 }
 const isShow = ref(false)
-const controlShow = (data: DataObject) => {
+const controlShow = (data: SportRankType) => {
   const keys = Object.keys(data)
   isShow.value = keys.every((item) => Array.isArray(data[item]) && data[item].length > 0)
 }
@@ -29,11 +29,11 @@ watch(
         <view class="row"><text></text><text>姓名</text><text>心率</text></view>
         <view
           class="row1"
-          v-for="(item, index) in props.sportRanks.maxHeartRateRankAsc.slice(0, 2)"
-          :key="item.name"
+          v-for="(item, index) in props.sportRanks.trainingHeartRateListASC.slice(0, 2)"
+          :key="item.studentName"
           ><text>{{ index + 1 }}</text
-          ><text>{{ item.name }}</text
-          ><text>{{ item.maxHeartRate }}</text>
+          ><text>{{ item.studentName }}</text
+          ><text>{{ item.heartRate }}</text>
         </view>
       </view>
       <view>
@@ -41,11 +41,11 @@ watch(
         <view class="row"><text>序号</text><text>姓名</text><text>心率</text></view>
         <view
           class="row1"
-          v-for="(item, index) in props.sportRanks?.maxHeartRateRankDesc?.slice(0, 2)"
-          :key="item.name"
+          v-for="(item, index) in props.sportRanks?.trainingHeartRateListDEAS?.slice(0, 2)"
+          :key="item.studentName"
           ><text>{{ index + 1 }}</text
-          ><text>{{ item.name }}</text
-          ><text>{{ item.maxHeartRate }}</text>
+          ><text>{{ item.studentName }}</text
+          ><text>{{ item.heartRate }}</text>
         </view>
       </view>
       <view>
@@ -53,11 +53,11 @@ watch(
         <view class="row"><text>序号</text><text>姓名</text><text>密度</text></view>
         <view
           class="row1"
-          v-for="(item, index) in props.sportRanks?.intensityRankAsc?.slice(0, 2)"
+          v-for="(item, index) in props.sportRanks?.trainingIntensityListASC?.slice(0, 2)"
           :key="index"
           ><text>{{ index + 1 }}</text
-          ><text>{{ item.name }}</text
-          ><text>{{ item.density }}</text>
+          ><text>{{ item.studentName }}</text
+          ><text>{{ item.intensity }}</text>
         </view>
       </view>
       <view>
@@ -65,11 +65,11 @@ watch(
         <view class="row"><text>序号</text><text>姓名</text><text>密度</text></view>
         <view
           class="row1"
-          v-for="(item, index) in props.sportRanks?.intensityRankDesc?.slice(0, 2)"
+          v-for="(item, index) in props.sportRanks?.trainingIntensityListDEAS?.slice(0, 2)"
           :key="index"
           ><text>{{ index + 1 }}</text
-          ><text> {{ item.name }}</text
-          ><text>{{ item.density }}</text>
+          ><text> {{ item.studentName }}</text
+          ><text>{{ item.intensity }}</text>
         </view>
       </view>
     </view>
@@ -79,7 +79,6 @@ watch(
 
 <style lang="scss" scoped>
 .main {
-  height: 20vh;
   min-height: 15vh;
 }
 .rank {
