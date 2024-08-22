@@ -60,15 +60,17 @@ const startInterval = async () => {
     if (BaseInfo.value?.studentInfoList) {
       BaseInfo.value.studentInfoList = BaseInfo.value?.studentInfoList.map((item) => {
         const existItem = res.data.taskHealthMetricsVoList.find(
-          (newItem) => newItem.studentId === item.studentId,
+          (newItem) => newItem.studentName === item.studentName,
         )
         if (existItem) {
+          console.log('存在')
           return { ...existItem, status: 1 }
         } else {
+          console.log('不存在')
           return { ...item, status: 0 }
         }
       })
-
+      console.log(BaseInfo.value.studentInfoList)
       // 在线状态实时替换
       watchOnline.value = {
         braceletsOnlineNum: res.data.braceletsOnlineNum,

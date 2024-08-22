@@ -4,11 +4,11 @@
 
 <script setup lang="ts">
 import * as echarts from 'echarts'
-import type { SportRingType } from '@/api/report/reportType'
+import type { SportAchievementVO } from '@/api/report/reportType'
 const props = defineProps<{
-  sportComplate: SportRingType
+  sportComplate: SportAchievementVO
 }>()
-const chartRef = ref(null)
+const chartRef = ref<any>(null)
 const completionNum = computed(() => {
   return props.sportComplate.completionNum ?? 0
 })
@@ -48,7 +48,7 @@ const option = ref({
         fontSize: 16,
         lineHeight: 20,
         position: 'center',
-        formatter: (params) => {
+        formatter: (params: any) => {
           // 设置默认显示第一个数据,函数接收一个参数，拿到所有配置项，遍历所有配置项，判断,下标为0的，第一个配置项信息，return 出去设置为默认值。
           if (params.dataIndex === 0) {
             return `${params.percent + '%' + '\n'}(${params.value + '人'})`
@@ -61,7 +61,7 @@ const option = ref({
         label: {
           show: true,
           fontSize: '10',
-          formatter: (params) => {
+          formatter: (params: any) => {
             //切换非默认选项配置数据展示
             if (params.dataIndex != 0) {
               return `${params.percent + '%' + '\n'}(${params.value + '人'})`

@@ -12,12 +12,12 @@
 <script setup lang="ts">
 import * as echarts from 'echarts'
 import { exchangeHeart } from '../utils/sort'
-import type { HeartMap } from '@/api/report/reportType'
+import type { TrainingReportGrade } from '@/api/report/reportType'
 
 const props = defineProps<{
-  heartMap: HeartMap[]
+  heartMap: TrainingReportGrade[]
 }>()
-const chartRef = ref(null)
+const chartRef = ref<any>(null)
 const isShow = ref(true)
 const data = computed(() => {
   return props.heartMap?.map((item) => item.time)
@@ -47,10 +47,11 @@ const option = ref({
   yAxis: {
     type: 'category',
     data: yAxis,
+    inverse: true, //倒序
     axisTick: false,
     axisLine: {
       lineStyle: {
-        type: 'dotted',
+        type: 'dashed',
       },
     },
   },
@@ -59,7 +60,7 @@ const option = ref({
       type: 'bar',
       data: data,
       itemStyle: {
-        color: (params) => {
+        color: (params: any) => {
           // 获取渐变色
           const gradientColor = gradientColors[params.dataIndex % gradientColors.length]
           return new echarts.graphic.LinearGradient(0, 0, 1, 0, [
@@ -69,13 +70,12 @@ const option = ref({
         },
       },
       barGap: '20rpx',
-
       label: {
         show: true, // 显示标签
         position: 'right', // 标签显示在柱子顶部
         color: '#000', // 标签文字颜色
         fontSize: 12, // 标签字体大小
-        formatter: (params) => {
+        formatter: (params: any) => {
           // 使用 dayjs 对数据进行格式化
           if (!params.value) return ''
           return params.value + '秒' // 修改为你需要的日期格式

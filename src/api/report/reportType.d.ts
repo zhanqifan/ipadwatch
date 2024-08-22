@@ -51,79 +51,16 @@ export interface reportResponse extends common {
   students: null
 }
 
-// 报告详情
-export interface ReportDetail {
-  trainingName: string
-  trainingType: string
-  teacherName: string
-  trainingDate: number
-  personNum: number
-  fullDetailsReportVoList: FullDetailsReportVoList[]
-}
-
-export interface FullDetailsReportVoList {
-  studentName: string
-  averageHeartRate: number
-  averagePace: number
-  averageBloodOxygen: number
-  maxHeartRate: number
-  maxPace: number
-  maxBloodOxygen: number
-  minHeartRate: number
-}
-
-// // echart统一传参
-interface SportType {
-  taskId?: string
-  teamId?: string
-  number?: number | null
-  dateTime?: string
-  startTime?: string
-  endTime?: string
-}
-// 强度分部图
-export interface HeartMap {
-  grade: 'LOW' | 'MIDDLE' | 'HIGH' | 'HIGHER' | 'HIGHEST' | 'HIGHEST_HIGHER'
-  time?: number
-}
-// 心率对比图
-export interface RealTimeHeartRate {
-  time: string
-  maxHeartRate: number
-  minHeartRate: number
-}
-
-// 运动达成图响应
-export interface SportRingType {
-  sportDensity: number
-  averageHeartRate: number
-  averageIntensity: number
-  heartRateGreaterThan120Time: number
-  maxHeartRateTime: number
-  achievementRate: null
-  completionNum: number
-  totalNum: number
-  achievementRate: number
-}
-
-export interface MaxHeartRateRankAsc {
-  name: string
-  density: number
-  intensity: number
-  maxHeartRate: number
-}
-
-// 运动负荷响应
-export interface SportLoadType {
-  averageIntensity: number
-  intensityQualifiedNum: number
-  intensityQualifiedRate: number
-  effectiveTrainingDensity: number
-  effectiveTrainingDensityQualifiedNum: number
-  effectiveTrainingDensityQualifiedRate: number
-  averageHeartRate: number
-  averageMaxHeartRate: number
-}
+// export interface FullDetailsReportVoList {
+//   studentName: string
+//   averageHeartRate: number
+//   averagePace: number
+//   averageBloodOxygen: number
+//   maxHeartRate: number
+//   maxPace: number
+//   maxBloodOxygen: number
+//   minHeartRate: number
+// }
 
 // 训练队次数传参
 export interface trainTimes {
@@ -131,14 +68,16 @@ export interface trainTimes {
   startTime: string
   endTime: string
 }
+// 统一传参
 export interface SportParams {
   teamId?: string
   startTime?: string
   endTime?: string
-  number?: string
+  number?: string | null
   taskId?: string
+  [property: string]: any
 }
-
+// 团体报表响应
 export interface SportData {
   /**
    * 基础信息
@@ -169,7 +108,7 @@ export interface SportData {
    */
   trainingIntensityListDEAS: TrainingIntensityListDEA[]
   /**
-   * 训练队心率分布
+   * 训练队心率对比分布
    */
   trainingRealTimeHeartRates: TrainingRealTimeHeartRate[]
   /**
@@ -177,6 +116,26 @@ export interface SportData {
    */
   trainingReportGrades: TrainingReportGrade[]
   [property: string]: any
+}
+// 学生个人报表响应
+export interface studentData {
+  /**
+   * 基础信息
+   */
+  studentInfo: StudentNameList
+  /**
+   * 课堂运动达成情况
+   */
+  sportAchievementVO: SportAchievementVO
+  /**
+   *   /**
+   * 训练队心率对比分布
+   */
+  realTimeHeartRate: TrainingRealTimeHeartRate[]
+  /**
+   * 训练队强度分布
+   */
+  heartRateDistributionVOList: TrainingReportGrade[]
 }
 
 /**
@@ -192,18 +151,20 @@ export interface BasicInfoDTOS {
  * 基础信息-学生列表
  */
 export interface StudentNameList {
-  averageHeartRate?: null
-  averageHeartRateRank?: null
+  averageHeartRate?: number
+  averageHeartRateRank?: number
   createBy?: string
   createDept?: number
   createTime?: string
   historyAverageHeartRate?: number
   historyMaxHeartRate?: number
   id?: string
-  maxHeartRate?: null
-  maxHeartRateRank?: null
+  maxHeartRate?: number
+  maxHeartRateRank?: number
   name?: string
   parentId?: null
+  trainingName?: string
+  teamTotalNum?: number
   phonenumber?: string
   studentNumber?: string
   tenantId?: null
@@ -249,7 +210,7 @@ export interface SportRankType {
   trainingHeartRateListASC: TrainingHeartRateListASC[]
   trainingHeartRateListDEAS: TrainingHeartRateListDEA[]
 }
-
+//训练队心率正排行
 export interface TrainingHeartRateListASC {
   heartRate: number
   id: string
@@ -257,6 +218,7 @@ export interface TrainingHeartRateListASC {
   studentName: string
   [property: string]: any
 }
+// 训练队心率倒排行
 
 export interface TrainingHeartRateListDEA {
   heartRate: number
@@ -265,7 +227,7 @@ export interface TrainingHeartRateListDEA {
   studentName: string
   [property: string]: any
 }
-
+// 训练队运动强度正排行
 export interface TrainingIntensityListASC {
   id: string
   intensity: number
@@ -273,7 +235,7 @@ export interface TrainingIntensityListASC {
   studentName: string
   [property: string]: any
 }
-
+// 训练队运动强度倒排行
 export interface TrainingIntensityListDEA {
   id: string
   intensity: number
@@ -281,7 +243,7 @@ export interface TrainingIntensityListDEA {
   studentName: string
   [property: string]: any
 }
-
+// 训练队心率分布
 export interface TrainingRealTimeHeartRate {
   avgHeartRate: number
   id: string

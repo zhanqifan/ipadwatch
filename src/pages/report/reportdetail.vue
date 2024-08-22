@@ -3,23 +3,19 @@ import ringChart from './components/ringChart.vue'
 import lineChart from './components/lineChart.vue'
 import lineChart1 from './components/lineChart1.vue'
 import pressure from './components/pressure.vue'
+import sportRank from './components/sportRank.vue'
 import { customOrder, categorySort } from './utils/sort'
 import dayjs from 'dayjs'
 import type {
-  SportType,
-  SportRingType,
-  ReportDetail,
   TrainingReportGrade,
   TrainingRealTimeHeartRate,
+  SportParams,
+  BasicInfoDTOS,
+  SportAchievementVO,
 } from '@/api/report/reportType'
 import { getTeamList } from '@/api/start/start'
-
-import type { SportParams, BasicInfoDTOS, SportAchievementVO } from '@/api/report/reportType'
-import { getDateReport } from '@/api/report/report'
+import { getDateReport, getInpNumber } from '@/api/report/report'
 import { sportDict, secondsToMinutes } from './utils/sportComplate'
-import sportRank from './components/sportRank.vue'
-import { useMemberStore } from '@/stores/modules/user'
-const user = useMemberStore()
 const teamType = ref(false)
 const initialValue = () => {
   return {
@@ -28,9 +24,12 @@ const initialValue = () => {
     dateTime: dayjs().format('YYYY-MM-DD'),
   }
 }
-const taskId = ref()
+const isShow = ref(true)
+const taskId = ref() //报告id
+const toastRef = ref() //提示框组件
+const selectRef = ref() //下拉框实例
 const teamName = ref() //训练队名
-const formRef = ref()
+const formRef = ref() //表单实例
 const params = ref(initialValue()) //搜索传参
 const sportComplate = ref<SportAchievementVO>() //运动达成情况
 const heartMap = ref() //运动强度分布图
@@ -38,12 +37,12 @@ const heartCompare = ref() //心率对比图
 const sportRanks = ref() //运动排行
 const SportLoads = ref() //负荷图
 const teamColumns = ref<[any[]]>([[]]) //选择器
-const studentList = ref<BasicInfoDTOS>()
-
+const studentList = ref<BasicInfoDTOS>() //学生列表
+const range = ref<any>([])
 const rules = {
-  teamId: [{ required: true, message: '选择训练队', trigger: ['change'] }],
-  number: [{ required: true, message: '请输入输入次数', trigger: ['blur'] }],
-  dateTime: [{ required: true, message: '请输入输入时间', trigger: ['change'] }],
+  teamId: { rules: [{ required: true, errorMessage: '选择训练队', trigger: 'change' }] },
+  number: { rules: [{ required: true, errorMessage: '请输入输入次数', trigger: 'change' }] },
+  dateTime: { rules: [{ required: true, errorMessage: '请输入输入时间', trigger: 'change' }] },
 }
 const getTeam = async () => {
   const res = await getTeamList()
@@ -97,13 +96,28 @@ const getHeartCompare = async (data: TrainingRealTimeHeartRate[]) => {
     return item
   })
 }
-// const getNumber = async () => {
-//   if(params.value.dateTime&&params.value.teamId){
-//   const res = await getInpNumber()
-//   }
-// }
+// 下拉框
+const handleClick = async () => {
+  if (params.value.dateTime && params.value.teamId) {
+    const res = await getInpNumber({
+      trainingTeamId: params.value.teamId,
+      startTime: dayjs(params.value.dateTime).startOf('day').format('YYYY-MM-DD HH:mm:ss'),
+      endTime: dayjs(params.value.dateTime).endOf('day').format('YYYY-MM-DD HH:mm:ss'),
+    })
+    range.value = res.data.map((item: Number) => ({ value: item, text: item }))
+  } else {
+    selectRef.value.showSelector = false
+    toastRef.value.showToast({
+      message: '请先选择训练队和时间',
+      type: 'error',
+      position: 'top',
+    })
+  }
+}
+
 // 修改返回去向
 onBackPress((e) => {
+  console.log(e)
   uni.switchTab({
     url: '/pages/report/report',
   })
@@ -112,6 +126,10 @@ onBackPress((e) => {
 // 请求队列
 const PromiseList = async (data: SportParams) => {
   const res = await getDateReport(data)
+  if (checkResponse(res.data)) {
+    isShow.value = false
+    return
+  }
   studentList.value = res.data.basicInfoDTOS
   sportComplate.value = res.data.sportAchievementVO
   sportRanks.value = {
@@ -124,22 +142,27 @@ const PromiseList = async (data: SportParams) => {
   getSportMap(res.data.trainingReportGrades)
   getHeartCompare(res.data.trainingRealTimeHeartRates)
 }
+const checkResponse = (data: SportParams) => {
+  const arr = Object.values(data)
+  return arr.every((item) => item === null)
+}
+// 过滤运动达成情况
 const filterDate = computed(() => {
   const sportData = sportComplate.value
   if (!sportData) {
     return {} // 如果 sportComplate.value 是 undefined 或 null，返回空对象
   }
-  return Object.keys(sportComplate!.value)
+  return Object.keys(sportData)
     .filter((key) => Object.keys(sportDict).includes(key))
     .reduce((acc, key) => {
-      acc[key] = sportComplate!.value[key]
+      acc[key] = sportData[key] as SportAchievementVO
       return acc
     }, {})
 })
-
-const toStudent = () => {
+// 跳转学生详情
+const toStudent = (item: BasicInfoDTOS) => {
   uni.navigateTo({
-    url: '/pages/report/reportdetailStu',
+    url: `/pages/report/reportdetailStu?studentId=${item.id}&taskId=${taskId.value}`,
   })
 }
 onLoad((options) => {
@@ -150,131 +173,140 @@ onLoad((options) => {
 
 <template>
   <tabBar :selected="1">
-    <!-- 搜索 -->
-    <up-form labelPosition="left" :model="params" :rules="rules" ref="formRef">
-      <view class="top">
-        <up-form-item label="训练队:" labelWidth="60" prop="teamId">
-          <up-picker
-            :show="teamType"
-            :columns="teamColumns"
-            @cancel="teamType = false"
-            @confirm="confirm"
-            keyName="label"
-          />
-          <up-button @click="teamType = true">{{ teamName ? teamName : '选择训练队' }}</up-button>
-        </up-form-item>
-
-        <up-form-item label="时间:" labelWidth="40" prop="dateTime">
-          <uni-datetime-picker
-            type="date"
-            :clear-icon="false"
-            style="width: 300rpx"
-            v-model="params.dateTime"
-          />
-        </up-form-item>
-        <up-form-item label="次数:" labelWidth="40" prop="number">
-          <up-input placeholder="请输入次数" border="surround" v-model="params.number" />
-        </up-form-item>
-        <view>
-          <up-form-item>
-            <up-button
-              type="primary"
-              style="width: 150rpx; margin-right: 10rpx"
-              text="搜索"
-              @click="search"
+    <view v-if="isShow">
+      <!-- 搜索 -->
+      <uni-forms label-align="left" :model="params" :rules="rules" ref="formRef">
+        <view class="top">
+          <uni-forms-item label="训练队:" labelWidth="60" name="teamId">
+            <up-picker
+              :show="teamType"
+              :columns="teamColumns"
+              @cancel="teamType = false"
+              @confirm="confirm"
+              keyName="label"
             />
-            <up-button type="success" style="width: 150rpx" text="重置" @click="reset" />
-          </up-form-item>
-        </view>
-      </view>
-    </up-form>
+            <up-button @click="teamType = true">{{ teamName ? teamName : '选择训练队' }}</up-button>
+          </uni-forms-item>
 
-    <!-- 主体 -->
-    <view class="main">
-      <up-row gutter="10">
-        <up-col span="3">
-          <view class="Base_info">
-            <view class="title">基础信息</view>
-            <view class="Base_team"
-              ><text>{{ studentList?.teamName }}</text
-              ><text>授课教师:{{ studentList?.teacherName }}</text></view
-            >
-            <scroll-view scroll-y style="height: 132rpx">
-              <view class="students">
-                <text
-                  class="name"
-                  @click="toStudent"
-                  v-for="(item, index) in studentList?.studentNameList"
-                  :key="index"
-                  >{{ item.name }}</text
-                >
+          <uni-forms-item label="时间:" labelWidth="40" name="dateTime">
+            <uni-datetime-picker
+              type="date"
+              class="datePicker"
+              :clear-icon="false"
+              v-model="params.dateTime"
+            />
+          </uni-forms-item>
+          <uni-forms-item label="次数:" labelWidth="40" name="number">
+            <uni-data-select
+              ref="selectRef"
+              v-model="params.number"
+              :localdata="range"
+              @click="handleClick"
+              @change="(e) => (params.number = e)"
+            ></uni-data-select>
+          </uni-forms-item>
+          <view>
+            <uni-forms-item>
+              <view class="btn">
+                <up-button type="primary" class="btn_e" text="搜索" @click="search" />
+                <up-button type="success" class="btn_e" text="重置" @click="reset" />
               </view>
-            </scroll-view>
+            </uni-forms-item>
           </view>
-        </up-col>
-        <!-- 训练运动达成情况 -->
-        <up-col span="9">
-          <view class="Base_right">
-            <view class="condition">训练运动达成情况</view>
-            <up-row>
-              <up-col span="3">
-                <view style="padding-left: 30rpx">
-                  <ringChart v-if="sportComplate" :sportComplate="sportComplate" />
+        </view>
+      </uni-forms>
+
+      <!-- 主体 -->
+      <view class="main">
+        <up-row gutter="10">
+          <up-col span="3">
+            <view class="Base_info">
+              <view class="title">基础信息</view>
+              <view class="Base_team"
+                ><text>{{ studentList?.teamName }}</text
+                ><text>授课教师:{{ studentList?.teacherName }}</text></view
+              >
+              <scroll-view scroll-y style="height: 132rpx">
+                <view class="students">
+                  <text
+                    class="name"
+                    v-for="(item, index) in studentList?.studentNameList"
+                    @click="toStudent(item)"
+                    :key="index"
+                    >{{ item.name }}</text
+                  >
                 </view>
-              </up-col>
-              <up-col span="8">
-                <view class="container">
-                  <view v-for="(item, index) of filterDate" :key="index">
-                    <view v-if="sportDict[index as keyof typeof sportDict]?.label" class="item">
-                      <view
-                        class="dot"
-                        :style="{ background: sportDict[index as keyof typeof sportDict]?.color }"
-                      ></view>
-                      <view class="text">{{
-                        sportDict[index as keyof typeof sportDict]?.label +
-                        ':' +
-                        secondsToMinutes(item!, index) +
-                        sportDict[index as keyof typeof sportDict]?.unit
-                      }}</view>
+              </scroll-view>
+            </view>
+          </up-col>
+          <!-- 训练运动达成情况 -->
+          <up-col span="9">
+            <view class="Base_right">
+              <view class="condition">训练运动达成情况</view>
+              <up-row>
+                <up-col span="3">
+                  <view style="padding-left: 30rpx">
+                    <ringChart v-if="sportComplate" :sportComplate="sportComplate" />
+                  </view>
+                </up-col>
+                <up-col span="8">
+                  <view class="container">
+                    <view v-for="(item, index) of filterDate" :key="index">
+                      <view v-if="sportDict[index as keyof typeof sportDict]?.label" class="item">
+                        <view
+                          class="dot"
+                          :style="{ background: sportDict[index as keyof typeof sportDict]?.color }"
+                        ></view>
+                        <view class="text">{{
+                          sportDict[index as keyof typeof sportDict]?.label +
+                          ':' +
+                          secondsToMinutes(item!, index) +
+                          sportDict[index as keyof typeof sportDict]?.unit
+                        }}</view>
+                      </view>
                     </view>
                   </view>
-                </view>
-              </up-col>
-            </up-row>
-          </view>
-        </up-col>
-      </up-row>
-      <!-- 中间 -->
-      <up-row class="middle" gutter="10">
-        <up-col span="6">
-          <view class="map1">
-            <view style="margin-bottom: 20rpx">训练队运动强度分布图 </view>
-            <view><lineChart v-if="heartMap" :heartMap="heartMap" /></view>
-          </view>
-        </up-col>
-        <up-col span="6">
-          <view class="map1">
-            <view style="margin-bottom: 20rpx">训练队心率对比图 </view>
-            <view><lineChart1 v-if="heartCompare" :heartCompare="heartCompare" /></view>
-          </view>
-        </up-col>
-      </up-row>
-      <!-- 底部 -->
-      <up-row class="bottom" gutter="10">
-        <up-col span="6"
-          ><view class="map1">
-            <view style="margin-bottom: 20rpx">训练队运动强度分布图 </view>
-            <view><sportRank v-if="sportRanks" :sportRanks="sportRanks" /></view>
-          </view>
-        </up-col>
-        <up-col span="6"
-          ><view class="map1">
-            <view style="margin-bottom: 20rpx">训练队运动负荷项目及达标情况 </view>
-            <view><pressure v-if="SportLoads" :SportLoads="SportLoads" /></view>
-          </view>
-        </up-col>
-      </up-row>
+                </up-col>
+              </up-row>
+            </view>
+          </up-col>
+        </up-row>
+        <!-- 中间 -->
+        <up-row class="middle" gutter="10">
+          <up-col span="6">
+            <view class="map1">
+              <view style="margin-bottom: 20rpx">训练队运动强度分布图 </view>
+              <view><lineChart v-if="heartMap" :heartMap="heartMap" /></view>
+            </view>
+          </up-col>
+          <up-col span="6">
+            <view class="map1">
+              <view style="margin-bottom: 20rpx">训练队心率对比图 </view>
+              <view><lineChart1 v-if="heartCompare" :heartCompare="heartCompare" /></view>
+            </view>
+          </up-col>
+        </up-row>
+        <!-- 底部 -->
+        <up-row class="bottom" gutter="10">
+          <up-col span="6"
+            ><view class="map1">
+              <view style="margin-bottom: 20rpx">训练队运动强度分布图 </view>
+              <view><sportRank v-if="sportRanks" :sportRanks="sportRanks" /></view>
+            </view>
+          </up-col>
+          <up-col span="6"
+            ><view class="map1">
+              <view style="margin-bottom: 20rpx">训练队运动负荷项目及达标情况 </view>
+              <view><pressure v-if="SportLoads" :SportLoads="SportLoads" /></view>
+            </view>
+          </up-col>
+        </up-row>
+      </view>
+
+      <!-- 消息提示 -->
+      <toast ref="toastRef" />
     </view>
+    <emptyBox v-else :size="{ width: 350, height: 350 }" />
   </tabBar>
 </template>
 
@@ -282,9 +314,21 @@ onLoad((options) => {
 .top {
   display: flex;
   gap: 50rpx;
+  align-items: center;
+  .datePicker {
+    width: 300rpx;
+  }
+  .btn {
+    display: flex;
+    .btn_e {
+      width: 150rpx;
+      height: 70rpx;
+      margin-right: 10rpx;
+    }
+  }
 }
+
 .main {
-  margin-top: 0rpx;
   padding: 3rpx;
   .Base_info {
     box-shadow: 0rpx 0rpx 16rpx 0rpx rgba(0, 0, 0, 0.1);

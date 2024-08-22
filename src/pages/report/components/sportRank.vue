@@ -1,11 +1,9 @@
 <script setup lang="ts">
-import type { SportRankType, MaxHeartRateRankAsc } from '@/api/report/reportType'
+import type { SportRankType } from '@/api/report/reportType'
 const props = defineProps<{
   sportRanks: SportRankType
 }>()
-type DataObject = {
-  [key: string]: MaxHeartRateRankAsc[]
-}
+
 const isShow = ref(false)
 const controlShow = (data: SportRankType) => {
   const keys = Object.keys(data)

@@ -47,7 +47,7 @@ const itemClick = (item: itemType) => {
       </view>
     </view>
     <view class="main-content">
-      <scroll-view scroll-y style="height: 100%">
+      <scroll-view scroll-y style="height: 90vh">
         <slot />
       </scroll-view>
     </view>

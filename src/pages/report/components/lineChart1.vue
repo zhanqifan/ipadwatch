@@ -11,11 +11,11 @@
 
 <script setup lang="ts">
 import * as echarts from 'echarts'
-import type { RealTimeHeartRate } from '@/api/report/reportType'
+import type { TrainingRealTimeHeartRate } from '@/api/report/reportType'
 const props = defineProps<{
-  heartCompare: RealTimeHeartRate[]
+  heartCompare: TrainingRealTimeHeartRate[]
 }>()
-const chartRef = ref(null)
+const chartRef = ref<any>(null)
 const isShow = ref(true)
 const xAxis = computed(() => {
   return props.heartCompare.map((item) => item.time)
@@ -74,7 +74,6 @@ const getData = async () => {
   // 使用 nextTick 确保视图更新完成
   await nextTick()
   if (!chartRef.value) return
-  console.log(chartRef.value)
   const myChart = await chartRef.value.init(echarts)
   myChart.setOption(option.value)
   isShow.value = true
