@@ -123,7 +123,7 @@ onBackPress((e) => {
   })
   return true
 })
-// 请求队列
+// 报表数据
 const PromiseList = async (data: SportParams) => {
   const res = await getDateReport(data)
   if (checkResponse(res.data)) {
@@ -142,6 +142,7 @@ const PromiseList = async (data: SportParams) => {
   getSportMap(res.data.trainingReportGrades)
   getHeartCompare(res.data.trainingRealTimeHeartRates)
 }
+// 判断是否空数据
 const checkResponse = (data: SportParams) => {
   const arr = Object.values(data)
   return arr.every((item) => item === null)

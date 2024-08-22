@@ -21,8 +21,8 @@ const getTrain = async () => {
       exerciseTypeName: item.exerciseName,
     }
   })
-  exerciseTypeId.value = res.data[0].id
-  exerciseTypeName.value = res.data[0].exerciseName
+  exerciseTypeId.value = res.data[0]?.id
+  exerciseTypeName.value = res.data[0]?.exerciseName
 }
 const trainingTeamId = ref<string | number>() //训练队id
 const trainingTeamName = ref<string>()
@@ -36,8 +36,9 @@ const getTeam = async () => {
       trainingTeamName: item.teamName,
     }
   })
-  trainingTeamId.value = res.data[0].id //默认选中第一个
-  trainingTeamName.value = res.data[0].teamName
+  await nextTick()
+  trainingTeamId.value = res.data[0]?.id //默认选中第一个
+  trainingTeamName.value = res.data[0]?.teamName
   getTeamStudent()
 }
 // 按钮切换事件
@@ -53,8 +54,10 @@ const groupChange = (e: string, type: string, name: string) => {
 }
 // 获取学生列表
 const getTeamStudent = async () => {
-  const res = await getTrainingTeam(trainingTeamId.value!)
-  studentList.value = res.data.studentList
+  if (trainingTeamId.value) {
+    const res = await getTrainingTeam(trainingTeamId.value!)
+    studentList.value = res.data.studentList
+  }
 }
 // 开始训练
 const nextStep = async () => {

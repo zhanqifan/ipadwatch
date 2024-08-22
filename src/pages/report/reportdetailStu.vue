@@ -10,6 +10,7 @@ import type {
   TrainingReportGrade,
   SportParams,
 } from '@/api/report/reportType'
+import { getTeamList } from '@/api/start/start'
 import { sportDict, secondsToMinutes } from './utils/sportComplate'
 import { customOrder, categorySort } from './utils/sort'
 import { getStuReport, getInpNumber } from '@/api/report/report'
@@ -22,7 +23,9 @@ const initialValue = () => {
 }
 const teamType = ref(false)
 const formRef = ref()
-const teamColumns = ref()
+const taskId = ref()
+const studentId = ref()
+const teamColumns = ref<[any[]]>([[]]) //选择器
 const toastRef = ref() //提示框组件
 const selectRef = ref() //下拉框实例
 const params = ref(initialValue()) //搜索传参
@@ -33,6 +36,7 @@ const sportComplate = ref<SportAchievementVO>() //运动达成情况
 const studentList = ref<StudentNameList>() //学生列表
 const isShow = ref(true)
 const range = ref<any>([])
+
 const confirm = ({ value }: { value: { id: string; label: string }[] }) => {
   params.value.teamId = value[0].id
   teamName.value = value[0].label
@@ -47,7 +51,18 @@ const reset = () => {
   params.value = initialValue()
   teamName.value = ''
 }
-const search = () => {}
+const search = () => {
+  formRef.value.validate().then((valid: Boolean) => {
+    if (valid) {
+      getReportStu({
+        ...params.value,
+        studentId: studentId.value,
+        startTime: dayjs(params.value.dateTime).startOf('day').format('YYYY-MM-DD HH:mm:ss'),
+        endTime: dayjs(params.value.dateTime).endOf('day').format('YYYY-MM-DD HH:mm:ss'),
+      })
+    }
+  })
+}
 // // 运动强度分布图
 const getSportMap = async (data: TrainingReportGrade[]) => {
   customOrder.forEach((grade) => {
@@ -62,8 +77,8 @@ const getSportMap = async (data: TrainingReportGrade[]) => {
   heartMap.value = categorySort(data, 'grade', customOrder)
 }
 // 获取学生详情
-const getReportStu = async (studentId: string, taskId: string) => {
-  const res = await getStuReport({ studentId, taskId })
+const getReportStu = async (data: SportParams) => {
+  const res = await getStuReport(data)
   if (checkResponse(res.data)) {
     isShow.value = false
     return
@@ -73,8 +88,7 @@ const getReportStu = async (studentId: string, taskId: string) => {
   getSportMap(res.data.heartRateDistributionVOList)
   getHeartCompare(res.data.realTimeHeartRate)
 }
-// // 训练队心率对比图
-
+// 训练队心率对比图
 const getHeartCompare = async (data: TrainingRealTimeHeartRate[]) => {
   heartCompare.value = data.map((item) => {
     item.time = dayjs(item.time).format('H:mm')
@@ -115,8 +129,20 @@ const checkResponse = (data: SportParams) => {
   const arr = Object.values(data)
   return arr.every((item) => item === null)
 }
+const getTeam = async () => {
+  const res = await getTeamList()
+  teamColumns.value[0] = res.data.map((item) => {
+    return {
+      label: item.teamName,
+      id: item.id,
+    }
+  })
+}
 onLoad((options) => {
-  getReportStu(options!.studentId, options!.taskId)
+  taskId.value = options!.taskId
+  studentId.value = options!.studentId
+  getTeam()
+  getReportStu({ studentId: options!.studentId, taskId: options!.taskId })
 })
 </script>
 <template>
@@ -284,6 +310,9 @@ onLoad((options) => {
       .name {
         white-space: nowrap;
         position: relative;
+        background-color: transparent; // 确保 text 标签本身没有背景色
+        color: black;
+        text-align: start;
         &::before {
           content: '';
           display: inline-block;
