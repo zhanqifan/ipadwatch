@@ -68,7 +68,6 @@ const reset = () => {
 const search = () => {
   formRef.value.validate().then((valid: Boolean) => {
     if (valid) {
-      BaseInfo()
       PromiseList({
         ...params.value,
         startTime: dayjs(params.value.dateTime).startOf('day').format('YYYY-MM-DD HH:mm:ss'),
@@ -124,6 +123,24 @@ const PromiseList = async (data: SportParams) => {
   SportLoads.value = res.data.sportLoadVO
   getSportMap(res.data.trainingReportGrades)
   getHeartCompare(res.data.trainingRealTimeHeartRates)
+}
+const filterDate = computed(() => {
+  const sportData = sportComplate.value
+  if (!sportData) {
+    return {} // 如果 sportComplate.value 是 undefined 或 null，返回空对象
+  }
+  return Object.keys(sportComplate!.value)
+    .filter((key) => Object.keys(sportDict).includes(key))
+    .reduce((acc, key) => {
+      acc[key] = sportComplate!.value[key]
+      return acc
+    }, {})
+})
+
+const toStudent = () => {
+  uni.navigateTo({
+    url: '/pages/report/reportdetailStu',
+  })
 }
 onLoad((options) => {
   taskId.value = options!.taskId
@@ -186,6 +203,7 @@ onLoad((options) => {
               <view class="students">
                 <text
                   class="name"
+                  @click="toStudent"
                   v-for="(item, index) in studentList?.studentNameList"
                   :key="index"
                   >{{ item.name }}</text
@@ -206,7 +224,7 @@ onLoad((options) => {
               </up-col>
               <up-col span="8">
                 <view class="container">
-                  <view v-for="(item, index) of sportComplate" :key="index">
+                  <view v-for="(item, index) of filterDate" :key="index">
                     <view v-if="sportDict[index as keyof typeof sportDict]?.label" class="item">
                       <view
                         class="dot"
@@ -292,6 +310,7 @@ onLoad((options) => {
         background-color: #4fa2fd;
         color: #fff;
         text-align: center;
+        white-space: nowrap;
         border-radius: 10rpx;
         padding: 2rpx;
       }

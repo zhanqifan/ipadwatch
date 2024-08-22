@@ -47,9 +47,10 @@ const option = ref({
   yAxis: {
     type: 'category',
     data: yAxis,
-    axisLabel: {
-      textStyle: {
-        fontFamily: 'test', // 使用自定义字体
+    axisTick: false,
+    axisLine: {
+      lineStyle: {
+        type: 'dotted',
       },
     },
   },
@@ -92,11 +93,9 @@ const getData = async () => {
   isShow.value = true
   await nextTick()
   if (!chartRef.value) return
-  console.log(chartRef.value)
   const myChart = await chartRef.value.init(echarts)
   myChart.clear() // 清空图表
   myChart.setOption(option.value)
-  console.log(option.value)
 }
 watch(
   () => props.heartMap,

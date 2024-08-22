@@ -3,7 +3,7 @@ export const customOrder = ['LOW', 'MIDDLE', 'HIGH', 'HIGHER', 'HIGHEST'] //排�
 
 // 转换字典
 export const exchangeHeart = {
-  LOW: { num: '<120', name: '精修热身' },
+  LOW: { num: '<120', name: '静修热身' },
   MIDDLE: { num: '120-140', name: '减压状态' },
   HIGH: { num: '140-160', name: '燃脂状态' },
   HIGHER: { num: '160-180', name: '心肺锻炼' },

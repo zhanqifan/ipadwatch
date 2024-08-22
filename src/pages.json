@@ -43,6 +43,12 @@
       }
     },
     {
+      "path": "pages/report/reportdetailStu",
+      "style": {
+        "navigationBarTitleText": "学生报告"
+      }
+    },
+    {
       "path": "pages/login/login",
       "style": {
         "navigationBarTitleText": "登录"
