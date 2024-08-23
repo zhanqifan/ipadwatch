@@ -78,19 +78,23 @@ const getSportMap = async (data: TrainingReportGrade[]) => {
 }
 // 获取学生详情
 const getReportStu = async (data: SportParams) => {
-  const res = await getStuReport(data)
-  if (checkResponse(res.data)) {
+  try {
+    const res = await getStuReport(data)
+    if (checkResponse(res.data)) {
+      isShow.value = false
+      return
+    }
+    studentList.value = res.data.studentInfo
+    sportComplate.value = res.data.sportAchievementVO
+    getSportMap(res.data.heartRateDistributionVOList)
+    getHeartCompare(res.data.realTimeHeartRate)
+  } catch (error) {
     isShow.value = false
-    return
   }
-  studentList.value = res.data.studentInfo
-  sportComplate.value = res.data.sportAchievementVO
-  getSportMap(res.data.heartRateDistributionVOList)
-  getHeartCompare(res.data.realTimeHeartRate)
 }
 // 训练队心率对比图
 const getHeartCompare = async (data: TrainingRealTimeHeartRate[]) => {
-  heartCompare.value = data.map((item) => {
+  heartCompare.value = data.reverse().map((item) => {
     item.time = dayjs(item.time).format('H:mm')
     return item
   })
@@ -105,7 +109,7 @@ const filterDate = computed(() => {
     .reduce((acc, key) => {
       acc[key] = sportData[key] as SportAchievementVO
       return acc
-    }, {})
+    }, {} as SportAchievementVO)
 })
 // 下拉框
 const handleClick = async () => {
@@ -148,47 +152,48 @@ onLoad((options) => {
 <template>
   <tabBar :selected="1">
     <!-- 搜索栏 -->
-    <view v-if="isShow">
-      <uni-forms label-align="left" :model="params" :rules="rules" ref="formRef">
-        <view class="top">
-          <uni-forms-item label="训练队:" labelWidth="60" name="teamId">
-            <up-picker
-              :show="teamType"
-              :columns="teamColumns"
-              @cancel="teamType = false"
-              @confirm="confirm"
-              keyName="label"
-            />
-            <up-button @click="teamType = true">{{ teamName ? teamName : '选择训练队' }}</up-button>
-          </uni-forms-item>
 
-          <uni-forms-item label="时间:" labelWidth="40" name="dateTime">
-            <uni-datetime-picker
-              type="date"
-              class="datePicker"
-              :clear-icon="false"
-              v-model="params.dateTime"
-            />
+    <uni-forms label-align="left" :model="params" :rules="rules" ref="formRef">
+      <view class="top">
+        <uni-forms-item label="训练队:" labelWidth="60" name="teamId">
+          <up-picker
+            :show="teamType"
+            :columns="teamColumns"
+            @cancel="teamType = false"
+            @confirm="confirm"
+            keyName="label"
+          />
+          <up-button @click="teamType = true">{{ teamName ? teamName : '选择训练队' }}</up-button>
+        </uni-forms-item>
+
+        <uni-forms-item label="时间:" labelWidth="40" name="dateTime">
+          <uni-datetime-picker
+            type="date"
+            class="datePicker"
+            :clear-icon="false"
+            v-model="params.dateTime"
+          />
+        </uni-forms-item>
+        <uni-forms-item label="次数:" labelWidth="40" name="number">
+          <uni-data-select
+            ref="selectRef"
+            v-model="params.number"
+            :localdata="range"
+            @click="handleClick"
+            @change="(e) => (params.number = e)"
+          ></uni-data-select>
+        </uni-forms-item>
+        <view>
+          <uni-forms-item>
+            <view class="btn">
+              <up-button type="primary" class="btn_e" text="搜索" @click="search" />
+              <up-button type="success" class="btn_e" text="重置" @click="reset" />
+            </view>
           </uni-forms-item>
-          <uni-forms-item label="次数:" labelWidth="40" name="number">
-            <uni-data-select
-              ref="selectRef"
-              v-model="params.number"
-              :localdata="range"
-              @click="handleClick"
-              @change="(e) => (params.number = e)"
-            ></uni-data-select>
-          </uni-forms-item>
-          <view>
-            <uni-forms-item>
-              <view class="btn">
-                <up-button type="primary" class="btn_e" text="搜索" @click="search" />
-                <up-button type="success" class="btn_e" text="重置" @click="reset" />
-              </view>
-            </uni-forms-item>
-          </view>
         </view>
-      </uni-forms>
+      </view>
+    </uni-forms>
+    <view v-if="isShow">
       <view class="main">
         <up-row gutter="10">
           <up-col span="3">
@@ -262,6 +267,7 @@ onLoad((options) => {
         </up-row>
       </view>
     </view>
+
     <emptyBox v-else :size="{ width: 350, height: 350 }" />
     <toast ref="toastRef" />
   </tabBar>

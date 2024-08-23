@@ -91,7 +91,7 @@ const getSportMap = async (data: TrainingReportGrade[]) => {
 }
 // // 训练队心率对比图
 const getHeartCompare = async (data: TrainingRealTimeHeartRate[]) => {
-  heartCompare.value = data.map((item) => {
+  heartCompare.value = data.reverse().map((item) => {
     item.time = dayjs(item.time).format('H:mm')
     return item
   })
@@ -156,9 +156,9 @@ const filterDate = computed(() => {
   return Object.keys(sportData)
     .filter((key) => Object.keys(sportDict).includes(key))
     .reduce((acc, key) => {
-      acc[key] = sportData[key] as SportAchievementVO
+      acc[key] = sportData[key]
       return acc
-    }, {})
+    }, {} as SportAchievementVO)
 })
 // 跳转学生详情
 const toStudent = (item: BasicInfoDTOS) => {

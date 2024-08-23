@@ -11,6 +11,7 @@ type paramsType = {
 function showToast(params: paramsType) {
   uToastRef.value.show({
     ...params,
+    duration: 1000,
   })
 }
 defineExpose({

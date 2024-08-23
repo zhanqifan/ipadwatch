@@ -42,18 +42,24 @@ const option = ref({
   },
   xAxis: {
     type: 'value',
-    boundaryGap: [0, 0.1],
+
+    splitLine: {
+      show: true, // 显示分割线
+      lineStyle: {
+        type: 'dashed', // 设置为虚线
+        color: '#ccc', // 设置虚线的颜色
+        width: 2, // 增加虚线的宽度，让点更大
+        dashOffset: 4, // 控制虚线点的间隔
+        lineDash: [4, 8], // 控制虚线点的大小和间距
+      },
+      interval: (index: number) => console.log(index), // 不在0位置显示分割线
+    },
   },
   yAxis: {
     type: 'category',
     data: yAxis,
     inverse: true, //倒序
     axisTick: false,
-    axisLine: {
-      lineStyle: {
-        type: 'dashed',
-      },
-    },
   },
   series: [
     {
@@ -69,7 +75,7 @@ const option = ref({
           ])
         },
       },
-      barGap: '20rpx',
+      barWidth: '20',
       label: {
         show: true, // 显示标签
         position: 'right', // 标签显示在柱子顶部
