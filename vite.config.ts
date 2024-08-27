@@ -5,7 +5,7 @@ import AutoImport from 'unplugin-auto-import/vite' //npm install -D unplugin-aut
 const env = dotenv.config() // 手动加载 .env 文件中的环境变量
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: process.env.NODE_ENV === 'production' ? env.parsed?.VITE_APP_CONTEXT_PATH : '/',
+  base: process.env.NODE_ENV === 'production' ? env.parsed?.VITE_CONTEXT_PATH : '/',
 
   build: {
     // 开发阶段启用源码映射：https://uniapp.dcloud.net.cn/tutorial/migration-to-vue3.html#需主动开启-sourcemap

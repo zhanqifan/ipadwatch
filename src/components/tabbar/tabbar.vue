@@ -5,6 +5,7 @@ const props = defineProps({
     default: 0,
   },
 })
+
 type itemType = {
   icon: string
   url: string
@@ -69,7 +70,7 @@ const itemClick = (item: itemType) => {
   margin: 15rpx 0;
   background-color: #304056;
   /*  #ifdef  APP-PLUS	 */
-  height: 100vh;
+  height: calc(100vh - 10px); // 减去导航栏的高度
   /*  #endif  */
   /*  #ifdef  H5 */
   height: calc(100vh - 59px); // 减去导航栏的高度

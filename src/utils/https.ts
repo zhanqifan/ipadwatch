@@ -1,6 +1,6 @@
 import { useMemberStore } from '@/stores'
 /* eslint-disable */
-const baseURL = import.meta.env.VITE_APP_BASE_URL
+const baseURL = import.meta.env.VITE_BASE_URL
 
 const httpInterceptor = {
   // 拦截前触发
@@ -23,7 +23,7 @@ const httpInterceptor = {
     const token = memberStore.profile?.access_token
     if (token) {
       options.header.Authorization = 'Bearer ' + token
-      options.header.Clientid = 'e5cd7e4891bf95d1d19206ce24a7b32e'
+      options.header.Clientid = import.meta.env.VITE_CLIENT_ID
     }
   },
 }
