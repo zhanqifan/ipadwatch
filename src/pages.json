@@ -61,7 +61,7 @@
     "navigationBarBackgroundColor": "#F8F8F8",
     "backgroundColor": "#F8F8F8",
     "pageOrientation": "landscape",
-    "rpxCalcMaxDeviceWidth": 0
+
 
   },
   // 设置 TabBar

@@ -1,6 +1,6 @@
 import { request } from '@/utils/https'
 import type { LoginData, LoginResult, UserInfo } from './loginType'
-const clientId = import.meta.env.VITE_APP_CLIENT_ID
+const clientId = import.meta.env.VITE_CLIENT_ID
 // 登录
 export function login(data: LoginData) {
   const params = {
