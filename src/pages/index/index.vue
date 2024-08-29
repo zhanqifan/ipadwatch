@@ -266,7 +266,7 @@ onBeforeUnmount(() => {
   justify-content: space-between;
 }
 .custom-style {
-  height: 105rpx;
+  height: 100rpx;
   border: none;
   margin: 0;
   width: 308rpx;
@@ -281,6 +281,7 @@ onBeforeUnmount(() => {
   background-color: #f5f9fa;
   border-radius: 20rpx;
   padding: 3%;
+  margin-top: 20rpx;
   min-height: 70vh;
   .card_group {
     display: grid;

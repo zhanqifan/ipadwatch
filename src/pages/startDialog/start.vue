@@ -100,7 +100,7 @@ onMounted(() => {
         <view class="project">
           选择项目<text class="add" @click="open('pro')">新增训练项目</text>
         </view>
-        <scroll-view scroll-x style="width: 85vw; height: 150rpx">
+        <scroll-view scroll-x style="width: 68vw; height: 150rpx">
           <view class="project_group" v-if="radiolist1.length">
             <up-radio-group v-model="exerciseTypeId" placement="column">
               <up-radio
@@ -108,8 +108,14 @@ onMounted(() => {
                 :customStyle="{
                   marginRight: '60rpx',
                   minWidth: '250rpx',
-                  border: index == exerciseTypeId ? '1rpx solid #387ff2' : '1rpx solid #e6e6e6',
+                  borderRadius: '5rpx',
+                  background: item.exerciseTypeId == exerciseTypeId ? '#387ff2' : '',
+                  border:
+                    item.exerciseTypeId == exerciseTypeId
+                      ? '1rpx solid #387ff2'
+                      : '1rpx solid #e6e6e6',
                 }"
+                :labelColor="item.exerciseTypeId == exerciseTypeId ? '#fff' : 'black'"
                 :key="index"
                 :label="item.exerciseTypeName"
                 :name="item.exerciseTypeId"
@@ -124,18 +130,25 @@ onMounted(() => {
       <!-- 选择队伍 -->
       <view class="select_tow">
         <view class="project">
-          选择队伍 <text class="add" @click="open('team')">新增训练队</text></view
-        >
-        <scroll-view scroll-x style="width: 85vw">
+          选择队伍
+          <text class="add" @click="open('team')">新增训练队</text>
+        </view>
+        <scroll-view scroll-x style="width: 68vw">
           <view class="project_group" v-if="radiolist2.length">
             <up-radio-group v-model="trainingTeamId" scroll-left placement="column">
               <up-radio
                 v-for="(item, index) in radiolist2"
                 :customStyle="{
-                  border: index == trainingTeamId ? '1rpx solid #387ff2' : '1rpx solid #e6e6e6',
+                  border:
+                    item.trainingTeamId == trainingTeamId
+                      ? '5rpx solid #387ff2'
+                      : '1rpx solid #e6e6e6',
                   width: '300rpx',
+                  background: item.trainingTeamId == trainingTeamId ? '#387ff2' : '',
                   marginRight: '50rpx',
+                  borderRadius: '5rpx',
                 }"
+                :labelColor="item.trainingTeamId == trainingTeamId ? '#fff' : 'black'"
                 @change="(e) => groupChange(e, 'team', item.trainingTeamName)"
                 :key="index"
                 :label="item.trainingTeamName"
@@ -149,13 +162,13 @@ onMounted(() => {
       </view>
       <!-- 训练人员 -->
       <view class="Cur_people">
-        <view class="title">当前训练人员</view>
+        <view class="title"
+          >训练人数:&nbsp{{ studentList?.length ? studentList.length : 0 }}人</view
+        >
         <view class="total">
           <view>
-            <up-icon name="account" color="black" size="28"></up-icon>
             <view style="display: flex; flex-direction: column">
-              <text>训练计划人数:</text>
-              <text>({{ studentList?.length ? studentList.length : 0 }}人) </text>
+              <text>训练名单:&nbsp</text>
             </view>
           </view>
           <scroll-view scroll-y style="max-height: 120rpx">
@@ -213,7 +226,7 @@ onMounted(() => {
 }
 .sprot_box {
   padding-top: 10rpx;
-  margin-left: 100rpx;
+  margin-left: 60rpx;
 }
 .Cur_people {
   background-color: #f9f9f9;
@@ -232,7 +245,6 @@ onMounted(() => {
     .plan_people {
       display: grid;
       width: 100%;
-      margin-left: 50rpx;
       grid-template-columns: repeat(
         auto-fill,
         minmax(150rpx, 1fr)
@@ -249,5 +261,12 @@ onMounted(() => {
     // border: 1rpx solid #387ff2;
     margin-right: 20rpx;
   }
+}
+::v-deep .u-radio__icon-wrap--circle {
+  display: none;
+}
+::v-deep .u-radio__text {
+  text-align: center;
+  width: 100%;
 }
 </style>

@@ -95,17 +95,6 @@ onMounted(() => {
       <view class="top">
         <view>
           <up-picker
-            :show="teamType"
-            :columns="teamColumns"
-            @cancel="teamType = false"
-            @confirm="(e) => confirm(e, 'team')"
-          />
-          <up-button @click="teamType = true">{{
-            params.trainingTeamName ? params.trainingTeamName : '选择训练队'
-          }}</up-button>
-        </view>
-        <view>
-          <up-picker
             :show="trainType"
             :columns="trainColumns"
             @cancel="trainType = false"
@@ -115,8 +104,25 @@ onMounted(() => {
             params.exerciseTypeName ? params.exerciseTypeName : '选择训练类型'
           }}</up-button>
         </view>
+        <view>
+          <up-picker
+            :show="teamType"
+            :columns="teamColumns"
+            @cancel="teamType = false"
+            @confirm="(e) => confirm(e, 'team')"
+          />
+          <up-button @click="teamType = true">{{
+            params.trainingTeamName ? params.trainingTeamName : '选择训练队'
+          }}</up-button>
+        </view>
+
         <view
-          ><up-datetime-picker hasInput :show="show" v-model="params.dateTime" mode="date"
+          ><up-datetime-picker
+            hasInput
+            :show="show"
+            v-model="params.dateTime"
+            @confirm="search"
+            mode="date"
         /></view>
         <view
           ><up-button type="primary" style="width: 150rpx" text="搜索" @click="search"></up-button

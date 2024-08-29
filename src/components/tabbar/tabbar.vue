@@ -16,7 +16,7 @@ const sidebarItems = ref<
     url: string
   }[]
 >([
-  { icon: 'heart', url: '/pages/startDialog/start' },
+  { icon: 'heart-fill', url: '/pages/startDialog/start' },
   { icon: 'calendar-fill', url: '/pages/report/report' },
   { icon: 'account-fill', url: '/pages/my/my' },
 ])
@@ -41,7 +41,7 @@ const itemClick = (item: itemType) => {
         >
           <u-icon
             :name="item.icon"
-            :color="selected === index ? '#86dfc1' : '#bfcbd9'"
+            :color="selected === index ? '#3c9cff' : '#bfcbd9'"
             size="27"
           ></u-icon>
         </view>

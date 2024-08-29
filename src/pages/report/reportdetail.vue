@@ -222,11 +222,11 @@ onLoad((options) => {
         <up-row gutter="10">
           <up-col span="3">
             <view class="Base_info">
-              <view class="title">基础信息</view>
-              <view class="Base_team"
-                ><text>{{ studentList?.teamName }}</text
-                ><text>授课教师:{{ studentList?.teacherName }}</text></view
-              >
+              <view class="title">学生名单</view>
+              <view class="Base_team">
+                <text>{{ studentList?.teamName }}</text>
+                <text>授课教师:{{ studentList?.teacherName }}</text>
+              </view>
               <scroll-view scroll-y style="height: 132rpx">
                 <view class="students">
                   <text

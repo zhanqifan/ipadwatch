@@ -13,7 +13,7 @@ const initialValue = () => {
 }
 const form = ref(initialValue())
 const status = ref('loading')
-const loadingText = ref('努力加载中')
+const loadingText = ref('加载中')
 const nomoreText = ref('实在没有了~')
 const formRef = ref()
 const emit = defineEmits<{
@@ -28,7 +28,7 @@ const rules = ref({
 })
 const pageParams = reactive({
   pageNum: 1,
-  pageSize: 10,
+  pageSize: 24,
 })
 const maxpageNum = ref() //总共分几页
 const studentList = ref<Row[]>([])
@@ -52,6 +52,8 @@ const commit = () => {
     .validate()
     .then(async (valid: Boolean) => {
       if (valid) {
+        const e = form.value.teamName.endsWith('队')
+        e ? '' : (form.value.teamName = form.value.teamName + '队')
         const res = await addTrainingTeam(form.value)
         if (res.code === 200) {
           emit('success')
@@ -63,6 +65,7 @@ const commit = () => {
       console.log('33')
     })
 }
+// 触底获取更多学生
 const upToLower = async () => {
   if (pageParams.pageNum < maxpageNum.value) {
     pageParams.pageNum = pageParams.pageNum + 1
@@ -70,8 +73,16 @@ const upToLower = async () => {
     studentList.value = [...studentList.value, ...res.rows]
   } else {
     status.value = 'nomore'
+    console.log(status.value)
   }
 }
+const formatTeamName = () => {
+  const e = form.value.teamName.endsWith('队')
+  if (!e) {
+    form.value.teamName = form.value.teamName + '队'
+  }
+}
+
 // 关闭初始化
 const close = () => {
   show.value = false
@@ -90,11 +101,11 @@ defineExpose({
       :show="show"
       :title="title"
       @confirm="commit"
-      width="1200rpx"
+      width="1300rpx"
       :showCancelButton="true"
       @cancel="close"
     >
-      <view class="slot-content" style="height: 200px">
+      <view class="slot-content" style="height: 500rpx; min-width: 600rpx">
         <up-form labelPosition="left" :model="form" :rules="rules" ref="formRef">
           <up-form-item label="队伍名称" labelWidth="70" prop="teamName" borderBottom ref="item1">
             <up-input v-model="form.teamName" placeholder="请输入队伍名称"></up-input>
@@ -102,7 +113,7 @@ defineExpose({
           <up-form-item label="训练人员" labelWidth="70" class="peo">
             <scroll-view
               scroll-y
-              style="height: 240rpx"
+              style="height: 350rpx"
               v-if="studentList.length"
               @scrolltolower="upToLower"
             >
@@ -151,10 +162,11 @@ defineExpose({
   }
 }
 ::v-deep .u-checkbox-group--column {
-  display: flex;
+  gap: 10rpx 40rpx;
+  display: grid;
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: space-between;
-  width: 180px;
+  grid-template-columns: repeat(4, 1fr);
 }
 </style>
