@@ -12,7 +12,6 @@ export function createApp() {
   app.component('emptyBox', emptyBox)
   app.component('toast', toast)
   app.use(uviewPlus)
-  app.use(pinia)
   setConfig({
     // 修改$u.config对象的属性
     config: {
@@ -21,6 +20,7 @@ export function createApp() {
     },
     // 修改$u.props对象的属性
   })
+  app.use(pinia)
   return {
     app,
   }

@@ -120,14 +120,14 @@ onBeforeUnmount(() => {
         </view>
         <!-- 班级 -->
         <view class="flexBox"
-          ><image src="@/static/images/people.png" style="width: 50rpx; height: 50rpx" />训练队伍:
+          ><image src="@/static/images/people.png" style="width: 25rpx; height: 25rpx" />训练队伍:
           {{ BaseInfo?.trainingTeamName }}</view
         >
         <!-- 手环 -->
         <view class="flexBox"
           ><image
             src="@/static/images/watch.png"
-            style="width: 50rpx; height: 50rpx"
+            style="width: 25rpx; height: 25rpx"
             mode="scaleToFill"
           />
           <text
@@ -138,7 +138,7 @@ onBeforeUnmount(() => {
         <view class="flexBox"
           ><image
             src="@/static/images/clock.png"
-            style="width: 50rpx; height: 50rpx"
+            style="width: 30rpx; height: 30rpx"
             mode="scaleToFill"
           />
           <text>计时时间: {{ clock.formattedTime }}</text></view
@@ -266,10 +266,10 @@ onBeforeUnmount(() => {
   justify-content: space-between;
 }
 .custom-style {
-  height: 100rpx;
+  height: 40rpx;
   border: none;
   margin: 0;
-  width: 308rpx;
+  width: 160rpx;
   background: #58cca5;
   border-radius: 26rpx;
 }

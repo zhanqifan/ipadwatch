@@ -159,35 +159,38 @@ onMounted(() => {
 <style lang="scss" scoped>
 .top {
   display: flex;
-  gap: 50rpx;
+  gap: 30rpx;
 }
 .card_box {
   display: grid;
-  padding: 20rpx;
+  padding: 10rpx;
   grid-template-columns: repeat(2, 1fr);
-  gap: 20rpx;
+  gap: 10rpx;
 
   .card {
     border-radius: 10rpx;
-    margin-top: 15rpx;
     background-color: #f7f8fa;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 25rpx;
+    padding: 10rpx;
     .card_content {
+      .title {
+        font-size: 13rpx;
+      }
       .type {
         color: #5c5c5cc4;
-        font-size: 25rpx;
+        font-size: 10rpx;
       }
       view {
-        margin-bottom: 10rpx;
+        margin-bottom: 5rpx;
       }
     }
     .detail {
       background-color: #4b84fa;
-      padding: 10rpx;
-      border-radius: 10rpx;
+      padding: 8rpx;
+      font-size: 11rpx;
+      border-radius: 4rpx;
       color: #fff;
     }
   }

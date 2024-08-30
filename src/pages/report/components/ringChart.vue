@@ -1,5 +1,5 @@
 <template>
-  <view style="height: 240rpx; width: 300rpx"><l-echart ref="chartRef"></l-echart></view>
+  <view style="height: 80rpx; width: 100rpx"><l-echart ref="chartRef"></l-echart></view>
 </template>
 
 <script setup lang="ts">

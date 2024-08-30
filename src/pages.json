@@ -61,7 +61,7 @@
     "navigationBarBackgroundColor": "#F8F8F8",
     "backgroundColor": "#F8F8F8",
     "pageOrientation": "landscape",
-
+    "rpxCalcMaxDeviceWidth": 2000, // rpx 计算所支持的最大设备宽度，单位 px，默认值为 960
 
   },
   // 设置 TabBar

@@ -29,6 +29,7 @@ input,
 scroll-view {
   font-family: test;
   box-sizing: border-box;
+  font-size: 14rpx;
 }
 
 button::after {

@@ -54,13 +54,13 @@ defineExpose({
       :show="show"
       :title="title"
       @confirm="commit"
-      width="800rpx"
+      width="300rpx"
     >
       <view class="slot-content">
         <up-form labelPosition="left" :model="form" :rules="rules" ref="formRef">
           <up-form-item
             label="运动项目"
-            labelWidth="70"
+            labelWidth="90"
             prop="exerciseName"
             placter
             borderBottom

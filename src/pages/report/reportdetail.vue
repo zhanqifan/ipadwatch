@@ -219,15 +219,15 @@ onLoad((options) => {
 
       <!-- 主体 -->
       <view class="main">
-        <up-row gutter="10">
-          <up-col span="3">
+        <uni-row>
+          <uni-col span="5">
             <view class="Base_info">
               <view class="title">学生名单</view>
               <view class="Base_team">
                 <text>{{ studentList?.teamName }}</text>
                 <text>授课教师:{{ studentList?.teacherName }}</text>
               </view>
-              <scroll-view scroll-y style="height: 132rpx">
+              <scroll-view scroll-y style="height: 80rpx">
                 <view class="students">
                   <text
                     class="name"
@@ -239,9 +239,9 @@ onLoad((options) => {
                 </view>
               </scroll-view>
             </view>
-          </up-col>
+          </uni-col>
           <!-- 训练运动达成情况 -->
-          <up-col span="9">
+          <uni-col span="17" :offset="1">
             <view class="Base_right">
               <view class="condition">训练运动达成情况</view>
               <up-row>
@@ -250,7 +250,7 @@ onLoad((options) => {
                     <ringChart v-if="sportComplate" :sportComplate="sportComplate" />
                   </view>
                 </up-col>
-                <up-col span="8">
+                <up-col span="21">
                   <view class="container">
                     <view v-for="(item, index) of filterDate" :key="index">
                       <view v-if="sportDict[index as keyof typeof sportDict]?.label" class="item">
@@ -270,8 +270,8 @@ onLoad((options) => {
                 </up-col>
               </up-row>
             </view>
-          </up-col>
-        </up-row>
+          </uni-col>
+        </uni-row>
         <!-- 中间 -->
         <up-row class="middle" gutter="10">
           <up-col span="6">
@@ -314,16 +314,16 @@ onLoad((options) => {
 <style lang="scss">
 .top {
   display: flex;
-  gap: 50rpx;
+  gap: 10rpx;
   align-items: center;
   .datePicker {
-    width: 300rpx;
+    width: 100rpx;
   }
   .btn {
     display: flex;
     .btn_e {
-      width: 150rpx;
-      height: 70rpx;
+      width: 70rpx;
+      height: 22rpx;
       margin-right: 10rpx;
     }
   }
@@ -332,18 +332,16 @@ onLoad((options) => {
 .main {
   padding: 3rpx;
   .Base_info {
-    box-shadow: 0rpx 0rpx 16rpx 0rpx rgba(0, 0, 0, 0.1);
+    box-shadow: 0rpx 0rpx 8rpx 0rpx rgba(0, 0, 0, 0.1);
     border-radius: 20rpx;
-    padding: 30rpx 20rpx;
-    min-height: 300rpx;
+    padding: 10rpx 10rpx;
     .title {
       padding: 0rpx 0rpx;
-      margin-bottom: 40rpx;
     }
     .Base_team {
       display: flex;
       justify-content: space-between;
-      font-size: 25rpx;
+      font-size: 10rpx;
     }
     .students {
       font-size: 25rpx;
@@ -362,18 +360,17 @@ onLoad((options) => {
     }
   }
   .Base_right {
-    box-shadow: 0rpx 0rpx 16rpx 0rpx rgba(0, 0, 0, 0.1);
-    border-radius: 20rpx;
+    box-shadow: 0rpx 0rpx 8rpx 0rpx rgba(0, 0, 0, 0.1);
+    border-radius: 10rpx;
     .container {
       display: grid;
       grid-template-columns: repeat(3, 1fr); // 设定每行 3 列
       .item {
         display: flex;
         align-items: center;
-        padding: 10px; // 内边距
+        padding: 6rpx; // 内边距
         border-radius: 4px; // 圆角（可选）
       }
-
       .dot {
         width: 10px; // 圆点的大小
         height: 10px;
@@ -389,8 +386,8 @@ onLoad((options) => {
     }
 
     .condition {
-      padding-left: 30rpx;
-      padding-top: 20rpx;
+      padding-left: 20rpx;
+      padding-top: 5rpx;
     }
   }
   .middle {

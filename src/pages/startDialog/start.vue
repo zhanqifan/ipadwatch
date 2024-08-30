@@ -90,7 +90,7 @@ onMounted(() => {
   <tabBar :selected="0">
     <view class="sprot_box">
       <!-- 步骤条 -->
-      <up-steps current="0" style="margin-bottom: 100rpx">
+      <up-steps current="0" style="margin-bottom: 50rpx">
         <up-steps-item title="选择训练"> </up-steps-item>
         <up-steps-item title="开始训练"></up-steps-item>
         <up-steps-item title="训练报告"></up-steps-item>
@@ -100,14 +100,14 @@ onMounted(() => {
         <view class="project">
           选择项目<text class="add" @click="open('pro')">新增训练项目</text>
         </view>
-        <scroll-view scroll-x style="width: 68vw; height: 150rpx">
+        <scroll-view scroll-x style="width: 68vw; height: 70rpx">
           <view class="project_group" v-if="radiolist1.length">
             <up-radio-group v-model="exerciseTypeId" placement="column">
               <up-radio
                 v-for="(item, index) in radiolist1"
                 :customStyle="{
-                  marginRight: '60rpx',
-                  minWidth: '250rpx',
+                  marginRight: '20rpx',
+                  minWidth: '90rpx',
                   borderRadius: '5rpx',
                   background: item.exerciseTypeId == exerciseTypeId ? '#387ff2' : '',
                   border:
@@ -143,9 +143,9 @@ onMounted(() => {
                     item.trainingTeamId == trainingTeamId
                       ? '5rpx solid #387ff2'
                       : '1rpx solid #e6e6e6',
-                  width: '300rpx',
+                  width: '110rpx',
                   background: item.trainingTeamId == trainingTeamId ? '#387ff2' : '',
-                  marginRight: '50rpx',
+                  marginRight: '20rpx',
                   borderRadius: '5rpx',
                 }"
                 :labelColor="item.trainingTeamId == trainingTeamId ? '#fff' : 'black'"
@@ -180,12 +180,7 @@ onMounted(() => {
           </scroll-view>
         </view>
       </view>
-      <up-button
-        text="开始训练"
-        type="primary"
-        style="width: 500rpx; height: 150rpx; margin-top: 50rpx"
-        @click="nextStep"
-      />
+      <view class="start_btn" @click="nextStep">开始训练</view>
       <addProject ref="addProjectRef" @success="() => getTrain()" />
       <addTeam ref="addTeamRef" @success="() => getTeam()" />
     </view>
@@ -195,8 +190,8 @@ onMounted(() => {
 <style lang="scss" scoped>
 .project {
   position: relative;
-  padding-left: 20px; // 给伪元素留出空间
-  font-size: 16px;
+  padding-left: 15rpx; // 给伪元素留出空间
+  font-size: 12rpx;
   font-weight: bold;
   margin-bottom: 10rpx;
   .add {
@@ -213,26 +208,26 @@ onMounted(() => {
     left: 0;
     top: 50%;
     transform: translateY(-50%);
-    width: 8px;
-    height: 16px;
+    width: 8rpx;
+    height: 13rpx;
     background-color: #387ff2;
-    border-radius: 2px; // 可选：如果你想让矩形有圆角
+    border-radius: 2rpx; // 可选：如果你想让矩形有圆角
   }
 }
 .project_group {
   display: flex;
   align-items: center;
-  margin-bottom: 40rpx;
+  margin-bottom: 20rpx;
 }
 .sprot_box {
   padding-top: 10rpx;
-  margin-left: 60rpx;
+  margin-left: 20rpx;
 }
 .Cur_people {
   background-color: #f9f9f9;
-  padding: 60rpx;
+  padding: 20rpx;
   .title {
-    margin-bottom: 30rpx;
+    margin-bottom: 10rpx;
   }
   .total {
     display: flex;
@@ -247,19 +242,31 @@ onMounted(() => {
       width: 100%;
       grid-template-columns: repeat(
         auto-fill,
-        minmax(150rpx, 1fr)
+        minmax(100rpx, 1fr)
       ); // Adjust 150rpx to your desired minimum width
-      gap: 20rpx; // Adjust the gap between items if needed
+      gap: 14rpx; // Adjust the gap between items if needed
     }
   }
+}
+.start_btn {
+  width: 200rpx;
+  height: 70rpx;
+  border-radius: 7rpx;
+  margin-top: 25rpx;
+  background-color: #387ff2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #f9f9f9;
+  position: absolute;
+  left: 35%;
 }
 ::v-deep .u-radio-group--column {
   display: flex;
   flex-direction: row;
   .u-radio {
-    padding: 20rpx;
+    padding: 8rpx;
     // border: 1rpx solid #387ff2;
-    margin-right: 20rpx;
   }
 }
 ::v-deep .u-radio__icon-wrap--circle {

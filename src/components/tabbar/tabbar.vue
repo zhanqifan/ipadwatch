@@ -16,7 +16,7 @@ const sidebarItems = ref<
     url: string
   }[]
 >([
-  { icon: 'heart-fill', url: '/pages/startDialog/start' },
+  { icon: 'heart', url: '/pages/startDialog/start' },
   { icon: 'calendar-fill', url: '/pages/report/report' },
   { icon: 'account-fill', url: '/pages/my/my' },
 ])
@@ -41,7 +41,7 @@ const itemClick = (item: itemType) => {
         >
           <u-icon
             :name="item.icon"
-            :color="selected === index ? '#3c9cff' : '#bfcbd9'"
+            :color="selected === index ? '#86dfc1' : '#bfcbd9'"
             size="27"
           ></u-icon>
         </view>
@@ -66,8 +66,8 @@ const itemClick = (item: itemType) => {
   /*  #endif  */
 }
 .sidebar {
-  border-radius: 20rpx;
-  margin: 15rpx 0;
+  border-radius: 10rpx;
+  margin: 4rpx 0;
   background-color: #304056;
   /*  #ifdef  APP-PLUS	 */
   height: calc(100vh - 10px); // 减去导航栏的高度
@@ -79,15 +79,15 @@ const itemClick = (item: itemType) => {
 
 .sidebar-header {
   text-align: center;
-  padding: 5rpx;
+  padding: 3rpx;
   image {
-    width: 80rpx;
-    height: 80rpx;
+    width: 32rpx;
+    height: 32rpx;
   }
 }
 
 .sidebar-menu {
-  margin-top: 20rpx;
+  margin-top: 10rpx;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -95,14 +95,14 @@ const itemClick = (item: itemType) => {
 }
 
 .sidebar-item {
-  padding: 30rpx 0rpx;
+  padding: 13rpx 0rpx;
   cursor: pointer;
   transition: background-color 0.3s;
 }
 
 .main-content {
   flex: 1;
-  padding: 20px;
+  padding: 14px;
   max-height: max-content;
 }
 </style>

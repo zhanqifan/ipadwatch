@@ -101,19 +101,19 @@ defineExpose({
       :show="show"
       :title="title"
       @confirm="commit"
-      width="1300rpx"
+      width="400rpx"
       :showCancelButton="true"
       @cancel="close"
     >
-      <view class="slot-content" style="height: 500rpx; min-width: 600rpx">
+      <view class="slot-content" style="height: 200rpx; min-width: 250rpx">
         <up-form labelPosition="left" :model="form" :rules="rules" ref="formRef">
-          <up-form-item label="队伍名称" labelWidth="70" prop="teamName" borderBottom ref="item1">
+          <up-form-item label="队伍名称" labelWidth="80" prop="teamName" borderBottom ref="item1">
             <up-input v-model="form.teamName" placeholder="请输入队伍名称"></up-input>
           </up-form-item>
-          <up-form-item label="训练人员" labelWidth="70" class="peo">
+          <up-form-item label="训练人员" labelWidth="80" class="peo">
             <scroll-view
               scroll-y
-              style="height: 350rpx"
+              style="height: 130rpx"
               v-if="studentList.length"
               @scrolltolower="upToLower"
             >
@@ -162,7 +162,7 @@ defineExpose({
   }
 }
 ::v-deep .u-checkbox-group--column {
-  gap: 10rpx 40rpx;
+  gap: 10rpx 30rpx;
   display: grid;
   flex-direction: row;
   flex-wrap: wrap;
