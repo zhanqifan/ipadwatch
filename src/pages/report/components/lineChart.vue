@@ -4,7 +4,7 @@
       ><l-echart ref="chartRef"></l-echart
     ></view>
     <view v-else>
-      <emptyBox mode="data" :size="{ width: 250, height: 250 }" />
+      <emptyBox mode="data" :size="{ width: 120, height: 120 }" />
     </view>
   </view>
 </template>
@@ -60,6 +60,9 @@ const option = ref({
     data: yAxis,
     inverse: true, //倒序
     axisTick: false,
+    axisLabel: {
+      fontSize: 13, // 标签字体大小
+    },
   },
   series: [
     {
@@ -80,7 +83,7 @@ const option = ref({
         show: true, // 显示标签
         position: 'right', // 标签显示在柱子顶部
         color: '#000', // 标签文字颜色
-        fontSize: 12, // 标签字体大小
+        fontSize: 15, // 标签字体大小
         formatter: (params: any) => {
           // 使用 dayjs 对数据进行格式化
           if (!params.value) return ''

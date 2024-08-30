@@ -15,27 +15,32 @@ const completionNum = computed(() => {
 const UncompletionNum = computed(() => {
   return props.sportComplate.totalNum - props.sportComplate.completionNum
 })
+const pxToRpx = (px: any) => {
+  const screenWidth = uni.getSystemInfoSync().screenWidth
+  console.log((px / 750) * screenWidth)
+  return (px / 750) * screenWidth
+}
 const option = ref({
   legend: {
     top: '0%', // 设置图例距离顶部的距离
     left: '0%', // 设置图例距离右侧的距离
-    itemWidth: 10, // 设置图例图标的宽度
-    itemHeight: 10, // 设置图例图标的高度
+    itemWidth: pxToRpx(8), // 设置图例图标的宽度
+    itemHeight: pxToRpx(8), // 设置图例图标的高度
     textStyle: {
-      fontSize: 10, // 设置图例文字的大小
+      fontSize: pxToRpx(6.3), // 设置图例文字的大小
     },
   },
 
   title: {
     text: '训练负荷达成率',
     textStyle: {
-      fontSize: 10, // 设置标题文字大小
+      fontSize: pxToRpx(8), // 设置标题文字大小
       fontWeight: 'bolder', // 可选：设置标题文字加粗
       color: '#333', // 可选：设置标题文字颜色
       fontFamily: 'test',
     },
 
-    bottom: 8, // 将标题定位到底部，距离底部 20px
+    bottom: pxToRpx(3), // 将标题定位到底部，距离底部 20px
     left: 'center', // 标题水平居中
   },
   series: [
@@ -60,7 +65,7 @@ const option = ref({
       emphasis: {
         label: {
           show: true,
-          fontSize: '10',
+          fontSize: '13',
           formatter: (params: any) => {
             //切换非默认选项配置数据展示
             if (params.dataIndex != 0) {

@@ -11,15 +11,9 @@ export function createApp() {
   app.component('tabBar', tabBar)
   app.component('emptyBox', emptyBox)
   app.component('toast', toast)
+
+  // 使用 uview-plus
   app.use(uviewPlus)
-  setConfig({
-    // 修改$u.config对象的属性
-    config: {
-      // 修改默认单位为rpx，相当于执行 uni.$u.config.unit = 'rpx'
-      unit: 'rpx',
-    },
-    // 修改$u.props对象的属性
-  })
   app.use(pinia)
   return {
     app,

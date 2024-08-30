@@ -219,89 +219,74 @@ onLoad((options) => {
 
       <!-- 主体 -->
       <view class="main">
-        <uni-row>
-          <uni-col span="5">
-            <view class="Base_info">
+        <view class="main_top">
+          <view class="Base_info">
+            <view class="Base_team">
               <view class="title">学生名单</view>
-              <view class="Base_team">
-                <text>{{ studentList?.teamName }}</text>
-                <text>授课教师:{{ studentList?.teacherName }}</text>
+              <view>{{ studentList?.teamName }}</view>
+            </view>
+            <scroll-view scroll-y style="height: 50rpx">
+              <view class="students">
+                <text
+                  class="name"
+                  v-for="(item, index) in studentList?.studentNameList"
+                  @click="toStudent(item)"
+                  :key="index"
+                  >{{ item.name }}</text
+                >
               </view>
-              <scroll-view scroll-y style="height: 80rpx">
-                <view class="students">
-                  <text
-                    class="name"
-                    v-for="(item, index) in studentList?.studentNameList"
-                    @click="toStudent(item)"
-                    :key="index"
-                    >{{ item.name }}</text
-                  >
-                </view>
-              </scroll-view>
-            </view>
-          </uni-col>
+            </scroll-view>
+          </view>
           <!-- 训练运动达成情况 -->
-          <uni-col span="17" :offset="1">
-            <view class="Base_right">
-              <view class="condition">训练运动达成情况</view>
-              <up-row>
-                <up-col span="3">
-                  <view style="padding-left: 30rpx">
-                    <ringChart v-if="sportComplate" :sportComplate="sportComplate" />
+
+          <view class="Base_right">
+            <view class="condition">训练运动达成情况</view>
+            <view class="condition_main">
+              <view class="charts">
+                <ringChart v-if="sportComplate" :sportComplate="sportComplate" />
+              </view>
+              <view class="container">
+                <view v-for="(item, index) of filterDate" :key="index">
+                  <view v-if="sportDict[index as keyof typeof sportDict]?.label" class="item">
+                    <view
+                      class="dot"
+                      :style="{ background: sportDict[index as keyof typeof sportDict]?.color }"
+                    ></view>
+                    <view class="text">{{
+                      sportDict[index as keyof typeof sportDict]?.label +
+                      ':' +
+                      secondsToMinutes(item!, index) +
+                      sportDict[index as keyof typeof sportDict]?.unit
+                    }}</view>
                   </view>
-                </up-col>
-                <up-col span="21">
-                  <view class="container">
-                    <view v-for="(item, index) of filterDate" :key="index">
-                      <view v-if="sportDict[index as keyof typeof sportDict]?.label" class="item">
-                        <view
-                          class="dot"
-                          :style="{ background: sportDict[index as keyof typeof sportDict]?.color }"
-                        ></view>
-                        <view class="text">{{
-                          sportDict[index as keyof typeof sportDict]?.label +
-                          ':' +
-                          secondsToMinutes(item!, index) +
-                          sportDict[index as keyof typeof sportDict]?.unit
-                        }}</view>
-                      </view>
-                    </view>
-                  </view>
-                </up-col>
-              </up-row>
+                </view>
+              </view>
             </view>
-          </uni-col>
-        </uni-row>
+          </view>
+        </view>
         <!-- 中间 -->
-        <up-row class="middle" gutter="10">
-          <up-col span="6">
-            <view class="map1">
-              <view style="margin-bottom: 20rpx">训练队运动强度分布图 </view>
-              <view><lineChart v-if="heartMap" :heartMap="heartMap" /></view>
-            </view>
-          </up-col>
-          <up-col span="6">
-            <view class="map1">
-              <view style="margin-bottom: 20rpx">训练队心率对比图 </view>
-              <view><lineChart1 v-if="heartCompare" :heartCompare="heartCompare" /></view>
-            </view>
-          </up-col>
-        </up-row>
+        <view class="middle">
+          <view class="map1">
+            <view style="margin-bottom: 20rpx">训练队运动强度分布图 </view>
+            <view><lineChart v-if="heartMap" :heartMap="heartMap" /></view>
+          </view>
+          <view class="map1">
+            <view style="margin-bottom: 20rpx">训练队心率对比图 </view>
+            <view><lineChart1 v-if="heartCompare" :heartCompare="heartCompare" /></view>
+          </view>
+        </view>
         <!-- 底部 -->
-        <up-row class="bottom" gutter="10">
-          <up-col span="6"
-            ><view class="map1">
-              <view style="margin-bottom: 20rpx">训练队运动强度分布图 </view>
-              <view><sportRank v-if="sportRanks" :sportRanks="sportRanks" /></view>
-            </view>
-          </up-col>
-          <up-col span="6"
-            ><view class="map1">
-              <view style="margin-bottom: 20rpx">训练队运动负荷项目及达标情况 </view>
-              <view><pressure v-if="SportLoads" :SportLoads="SportLoads" /></view>
-            </view>
-          </up-col>
-        </up-row>
+        <view class="bottom">
+          <view class="map1">
+            <view style="margin-bottom: 6rpx">训练队运动强度分布图 </view>
+            <view><sportRank v-if="sportRanks" :sportRanks="sportRanks" /></view>
+          </view>
+
+          <view class="map1">
+            <view style="margin-bottom: 0rpx">训练队运动负荷项目及达标情况 </view>
+            <view><pressure v-if="SportLoads" :SportLoads="SportLoads" /></view>
+          </view>
+        </view>
       </view>
 
       <!-- 消息提示 -->
@@ -316,6 +301,7 @@ onLoad((options) => {
   display: flex;
   gap: 10rpx;
   align-items: center;
+  margin-bottom: -7rpx;
   .datePicker {
     width: 100rpx;
   }
@@ -331,10 +317,15 @@ onLoad((options) => {
 
 .main {
   padding: 3rpx;
+  .main_top {
+    display: flex;
+    gap: 0 13rpx;
+  }
   .Base_info {
     box-shadow: 0rpx 0rpx 8rpx 0rpx rgba(0, 0, 0, 0.1);
-    border-radius: 20rpx;
+    border-radius: 10rpx;
     padding: 10rpx 10rpx;
+    width: 23vw;
     .title {
       padding: 0rpx 0rpx;
     }
@@ -344,8 +335,8 @@ onLoad((options) => {
       font-size: 10rpx;
     }
     .students {
-      font-size: 25rpx;
-      margin-top: 10rpx;
+      font-size: 8rpx;
+      margin-top: 8rpx;
       display: grid;
       gap: 10rpx;
       grid-template-columns: repeat(4, 1fr); // 设定每行 3 列
@@ -354,58 +345,75 @@ onLoad((options) => {
         color: #fff;
         text-align: center;
         white-space: nowrap;
-        border-radius: 10rpx;
+        border-radius: 3rpx;
         padding: 2rpx;
       }
     }
   }
   .Base_right {
-    box-shadow: 0rpx 0rpx 8rpx 0rpx rgba(0, 0, 0, 0.1);
+    box-shadow: 0rpx 0rpx 6rpx 0rpx rgba(0, 0, 0, 0.1);
     border-radius: 10rpx;
-    .container {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr); // 设定每行 3 列
-      .item {
-        display: flex;
-        align-items: center;
-        padding: 6rpx; // 内边距
-        border-radius: 4px; // 圆角（可选）
-      }
-      .dot {
-        width: 10px; // 圆点的大小
-        height: 10px;
-        background-color: #333; // 圆点的颜色
-        border-radius: 50%; // 使其为圆形
-        margin-right: 8px; // 圆点和文本之间的间隔
-      }
-
-      .text {
-        white-space: nowrap; // 禁止换行
-        font-size: 14px; // Adjust text size as needed
-      }
-    }
+    width: 67vw;
 
     .condition {
       padding-left: 20rpx;
       padding-top: 5rpx;
     }
+    .condition_main {
+      display: flex;
+      align-items: center; /* 垂直居中对齐 */
+      justify-content: space-between;
+      .charts {
+        margin-left: 18rpx;
+      }
+      .container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr); // 设定每行 3 列
+        .item {
+          display: flex;
+          align-items: center;
+          padding: 6rpx; // 内边距
+          border-radius: 4px; // 圆角（可选）
+        }
+        .dot {
+          width: 6rpx; // 圆点的大小
+          height: 6rpx;
+          background-color: #333; // 圆点的颜色
+          border-radius: 50%; // 使其为圆形
+          margin-right: 5rpx; // 圆点和文本之间的间隔
+        }
+
+        .text {
+          white-space: nowrap; // 禁止换行
+          font-size: 14px; // Adjust text size as needed
+        }
+      }
+    }
   }
+
   .middle {
-    margin-top: 20rpx;
+    margin-top: 5rpx;
+    display: flex;
+    gap: 0 10rpx;
     .map1 {
-      border-radius: 20rpx;
-      padding: 20rpx;
+      flex: 1;
       border-radius: 10rpx;
-      box-shadow: 0rpx 0rpx 16rpx 0rpx rgba(0, 0, 0, 0.1);
+      padding: 10rpx;
+      border-radius: 10rpx;
+      box-shadow: 0rpx 0rpx 6rpx 0rpx rgba(0, 0, 0, 0.1);
     }
   }
   .bottom {
-    margin-top: 10rpx;
+    margin-top: 5rpx;
+
+    display: flex;
+    gap: 8rpx;
     .map1 {
+      flex: 1;
       border-radius: 20rpx;
-      padding: 20rpx;
+      padding: 10rpx;
       border-radius: 10rpx;
-      box-shadow: 0rpx 0rpx 16rpx 0rpx rgba(0, 0, 0, 0.1);
+      box-shadow: 0rpx 0rpx 8rpx 0rpx rgba(0, 0, 0, 0.1);
     }
   }
 }

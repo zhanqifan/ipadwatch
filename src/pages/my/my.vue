@@ -37,7 +37,10 @@ const exit = () => {
 .card {
   width: 30vw;
   .teacher {
-    margin-bottom: 30rpx;
+    margin-bottom: 10rpx;
+  }
+  .my {
+    font-size: 14rpx;
   }
 }
 </style>

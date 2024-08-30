@@ -38,46 +38,34 @@ const startInterval = async () => {
   if (intervalId.value !== null) {
     clearInterval(intervalId.value) // 避免多次启动定时器
   }
-  intervalId.value = setInterval(async () => {
-    const res = await detectionData({
-      ...startParams.value,
-      studentIds: BaseInfo.value?.students as number[],
-    })
-    // // 处理手环掉线  处理方法:只替换有返回的部分
-    // BaseInfo.value.studentInfoList = res.data.taskHealthMetricsVoList.map((newData: any) => {
-    //   const currentItem = BaseInfo.value?.studentInfoList.find(
-    //     (item) => {
-    //       item.studentId === newData.studentId
-    //     }
-    //   )
-    //   if (currentItem) {
-    //     // Object.assign(existingData, newData) // 替换相同项
-    //     return currentItem
-    //   } else {
-    //     return { ...newData, status: 0 }
-    //   }
-    // })
-    if (BaseInfo.value?.studentInfoList) {
-      BaseInfo.value.studentInfoList = BaseInfo.value?.studentInfoList.map((item) => {
-        const existItem = res.data.taskHealthMetricsVoList.find(
-          (newItem) => newItem.studentName === item.studentName,
-        )
-        if (existItem) {
-          console.log('存在')
-          return { ...existItem, status: 1 }
-        } else {
-          console.log('不存在')
-          return { ...item, status: 0 }
-        }
-      })
-      console.log(BaseInfo.value.studentInfoList)
-      // 在线状态实时替换
-      watchOnline.value = {
-        braceletsOnlineNum: res.data.braceletsOnlineNum,
-        braceletsTotalNum: res.data.braceletsTotalNum,
+  intervalId.value = setInterval(immediateWatch, 1000) // 每1秒轮询一次
+}
+
+const immediateWatch = async () => {
+  const res = await detectionData({
+    ...startParams.value,
+    studentIds: BaseInfo.value?.students as number[],
+  })
+  // 处理掉线
+  if (BaseInfo.value?.studentInfoList) {
+    BaseInfo.value.studentInfoList = BaseInfo.value?.studentInfoList.map((item) => {
+      const existItem = res.data.taskHealthMetricsVoList.find(
+        (newItem) => newItem.studentName === item.studentName,
+      )
+      if (existItem) {
+        console.log('存在')
+        return { ...existItem, status: 1 }
+      } else {
+        console.log('不存在')
+        return { ...item, status: 0 }
       }
+    })
+    // 在线状态实时替换
+    watchOnline.value = {
+      braceletsOnlineNum: res.data.braceletsOnlineNum,
+      braceletsTotalNum: res.data.braceletsTotalNum,
     }
-  }, 1000) // 每1秒轮询一次
+  }
 }
 // 开始/结束
 const control = async (type: 'start' | 'end') => {
@@ -99,6 +87,7 @@ const control = async (type: 'start' | 'end') => {
 onLoad((options) => {
   startParams.value.taskId = options!.taskId
   getHeartList(options!.taskId)
+  immediateWatch() //立即执行一次
   startInterval()
 })
 // 离开前确保销毁定时器
@@ -120,14 +109,14 @@ onBeforeUnmount(() => {
         </view>
         <!-- 班级 -->
         <view class="flexBox"
-          ><image src="@/static/images/people.png" style="width: 25rpx; height: 25rpx" />训练队伍:
+          ><image src="@/static/images/people.png" style="width: 23rpx; height: 23rpx" />训练队伍:
           {{ BaseInfo?.trainingTeamName }}</view
         >
         <!-- 手环 -->
         <view class="flexBox"
           ><image
             src="@/static/images/watch.png"
-            style="width: 25rpx; height: 25rpx"
+            style="width: 23rpx; height: 23rpx"
             mode="scaleToFill"
           />
           <text
@@ -138,7 +127,7 @@ onBeforeUnmount(() => {
         <view class="flexBox"
           ><image
             src="@/static/images/clock.png"
-            style="width: 30rpx; height: 30rpx"
+            style="width: 23rpx; height: 23rpx"
             mode="scaleToFill"
           />
           <text>计时时间: {{ clock.formattedTime }}</text></view
@@ -146,7 +135,7 @@ onBeforeUnmount(() => {
         <up-button
           type="primary"
           class="custom-style"
-          text="开始锻炼"
+          text="开始运动"
           @click="control('start')"
           v-if="btnShow"
         ></up-button>
@@ -155,7 +144,7 @@ onBeforeUnmount(() => {
           type="error"
           class="custom-style"
           style="background: #f56c6c"
-          text="结束锻炼"
+          text="结束运动"
           @click="control('end')"
         ></up-button>
       </view>
@@ -166,12 +155,12 @@ onBeforeUnmount(() => {
               v-for="item in BaseInfo?.studentInfoList"
               :key="item.id"
               class="card_item"
-              :style="{ background: item?.status ? '#fff' : '#ebedee' }"
+              :style="{ background: item?.status ? '#fff' : '#EBECEF' }"
             >
-              <!-- 在线卡片 -->
+              <!-- 在线卡片#fff -->
               <view v-show="item?.status === 1">
                 <view class="top">
-                  <view style="display: flex; align-items: center">
+                  <view style="display: flex; align-items: center; font-size: 10rpx">
                     <image src="@/static/images/stu.png" class="User_img" />{{ item.studentName }}
                     <!-- 速度状态 -->
                     <text class="status">{{ getStyleByType('statusColor', item.heartRate) }} </text>
@@ -190,13 +179,13 @@ onBeforeUnmount(() => {
                 <view class="heart_main">
                   <!-- 左侧heartrate +bmp -->
                   <view>
-                    <view style="margin-left: 20rpx; margin-top: 20rpx"
+                    <view style="margin-left: 13rpx; margin-top: 10rpx"
                       ><image
                         src="@/static/images/love.png"
-                        style="width: 40rpx; height: 40rpx"
+                        style="width: 15rpx; height: 15rpx"
                         mode="scaleToFill"
                       />
-                      <text style="font-size: 27rpx"> Heart rate</text></view
+                      <text style="font-size: 10rpx"> Heart rate</text></view
                     >
                     <view class="heart">
                       <text
@@ -204,14 +193,14 @@ onBeforeUnmount(() => {
                         :style="{ color: getStyleByType('heartRateColor', item.heartRate) }"
                         >{{ item.heartRate ?? 0 }}
                       </text>
-                      <text style="color: #959aa0; font-size: 25rpx">bpm</text>
+                      <text style="color: #959aa0; font-size: 12rpx">bpm</text>
                     </view>
                   </view>
                   <!-- 右侧心率图 -->
                   <view>
                     <image
                       src="@/static/images/heartJump.png"
-                      style="width: 140rpx; height: 110rpx"
+                      style="width: 45rpx; height: 44rpx"
                       mode="scaleToFill"
                     />
                   </view>
@@ -220,7 +209,7 @@ onBeforeUnmount(() => {
               <!-- 离线卡片 -->
               <view v-show="item?.status === 0">
                 <view class="top">
-                  <view style="display: flex; align-items: center">
+                  <view style="display: flex; align-items: center; font-size: 10rpx">
                     <image src="@/static/images/stu.png" class="User_img" />{{ item.studentName }}
                     <!-- 速度状态 -->
                     <text class="offLine">离线</text>
@@ -228,24 +217,24 @@ onBeforeUnmount(() => {
                   <!-- 电量 -->
                   <image
                     src="@/static/images/leave.png"
-                    style="width: 40rpx; height: 40rpx"
+                    style="width: 15rpx; height: 15rpx"
                     mode="scaleToFill"
                   />
                 </view>
                 <view class="heart_main">
                   <!-- 左侧heartrate +bmp -->
                   <view>
-                    <view style="margin-left: 20rpx; margin-top: 20rpx"
+                    <view style="margin-left: 15rpx; margin-top: 10rpx"
                       ><image
                         src="@/static/images/love.png"
-                        style="width: 40rpx; height: 40rpx"
+                        style="width: 15rpx; height: 15rpx"
                         mode="scaleToFill"
                       />
-                      <text style="font-size: 27rpx"> Heart rate</text></view
+                      <text style="font-size: 10rpx"> Heart rate</text></view
                     >
                     <view class="heart">
                       <text class="heart_rate">- </text>
-                      <text style="color: #959aa0; font-size: 25rpx">bpm</text>
+                      <text style="color: #959aa0; font-size: 12rpx">bpm</text>
                     </view>
                   </view>
                   <!-- 右侧心率图 -->
@@ -264,62 +253,62 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  font-size: 12rpx;
 }
 .custom-style {
   height: 40rpx;
   border: none;
   margin: 0;
-  width: 160rpx;
+  width: 150rpx;
   background: #58cca5;
-  border-radius: 26rpx;
+  border-radius: 8rpx;
 }
 .flexBox {
   display: flex;
   align-items: center;
 }
+
 .main {
   background-color: #f5f9fa;
-  border-radius: 20rpx;
-  padding: 3%;
-  margin-top: 20rpx;
+  border-radius: 10rpx;
+  padding: 2%;
+  margin-top: 10rpx;
   min-height: 70vh;
+
   .card_group {
     display: grid;
     justify-content: center;
     grid-template-columns: 1fr 1fr 1fr 1fr;
-    gap: 0.5% 3%; // 控制卡片之间的间距
+    gap: 5rpx 10rpx; // 控制卡片之间的间距
+
     .card_item {
-      max-width: 500rpx;
-      margin-bottom: 20rpx; // 控制行之间的间距
       background-color: #fff;
-      border-radius: 16rpx;
-      padding: 15rpx 20rpx;
-      box-shadow: 0 0 10rpx rgba(0, 0, 0, 0.1);
+      border-radius: 8rpx;
+      box-shadow: 0 0 2rpx rgba(0, 0, 0, 0.1);
       .offLine {
-        font-size: 24rpx;
+        font-size: 11rpx;
         margin-left: 5rpx;
       }
       .status {
         font-size: 12px;
         color: #4abc7a;
-        width: 50rpx;
         margin-left: 5rpx;
       }
       .top {
         display: flex;
         align-items: center;
-        margin-top: 20rpx;
+        margin-top: 10rpx;
         justify-content: space-between;
-        padding: 0rpx 20rpx;
+        padding: 0rpx 13rpx;
         .User_img {
-          width: 45rpx;
-          border-radius: 25rpx;
-          height: 45rpx;
+          width: 20rpx;
+          border-radius: 20rpx;
+          height: 20rpx;
         }
         .battery-container {
-          width: 68rpx;
-          height: 34rpx;
-          border: 4rpx solid #3bc968;
+          width: 30rpx;
+          height: 15rpx;
+          border: 2rpx solid #3bc968;
           border-radius: 4rpx;
           position: relative;
           transform: scale(0.7);
@@ -327,11 +316,11 @@ onBeforeUnmount(() => {
           &:after {
             content: '';
             display: block;
-            height: 12rpx;
+            height: 8rpx;
             width: 4rpx;
             position: absolute;
             background: #3bc968;
-            right: -8rpx;
+            right: -5rpx;
             top: 0;
             bottom: 0;
             margin: auto 0;
@@ -356,9 +345,9 @@ onBeforeUnmount(() => {
         justify-content: space-between;
       }
       .heart {
-        padding: 10rpx 26rpx;
+        padding: 3rpx 16rpx;
         .heart_rate {
-          font-size: 75rpx;
+          font-size: 30rpx;
         }
       }
     }

@@ -99,31 +99,28 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .main {
-  font-size: 24rpx;
-  min-height: 15vh;
+  font-size: 9rpx;
 }
 .imageSize {
-  width: 30rpx;
-  height: 30rpx;
+  width: 10rpx;
+  height: 10rpx;
 }
 .title {
   display: grid;
   text-align: center;
   align-items: center;
-  grid-template-columns: 180rpx 2fr 1fr 1fr 1fr;
+  grid-template-columns: 70rpx 2fr 1fr 1fr 1fr;
+  margin-top: 8rpx;
 }
 .left-align {
   justify-self: start;
   white-space: nowrap;
-  margin-top: 13rpx;
 }
 .row {
   display: flex;
-  padding-left: 20rpx;
   align-items: center;
-  margin-top: 13rpx;
   .text {
-    min-width: 55rpx;
+    min-width: 30rpx;
     text-align: center;
   }
 }

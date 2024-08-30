@@ -141,7 +141,7 @@ onMounted(() => {
                 :customStyle="{
                   border:
                     item.trainingTeamId == trainingTeamId
-                      ? '5rpx solid #387ff2'
+                      ? '1rpx solid #387ff2'
                       : '1rpx solid #e6e6e6',
                   width: '110rpx',
                   background: item.trainingTeamId == trainingTeamId ? '#387ff2' : '',
@@ -171,7 +171,7 @@ onMounted(() => {
               <text>训练名单:&nbsp</text>
             </view>
           </view>
-          <scroll-view scroll-y style="max-height: 120rpx">
+          <scroll-view scroll-y style="height: 50rpx">
             <view class="plan_people">
               <view style="color: #387ff2" v-for="item in studentList" :key="item.id"
                 >{{ item.name }}&nbsp
@@ -196,10 +196,10 @@ onMounted(() => {
   margin-bottom: 10rpx;
   .add {
     border: 1rpx solid #387ff2;
-    border-radius: 10rpx;
+    border-radius: 5rpx;
     color: #f9f9f9;
     background-color: #387ff2;
-    padding: 10rpx;
+    padding: 5rpx;
     float: right;
   }
   &::before {
@@ -242,7 +242,7 @@ onMounted(() => {
       width: 100%;
       grid-template-columns: repeat(
         auto-fill,
-        minmax(100rpx, 1fr)
+        minmax(43rpx, 1fr)
       ); // Adjust 150rpx to your desired minimum width
       gap: 14rpx; // Adjust the gap between items if needed
     }

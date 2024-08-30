@@ -24,7 +24,7 @@ watch(
     <view class="rank" v-if="isShow">
       <view>
         <view class="title">最高心率正排行</view>
-        <view class="row"><text></text><text>姓名</text><text>心率</text></view>
+        <view class="row"><text>序号</text><text>姓名</text><text>心率</text></view>
         <view
           class="row1"
           v-for="(item, index) in props.sportRanks.trainingHeartRateListASC.slice(0, 2)"
@@ -76,32 +76,30 @@ watch(
 </template>
 
 <style lang="scss" scoped>
-.main {
-  min-height: 15vh;
-}
 .rank {
   display: flex;
   justify-content: space-around;
   .title {
-    font-size: 25rpx;
+    font-size: 10rpx;
     text-align: center;
   }
   .row {
-    font-size: 23rpx;
+    font-size: 8rpx;
     display: grid;
     text-align: center;
     align-items: center;
     grid-template-columns: repeat(3, 1fr);
-    margin-top: 20rpx;
+    margin-top: 8rpx;
   }
   .row1 {
-    font-size: 23rpx;
+    font-size: 10rpx;
     align-items: center;
     display: grid;
     text-align: center;
-    margin-top: 20rpx;
+    margin-top: 8rpx;
     grid-template-columns: repeat(3, 1fr);
     text {
+      font-size: 8rpx;
       white-space: nowrap;
     }
   }

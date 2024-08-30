@@ -195,76 +195,68 @@ onLoad((options) => {
     </uni-forms>
     <view v-if="isShow">
       <view class="main">
-        <up-row gutter="10">
-          <up-col span="3">
-            <view class="Base_info">
-              <view class="title">基础信息</view>
-              <view class="Base_team"
-                ><text>{{ studentList?.name }}</text
-                ><text>{{ studentList?.trainingName }}</text></view
-              >
+        <view class="main_top">
+          <view class="Base_info">
+            <view class="title">基础信息</view>
+            <view class="Base_team"
+              ><text>{{ studentList?.name }}</text
+              ><text>{{ studentList?.trainingName }}</text></view
+            >
 
-              <view class="students">
-                <text class="name">最高心率：{{ studentList?.maxHeartRate }}</text>
-                <text class="name rank"
-                  >排名{{ studentList?.maxHeartRateRank }}/{{ studentList?.teamTotalNum }}</text
-                >
-                <text class="name">平均心率：{{ studentList?.averageHeartRate }}</text>
-                <text class="name rank"
-                  >排名{{ studentList?.averageHeartRateRank }}/{{ studentList?.teamTotalNum }}</text
-                >
-                <text class="name">历史最高心率：{{ studentList?.historyMaxHeartRate }}</text
-                ><text></text>
-                <text class="name">历史平均心率：{{ studentList?.historyAverageHeartRate }}</text>
-              </view>
+            <view class="students">
+              <text class="name">最高心率：{{ studentList?.maxHeartRate }}</text>
+              <text class="name rank"
+                >排名{{ studentList?.maxHeartRateRank }}/{{ studentList?.teamTotalNum }}</text
+              >
+              <text class="name">平均心率：{{ studentList?.averageHeartRate }}</text>
+              <text class="name rank"
+                >排名{{ studentList?.averageHeartRateRank }}/{{ studentList?.teamTotalNum }}</text
+              >
+              <text class="name">历史最高心率：{{ studentList?.historyMaxHeartRate }}</text
+              ><text></text>
+              <text class="name">历史平均心率：{{ studentList?.historyAverageHeartRate }}</text>
             </view>
-          </up-col>
+          </view>
           <!-- 训练运动达成情况 -->
-          <up-col span="9">
-            <view class="Base_right">
-              <view class="condition">训练运动达成情况</view>
-              <up-row>
-                <up-col span="3">
-                  <view style="padding-left: 30rpx">
-                    <ringChart v-if="sportComplate" :sportComplate="sportComplate" />
-                  </view>
-                </up-col>
-                <up-col span="8">
-                  <view class="container">
-                    <view v-for="(item, index) of filterDate" :key="index">
-                      <view v-if="sportDict[index as keyof typeof sportDict]?.label" class="item">
-                        <view
-                          class="dot"
-                          :style="{ background: sportDict[index as keyof typeof sportDict]?.color }"
-                        ></view>
-                        <view class="text">{{
-                          sportDict[index as keyof typeof sportDict]?.label +
-                          ':' +
-                          secondsToMinutes(item!, index) +
-                          sportDict[index as keyof typeof sportDict]?.unit
-                        }}</view>
-                      </view>
+          <view class="Base_right">
+            <view class="condition">训练运动达成情况</view>
+            <up-row>
+              <up-col span="3">
+                <view style="padding-left: 30rpx">
+                  <ringChart v-if="sportComplate" :sportComplate="sportComplate" />
+                </view>
+              </up-col>
+              <up-col span="8">
+                <view class="container">
+                  <view v-for="(item, index) of filterDate" :key="index">
+                    <view v-if="sportDict[index as keyof typeof sportDict]?.label" class="item">
+                      <view
+                        class="dot"
+                        :style="{ background: sportDict[index as keyof typeof sportDict]?.color }"
+                      ></view>
+                      <view class="text">{{
+                        sportDict[index as keyof typeof sportDict]?.label +
+                        ':' +
+                        secondsToMinutes(item!, index) +
+                        sportDict[index as keyof typeof sportDict]?.unit
+                      }}</view>
                     </view>
                   </view>
-                </up-col>
-              </up-row>
-            </view>
-          </up-col>
-        </up-row>
-        <up-row class="middle" gutter="10">
-          <up-col span="6">
-            <view class="map1">
-              <view style="margin-bottom: 20rpx">运动强度分布图 </view>
-              <view><lineChart v-if="heartMap" :heartMap="heartMap" /></view>
-            </view>
-          </up-col>
-          <up-col span="6">
-            <view class="map1">
-              <view style="margin-bottom: 20rpx">心率对比图 </view>
-              <view><lineChart1 v-if="heartCompare" :heartCompare="heartCompare" /></view>
-            </view>
-          </up-col>
-        </up-row>
+                </view>
+              </up-col>
+            </up-row>
+          </view>
+        </view>
+        <view class="middle">
+          <view class="map1">
+            <view style="margin-bottom: 20rpx">运动强度分布图 </view>
+            <view><lineChart v-if="heartMap" :heartMap="heartMap" /></view>
+          </view>
+          <view class="map1">
+            <view style="margin-bottom: 20rpx">心率对比图 </view>
+            <view><lineChart1 v-if="heartCompare" :heartCompare="heartCompare" /></view>
+          </view>
+        </view>
       </view>
     </view>
 
@@ -276,42 +268,44 @@ onLoad((options) => {
 <style lang="scss" scoped>
 .top {
   display: flex;
-  gap: 50rpx;
+  gap: 10rpx;
   align-items: center;
+  margin-bottom: -7rpx;
   .datePicker {
-    width: 300rpx;
+    width: 100rpx;
   }
   .btn {
     display: flex;
     .btn_e {
-      width: 150rpx;
-      height: 70rpx;
+      width: 70rpx;
+      height: 22rpx;
       margin-right: 10rpx;
     }
   }
 }
 .main {
-  margin-top: 0rpx;
   padding: 3rpx;
+  .main_top {
+    display: flex;
+    gap: 0 13rpx;
+  }
   .Base_info {
-    box-shadow: 0rpx 0rpx 16rpx 0rpx rgba(0, 0, 0, 0.1);
-    border-radius: 20rpx;
-    padding: 20rpx 20rpx;
-    min-height: 300rpx;
+    box-shadow: 0rpx 0rpx 8rpx 0rpx rgba(0, 0, 0, 0.1);
+    border-radius: 10rpx;
+    padding: 10rpx 10rpx;
+    width: 23vw;
     .title {
-      padding: 0rpx 0rpx;
-      margin-bottom: 20rpx;
+      margin-bottom: 8rpx;
     }
     .Base_team {
       display: flex;
       justify-content: space-between;
-      font-size: 25rpx;
+      font-size: 10rpx;
     }
     .students {
-      font-size: 23rpx;
-      margin-top: 10rpx;
+      font-size: 8rpx;
       display: grid;
-      gap: 10rpx;
+      gap: 3rpx;
       grid-template-columns: repeat(2, 1fr); // 设定每行 3 列
       .name {
         white-space: nowrap;
@@ -322,8 +316,8 @@ onLoad((options) => {
         &::before {
           content: '';
           display: inline-block;
-          width: 14rpx; // 圆点的宽度
-          height: 14rpx; // 圆点的高度
+          width: 6rpx; // 圆点的宽度
+          height: 6rpx; // 圆点的高度
           background-color: #4fa2fd; // 圆点的颜色
           border-radius: 50%; // 使其成为圆形
           margin-right: 10rpx; // 圆点和文本之间的间隔
@@ -338,8 +332,9 @@ onLoad((options) => {
     }
   }
   .Base_right {
-    box-shadow: 0rpx 0rpx 16rpx 0rpx rgba(0, 0, 0, 0.1);
-    border-radius: 20rpx;
+    box-shadow: 0rpx 0rpx 6rpx 0rpx rgba(0, 0, 0, 0.1);
+    border-radius: 10rpx;
+    width: 67vw;
     .container {
       display: grid;
       grid-template-columns: repeat(3, 1fr); // 设定每行 3 列
@@ -365,17 +360,20 @@ onLoad((options) => {
     }
 
     .condition {
-      padding-left: 30rpx;
-      padding-top: 20rpx;
+      padding-left: 20rpx;
+      padding-top: 5rpx;
     }
   }
   .middle {
-    margin-top: 50rpx;
+    margin-top: 5rpx;
+    display: flex;
+    gap: 0 10rpx;
     .map1 {
-      border-radius: 20rpx;
-      padding: 20rpx;
+      flex: 1;
       border-radius: 10rpx;
-      box-shadow: 0rpx 0rpx 16rpx 0rpx rgba(0, 0, 0, 0.1);
+      padding: 10rpx;
+      border-radius: 10rpx;
+      box-shadow: 0rpx 0rpx 6rpx 0rpx rgba(0, 0, 0, 0.1);
     }
   }
 }

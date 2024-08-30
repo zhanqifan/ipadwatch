@@ -43,12 +43,18 @@ const option = ref({
     type: 'category',
     boundaryGap: false,
     data: xAxis,
+    axisLabel: {
+      fontSize: 12, // 标签字体大小
+    },
   },
 
   yAxis: {
     name: '次/分',
     type: 'value',
     splitNumber: 5,
+    axisLabel: {
+      fontSize: 12, // 标签字体大小
+    },
   },
   series: [
     {
