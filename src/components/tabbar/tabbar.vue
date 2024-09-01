@@ -4,6 +4,10 @@ const props = defineProps({
     type: Number,
     default: 0,
   },
+    backUrl: {
+      url: String,
+      default: '',
+    },
 })
 
 type itemType = {
@@ -20,6 +24,14 @@ const sidebarItems = ref<
   { icon: 'calendar-fill', url: '/pages/report/report' },
   { icon: 'account-fill', url: '/pages/my/my' },
 ])
+const app = uni.getSystemInfoSync()
+const pageHeight = ref('100vh') // 初始化页面高度
+onMounted(()=>{
+ const safeAreaTop = app.safeAreaInsets?.top || 0
+  const vh = uni.getWindowInfo().windowHeight //获取屏幕用宽度
+  const calculatedHeight = vh 
+  pageHeight.value = `${calculatedHeight}px` // 动态计算高度并设置
+})
 let { selected } = toRefs(props)
 const itemClick = (item: itemType) => {
   // 处理侧边栏菜单项点击事件
@@ -27,11 +39,20 @@ const itemClick = (item: itemType) => {
     url: item.url,
   })
 }
+const back = () => {
+  if (props.backUrl) {
+    uni.navigateTo({
+      url: props.backUrl,
+    })
+  } else {
+    uni.navigateBack({ delta: 1 })
+  }
+}
 </script>
 <template>
-  <view class="sidebar-container">
+  <view class="sidebar-container" :style="{ paddingTop: app.safeAreaInsets?.top + 'rpx', height: '100vh'}">
     <view class="sidebar">
-      <view class="sidebar-header"><image src="@/static/images/stu.png" mode="scaleToFill" /></view>
+      <view class="sidebar-header"><image src="@/static/images/stu.png" mode="scaleToFill"  @click="back"/></view>
       <view class="sidebar-menu">
         <view
           class="sidebar-item"
@@ -47,8 +68,8 @@ const itemClick = (item: itemType) => {
         </view>
       </view>
     </view>
-    <view class="main-content">
-      <scroll-view scroll-y style="height: 90vh">
+    <view class="main-content" :style="{paddingTop:app.safeAreaInsets?.top}">
+      <scroll-view scroll-y >
         <slot />
       </scroll-view>
     </view>
@@ -56,30 +77,22 @@ const itemClick = (item: itemType) => {
 </template>
 
 <style lang="scss" scoped>
+	.page {
+	height: 100%;
+	}
 .sidebar-container {
   display: flex;
-  /*  #ifdef  APP-PLUS	 */
-  height: 100vh;
-  /*  #endif  */
-  /*  #ifdef  H5 */
-  height: calc(100vh - 59px); // 减去导航栏的高度
-  /*  #endif  */
+
 }
 .sidebar {
   border-radius: 10rpx;
-  margin: 4rpx 0;
   background-color: #304056;
-  /*  #ifdef  APP-PLUS	 */
-  height: calc(100vh - 10px); // 减去导航栏的高度
-  /*  #endif  */
-  /*  #ifdef  H5 */
-  height: calc(100vh - 59px); // 减去导航栏的高度
-  /*  #endif  */
+  height: 100%; // 改为使用父容器高度
 }
 
 .sidebar-header {
   text-align: center;
-  padding: 3rpx;
+  padding: 5rpx 3rpx;
   image {
     width: 32rpx;
     height: 32rpx;
@@ -102,7 +115,8 @@ const itemClick = (item: itemType) => {
 
 .main-content {
   flex: 1;
-  padding: 14px;
+  padding: 14rpx;
+  font-size: 15rpx;
   max-height: max-content;
 }
 </style>

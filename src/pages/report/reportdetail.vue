@@ -336,7 +336,7 @@ onLoad((options) => {
     }
     .students {
       font-size: 8rpx;
-      margin-top: 8rpx;
+      padding-top: 8rpx;
       display: grid;
       gap: 10rpx;
       grid-template-columns: repeat(4, 1fr); // 设定每行 3 列

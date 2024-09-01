@@ -97,68 +97,73 @@ onMounted(() => {
       </up-steps>
       <!-- 选择项目 -->
       <view class="select_one">
-        <view class="project">
-          选择项目<text class="add" @click="open('pro')">新增训练项目</text>
+        <view class="project">选择队伍 </view>
+        <view class="btn_group">
+          <scroll-view scroll-x style="width: 68vw; height: 70rpx">
+            <view class="project_group" v-if="radiolist1.length">
+              <up-radio-group v-model="exerciseTypeId" placement="column">
+                <up-radio
+                  v-for="(item, index) in radiolist1"
+                  :customStyle="{
+                    marginRight: '20rpx',
+                    minWidth: '90rpx',
+                    borderRadius: '5rpx',
+                    background: item.exerciseTypeId == exerciseTypeId ? '#387ff2' : '',
+                    border:
+                      item.exerciseTypeId == exerciseTypeId
+                        ? '1rpx solid #387ff2'
+                        : '1rpx solid #e6e6e6',
+                  }"
+                  :labelColor="item.exerciseTypeId == exerciseTypeId ? '#fff' : 'black'"
+                  :key="index"
+                  :label="item.exerciseTypeName"
+                  :name="item.exerciseTypeId"
+                  @change="(e) => groupChange(e, 'pro', item.exerciseTypeName)"
+                >
+                </up-radio>
+                <view class="add" @click="open('pro')"
+                  ><up-icon name="plus-circle-fill" size="25" color="#2979ff"
+                /></view>
+              </up-radio-group>
+            </view>
+            <view v-else> 暂无训练项目请先添加 </view>
+          </scroll-view>
         </view>
-        <scroll-view scroll-x style="width: 68vw; height: 70rpx">
-          <view class="project_group" v-if="radiolist1.length">
-            <up-radio-group v-model="exerciseTypeId" placement="column">
-              <up-radio
-                v-for="(item, index) in radiolist1"
-                :customStyle="{
-                  marginRight: '20rpx',
-                  minWidth: '90rpx',
-                  borderRadius: '5rpx',
-                  background: item.exerciseTypeId == exerciseTypeId ? '#387ff2' : '',
-                  border:
-                    item.exerciseTypeId == exerciseTypeId
-                      ? '1rpx solid #387ff2'
-                      : '1rpx solid #e6e6e6',
-                }"
-                :labelColor="item.exerciseTypeId == exerciseTypeId ? '#fff' : 'black'"
-                :key="index"
-                :label="item.exerciseTypeName"
-                :name="item.exerciseTypeId"
-                @change="(e) => groupChange(e, 'pro', item.exerciseTypeName)"
-              >
-              </up-radio>
-            </up-radio-group>
-          </view>
-          <view v-else> 暂无训练项目请先添加 </view>
-        </scroll-view>
       </view>
       <!-- 选择队伍 -->
       <view class="select_tow">
-        <view class="project">
-          选择队伍
-          <text class="add" @click="open('team')">新增训练队</text>
+        <view class="project"> 选择队伍 </view>
+        <view class="btn_group">
+          <scroll-view scroll-x style="width: 68vw">
+            <view class="project_group" v-if="radiolist2.length">
+              <up-radio-group v-model="trainingTeamId" scroll-left placement="column">
+                <up-radio
+                  v-for="(item, index) in radiolist2"
+                  :customStyle="{
+                    border:
+                      item.trainingTeamId == trainingTeamId
+                        ? '1rpx solid #387ff2'
+                        : '1rpx solid #e6e6e6',
+                    width: '110rpx',
+                    background: item.trainingTeamId == trainingTeamId ? '#387ff2' : '',
+                    marginRight: '20rpx',
+                    borderRadius: '5rpx',
+                  }"
+                  :labelColor="item.trainingTeamId == trainingTeamId ? '#fff' : 'black'"
+                  @change="(e) => groupChange(e, 'team', item.trainingTeamName)"
+                  :key="index"
+                  :label="item.trainingTeamName"
+                  :name="item.trainingTeamId"
+                >
+                </up-radio>
+                <view class="add" @click="open('team')"
+                  ><up-icon name="plus-circle-fill" size="25" color="#2979ff"
+                /></view>
+              </up-radio-group>
+            </view>
+            <view v-else style="margin-bottom: 30rpx">暂无队伍请先添加</view>
+          </scroll-view>
         </view>
-        <scroll-view scroll-x style="width: 68vw">
-          <view class="project_group" v-if="radiolist2.length">
-            <up-radio-group v-model="trainingTeamId" scroll-left placement="column">
-              <up-radio
-                v-for="(item, index) in radiolist2"
-                :customStyle="{
-                  border:
-                    item.trainingTeamId == trainingTeamId
-                      ? '1rpx solid #387ff2'
-                      : '1rpx solid #e6e6e6',
-                  width: '110rpx',
-                  background: item.trainingTeamId == trainingTeamId ? '#387ff2' : '',
-                  marginRight: '20rpx',
-                  borderRadius: '5rpx',
-                }"
-                :labelColor="item.trainingTeamId == trainingTeamId ? '#fff' : 'black'"
-                @change="(e) => groupChange(e, 'team', item.trainingTeamName)"
-                :key="index"
-                :label="item.trainingTeamName"
-                :name="item.trainingTeamId"
-              >
-              </up-radio>
-            </up-radio-group>
-          </view>
-          <view v-else style="margin-bottom: 30rpx">暂无队伍请先添加</view>
-        </scroll-view>
       </view>
       <!-- 训练人员 -->
       <view class="Cur_people">
@@ -173,8 +178,8 @@ onMounted(() => {
           </view>
           <scroll-view scroll-y style="height: 50rpx">
             <view class="plan_people">
-              <view style="color: #387ff2" v-for="item in studentList" :key="item.id"
-                >{{ item.name }}&nbsp
+              <view class="item_people" v-for="item in studentList" :key="item.id"
+                >{{ item.name }}
               </view>
             </view>
           </scroll-view>
@@ -219,6 +224,19 @@ onMounted(() => {
   align-items: center;
   margin-bottom: 20rpx;
 }
+.btn_group {
+  display: flex;
+  align-items: center;
+  .add {
+    border: 2rpx dashed;
+    border-radius: 7rpx;
+    color: #9fa0a1;
+    width: 90rpx;
+    height: 29rpx;
+    display: flex;
+    justify-content: center;
+  }
+}
 .sprot_box {
   padding-top: 10rpx;
   margin-left: 20rpx;
@@ -239,12 +257,17 @@ onMounted(() => {
 
     .plan_people {
       display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(45rpx, 1fr));
       width: 100%;
-      grid-template-columns: repeat(
-        auto-fill,
-        minmax(43rpx, 1fr)
-      ); // Adjust 150rpx to your desired minimum width
-      gap: 14rpx; // Adjust the gap between items if needed
+      align-items: center;
+      gap: 14rpx; /* 可调整项目之间的间距 */
+
+      .item_people {
+        color: #387ff2;
+
+        white-space: nowrap; /* 防止文字换行 */
+        text-align: center; /* 文字居中 */
+      }
     }
   }
 }
@@ -264,6 +287,7 @@ onMounted(() => {
 ::v-deep .u-radio-group--column {
   display: flex;
   flex-direction: row;
+  align-items: center;
   .u-radio {
     padding: 8rpx;
     // border: 1rpx solid #387ff2;

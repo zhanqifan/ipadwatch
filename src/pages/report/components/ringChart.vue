@@ -1,5 +1,5 @@
 <template>
-  <view style="height: 80rpx; width: 100rpx"><l-echart ref="chartRef"></l-echart></view>
+  <view style="height: 80rpx; width: 110rpx"><l-echart ref="chartRef"></l-echart></view>
 </template>
 
 <script setup lang="ts">
@@ -24,10 +24,12 @@ const option = ref({
   legend: {
     top: '0%', // 设置图例距离顶部的距离
     left: '0%', // 设置图例距离右侧的距离
-    itemWidth: pxToRpx(8), // 设置图例图标的宽度
-    itemHeight: pxToRpx(8), // 设置图例图标的高度
+    itemWidth: pxToRpx(7), // 设置图例图标的宽度
+    itemHeight: pxToRpx(7), // 设置图例图标的高度
+	itemGap: pxToRpx(12), // 设置图例项之间的间距，可以根据需求调整
+
     textStyle: {
-      fontSize: pxToRpx(6.3), // 设置图例文字的大小
+      fontSize: pxToRpx(6), // 设置图例文字的大小
     },
   },
 
@@ -35,7 +37,6 @@ const option = ref({
     text: '训练负荷达成率',
     textStyle: {
       fontSize: pxToRpx(8), // 设置标题文字大小
-      fontWeight: 'bolder', // 可选：设置标题文字加粗
       color: '#333', // 可选：设置标题文字颜色
       fontFamily: 'test',
     },
@@ -50,7 +51,6 @@ const option = ref({
       avoidLabelOverlap: false,
       label: {
         show: false,
-        fontSize: 16,
         lineHeight: 20,
         position: 'center',
         formatter: (params: any) => {
@@ -65,7 +65,6 @@ const option = ref({
       emphasis: {
         label: {
           show: true,
-          fontSize: '13',
           formatter: (params: any) => {
             //切换非默认选项配置数据展示
             if (params.dataIndex != 0) {
@@ -75,7 +74,6 @@ const option = ref({
             }
           },
 
-          fontWeight: 'bold',
         },
       },
       labelLine: {

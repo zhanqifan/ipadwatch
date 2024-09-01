@@ -62,7 +62,7 @@
     "backgroundColor": "#F8F8F8",
     "pageOrientation": "landscape",
     "rpxCalcMaxDeviceWidth": 2000, // rpx 计算所支持的最大设备宽度，单位 px，默认值为 960
-
+    "navigationStyle": "custom"
   },
   // 设置 TabBar
   "tabBar": {
@@ -71,18 +71,14 @@
     "backgroundColor": "#fff",
     "borderStyle": "white",
     "list": [
-
       {
         "pagePath":"pages/startDialog/start"
-
       },
       {
         "pagePath": "pages/report/report"
-
       },
       {
         "pagePath": "pages/my/my"
-
       }
     ]
   }

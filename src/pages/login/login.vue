@@ -87,6 +87,7 @@ const toLogin = async () => {
   justify-content: center;
   height: 80vh;
   padding: 0 16px;
+  font-size: 20rpx;
 }
 
 .login {

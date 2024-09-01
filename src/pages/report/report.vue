@@ -203,4 +203,7 @@ onMounted(() => {
 ::v-deep.u-cell__title-text {
   color: #fdf0f0;
 }
+::v-deep .uni-pagination__num-tag{
+	min-width: 30px;
+}
 </style>
