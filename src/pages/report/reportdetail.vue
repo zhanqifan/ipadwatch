@@ -16,7 +16,6 @@ import type {
 import { getTeamList } from '@/api/start/start'
 import { getDateReport, getInpNumber } from '@/api/report/report'
 import { sportDict, secondsToMinutes } from './utils/sportComplate'
-const teamType = ref(false)
 const initialValue = () => {
   return {
     teamId: '', //训练队名称
@@ -36,7 +35,7 @@ const heartMap = ref() //运动强度分布图
 const heartCompare = ref() //心率对比图
 const sportRanks = ref() //运动排行
 const SportLoads = ref() //负荷图
-const teamColumns = ref<[any[]]>([[]]) //选择器
+const teamColumns = ref<any[]>([]) //选择器
 const studentList = ref<BasicInfoDTOS>() //学生列表
 const range = ref<any>([])
 const rules = {
@@ -46,18 +45,14 @@ const rules = {
 }
 const getTeam = async () => {
   const res = await getTeamList()
-  teamColumns.value[0] = res.data.map((item) => {
+  teamColumns.value = res.data.map((item) => {
     return {
-      label: item.teamName,
-      id: item.id,
+      text: item.teamName,
+      value: item.id,
     }
   })
 }
-const confirm = ({ value }: { value: { id: string; label: string }[] }) => {
-  params.value.teamId = value[0].id
-  teamName.value = value[0].label
-  teamType.value = false
-}
+
 // 重置
 const reset = () => {
   params.value = initialValue()
@@ -104,7 +99,7 @@ const handleClick = async () => {
       startTime: dayjs(params.value.dateTime).startOf('day').format('YYYY-MM-DD HH:mm:ss'),
       endTime: dayjs(params.value.dateTime).endOf('day').format('YYYY-MM-DD HH:mm:ss'),
     })
-    range.value = res.data.map((item: Number) => ({ value: item, text: item }))
+    range.value = res.data.trainingTimes.map((item: Number) => ({ value: item, text: item }))
   } else {
     selectRef.value.showSelector = false
     toastRef.value.showToast({
@@ -127,9 +122,15 @@ onBackPress((e) => {
 const PromiseList = async (data: SportParams) => {
   const res = await getDateReport(data)
   if (checkResponse(res.data)) {
+    // 判断是否空数据
     isShow.value = false
     return
   }
+
+  params.value.dateTime = dayjs(res.data.trainingTime).format('YYYY-MM-DD')
+  params.value.teamId = res.data.teamId
+  handleClick()
+  params.value.number = res.data.trainingTimes
   studentList.value = res.data.basicInfoDTOS
   sportComplate.value = res.data.sportAchievementVO
   sportRanks.value = {
@@ -144,7 +145,8 @@ const PromiseList = async (data: SportParams) => {
 }
 // 判断是否空数据
 const checkResponse = (data: SportParams) => {
-  const arr = Object.values(data)
+  const { teamName, trainingTimes, trainingTime, ...dates } = data
+  const arr = Object.values(dates)
   return arr.every((item) => item === null)
 }
 // 过滤运动达成情况
@@ -160,6 +162,11 @@ const filterDate = computed(() => {
       return acc
     }, {} as SportAchievementVO)
 })
+const changeTeam = () => {
+  params.value.number = null
+  range.value = []
+  handleClick()
+}
 // 跳转学生详情
 const toStudent = (item: BasicInfoDTOS) => {
   uni.navigateTo({
@@ -178,17 +185,6 @@ onLoad((options) => {
       <!-- 搜索 -->
       <uni-forms label-align="left" :model="params" :rules="rules" ref="formRef">
         <view class="top">
-          <uni-forms-item label="训练队:" labelWidth="60" name="teamId">
-            <up-picker
-              :show="teamType"
-              :columns="teamColumns"
-              @cancel="teamType = false"
-              @confirm="confirm"
-              keyName="label"
-            />
-            <up-button @click="teamType = true">{{ teamName ? teamName : '选择训练队' }}</up-button>
-          </uni-forms-item>
-
           <uni-forms-item label="时间:" labelWidth="40" name="dateTime">
             <uni-datetime-picker
               type="date"
@@ -197,6 +193,16 @@ onLoad((options) => {
               v-model="params.dateTime"
             />
           </uni-forms-item>
+          <uni-forms-item label="训练队:" labelWidth="60" name="teamId">
+            <uni-data-select
+              v-model="params.teamId"
+              :clear="true"
+              class="select"
+              @change="changeTeam"
+              :localdata="teamColumns"
+            ></uni-data-select>
+          </uni-forms-item>
+
           <uni-forms-item label="次数:" labelWidth="40" name="number">
             <uni-data-select
               ref="selectRef"
@@ -296,7 +302,7 @@ onLoad((options) => {
   </tabBar>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .top {
   display: flex;
   gap: 10rpx;
@@ -416,5 +422,8 @@ onLoad((options) => {
       box-shadow: 0rpx 0rpx 8rpx 0rpx rgba(0, 0, 0, 0.1);
     }
   }
+}
+.select {
+  width: 100rpx !important;
 }
 </style>

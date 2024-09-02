@@ -51,17 +51,6 @@ export interface reportResponse extends common {
   students: null
 }
 
-// export interface FullDetailsReportVoList {
-//   studentName: string
-//   averageHeartRate: number
-//   averagePace: number
-//   averageBloodOxygen: number
-//   maxHeartRate: number
-//   maxPace: number
-//   maxBloodOxygen: number
-//   minHeartRate: number
-// }
-
 // 训练队次数传参
 export interface trainTimes {
   trainingTeamId: string
@@ -115,7 +104,11 @@ export interface SportData {
    * 训练队强度分布
    */
   trainingReportGrades: TrainingReportGrade[]
-  [property: string]: any
+  teamName: string //队名
+  trainingTime: string //时间
+  trainingTimes: number | null //次数
+  teamId: string //训练队id
+  taskId: string //任务id
 }
 // 学生个人报表响应
 export interface studentData {
@@ -136,6 +129,11 @@ export interface studentData {
    * 训练队强度分布
    */
   heartRateDistributionVOList: TrainingReportGrade[]
+  taskId: string //任务id
+  teamId: string //队伍id
+  teamName: string //队名
+  trainingTimes: number //训练次数
+  trainingTime: string //训练时间
 }
 
 /**
@@ -260,4 +258,32 @@ export interface TrainingReportGrade {
   reportId?: string
   time: number
   [property: string]: any
+}
+// 报告次数响应
+interface trainTimesResponse {
+  trainingTimes: number[]
+  studentInfoVoList: StudentInfoVoList[]
+}
+
+interface StudentInfoVoList {
+  createDept: number
+  createBy: string
+  createTime: string
+  updateBy: string
+  updateTime: string
+  tenantId: null
+  id: string
+  name: string
+  uuid: string
+  studentNumber: string
+  parentId: null
+  phonenumber: string
+  teamTotalNum: null
+  maxHeartRate: null
+  maxHeartRateRank: null
+  historyMaxHeartRate: number
+  averageHeartRate: null
+  averageHeartRateRank: null
+  historyAverageHeartRate: number
+  trainingName: null
 }

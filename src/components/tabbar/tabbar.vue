@@ -68,7 +68,7 @@ const back = () => {
         </view>
       </view>
     </view>
-    <view class="main-content" :style="{paddingTop:app.safeAreaInsets?.top}">
+    <view class="main-content" >
       <scroll-view scroll-y >
         <slot />
       </scroll-view>

@@ -23,8 +23,10 @@ onHide(() => {
   font-family: 'test';
   src: url('https://blt.yukexx.com/images/Alimama.woff');
 }
-uni-page-body,html,body{
-height: 100%;
+uni-page-body,
+html,
+body {
+  height: 100%;
 }
 view,
 navigator,

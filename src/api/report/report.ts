@@ -6,6 +6,7 @@ import type {
   studentData,
   SportData,
   trainTimes,
+  trainTimesResponse,
 } from './reportType'
 // 报告列表
 export const getReport = (data: reportData): reportType => {
@@ -18,7 +19,7 @@ export const getReport = (data: reportData): reportType => {
 
 // 报告次数
 export const getInpNumber = (data: trainTimes) => {
-  return request<Number[]>({
+  return request<trainTimesResponse>({
     url: '/teacher/training/report/trainingTimes',
     method: 'POST',
     data,
@@ -42,3 +43,11 @@ export const getStuReport = (data: SportParams) => {
     data,
   })
 }
+
+// 查询训练队次数和学生列表
+// export const getTrainTime = (data:) => {
+//   return request({
+//     url: '/teacher/training/report/trainingTimes',
+//     method: 'GET',
+//   })
+// }

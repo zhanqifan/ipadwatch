@@ -99,7 +99,7 @@ onMounted(() => {
       <view class="select_one">
         <view class="project">选择队伍 </view>
         <view class="btn_group">
-          <scroll-view scroll-x style="width: 68vw; height: 70rpx">
+          <scroll-view scroll-x style="height: 70rpx">
             <view class="project_group" v-if="radiolist1.length">
               <up-radio-group v-model="exerciseTypeId" placement="column">
                 <up-radio
@@ -176,7 +176,7 @@ onMounted(() => {
               <text>训练名单:&nbsp</text>
             </view>
           </view>
-          <scroll-view scroll-y style="height: 50rpx">
+          <scroll-view scroll-y style="height: 40rpx">
             <view class="plan_people">
               <view class="item_people" v-for="item in studentList" :key="item.id"
                 >{{ item.name }}
@@ -227,6 +227,7 @@ onMounted(() => {
 .btn_group {
   display: flex;
   align-items: center;
+  width: 86vw;
   .add {
     border: 2rpx dashed;
     border-radius: 7rpx;
@@ -243,7 +244,8 @@ onMounted(() => {
 }
 .Cur_people {
   background-color: #f9f9f9;
-  padding: 20rpx;
+  padding: 20rpx 15rpx;
+  font-size: 12rpx;
   .title {
     margin-bottom: 10rpx;
   }
@@ -260,7 +262,7 @@ onMounted(() => {
       grid-template-columns: repeat(auto-fill, minmax(45rpx, 1fr));
       width: 100%;
       align-items: center;
-      gap: 14rpx; /* 可调整项目之间的间距 */
+      gap: 12rpx; /* 可调整项目之间的间距 */
 
       .item_people {
         color: #387ff2;
@@ -272,8 +274,8 @@ onMounted(() => {
   }
 }
 .start_btn {
-  width: 200rpx;
-  height: 70rpx;
+  width: 180rpx;
+  height: 60rpx;
   border-radius: 7rpx;
   margin-top: 25rpx;
   background-color: #387ff2;
@@ -282,7 +284,7 @@ onMounted(() => {
   justify-content: center;
   color: #f9f9f9;
   position: absolute;
-  left: 35%;
+  left: 39%;
 }
 ::v-deep .u-radio-group--column {
   display: flex;

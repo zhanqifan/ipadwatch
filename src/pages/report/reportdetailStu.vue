@@ -17,18 +17,17 @@ import { getStuReport, getInpNumber } from '@/api/report/report'
 const initialValue = () => {
   return {
     teamId: '', //训练队名称
-    number: null,
+    stuTime: [],
     dateTime: dayjs().format('YYYY-MM-DD'),
   }
 }
-const teamType = ref(false)
 const formRef = ref()
 const taskId = ref()
 const studentId = ref()
-const teamColumns = ref<[any[]]>([[]]) //选择器
+const teamColumns = ref<any[]>([]) //选择器
 const toastRef = ref() //提示框组件
 const selectRef = ref() //下拉框实例
-const params = ref(initialValue()) //搜索传参
+const params = ref<any>(initialValue()) //搜索传参
 const heartMap = ref() //运动强度分布图
 const heartCompare = ref() //心率对比图
 const teamName = ref() //训练队名
@@ -37,26 +36,26 @@ const studentList = ref<StudentNameList>() //学生列表
 const isShow = ref(true)
 const range = ref<any>([])
 
-const confirm = ({ value }: { value: { id: string; label: string }[] }) => {
-  params.value.teamId = value[0].id
-  teamName.value = value[0].label
-  teamType.value = false
-}
 const rules = {
   teamId: { rules: [{ required: true, errorMessage: '选择训练队', trigger: 'change' }] },
-  number: { rules: [{ required: true, errorMessage: '请输入输入次数', trigger: 'change' }] },
+  stuTime: { rules: [{ required: true, errorMessage: '请输入输入次数', trigger: 'change' }] },
   dateTime: { rules: [{ required: true, errorMessage: '请输入输入时间', trigger: 'change' }] },
 }
 const reset = () => {
   params.value = initialValue()
   teamName.value = ''
+  getReportStu({
+    studentId: studentId.value,
+    taskId: taskId.value,
+  })
 }
 const search = () => {
   formRef.value.validate().then((valid: Boolean) => {
     if (valid) {
       getReportStu({
         ...params.value,
-        studentId: studentId.value,
+        studentId: params.value.stuTime[0],
+        number: params.value.stuTime[1],
         startTime: dayjs(params.value.dateTime).startOf('day').format('YYYY-MM-DD HH:mm:ss'),
         endTime: dayjs(params.value.dateTime).endOf('day').format('YYYY-MM-DD HH:mm:ss'),
       })
@@ -84,6 +83,10 @@ const getReportStu = async (data: SportParams) => {
       isShow.value = false
       return
     }
+    params.value.dateTime = dayjs(res.data.trainingTime).format('YYYY-MM-DD')
+    params.value.teamId = res.data.teamId
+    handleClick()
+    params.value.stuTime = [studentId.value, res.data.trainingTimes]
     studentList.value = res.data.studentInfo
     sportComplate.value = res.data.sportAchievementVO
     getSportMap(res.data.heartRateDistributionVOList)
@@ -119,7 +122,12 @@ const handleClick = async () => {
       startTime: dayjs(params.value.dateTime).startOf('day').format('YYYY-MM-DD HH:mm:ss'),
       endTime: dayjs(params.value.dateTime).endOf('day').format('YYYY-MM-DD HH:mm:ss'),
     })
-    range.value = res.data.map((item: Number) => ({ value: item, text: item }))
+    const children = res.data.trainingTimes.map((item) => ({ text: item, value: item }))
+    range.value = res.data.studentInfoVoList.map((item) => ({
+      value: item.id,
+      text: item.name,
+      children,
+    }))
   } else {
     selectRef.value.showSelector = false
     toastRef.value.showToast({
@@ -135,13 +143,19 @@ const checkResponse = (data: SportParams) => {
 }
 const getTeam = async () => {
   const res = await getTeamList()
-  teamColumns.value[0] = res.data.map((item) => {
+  teamColumns.value = res.data.map((item) => {
     return {
-      label: item.teamName,
-      id: item.id,
+      text: item.teamName,
+      value: item.id,
     }
   })
 }
+const changeTeam = () => {
+  params.value.stuTime = []
+  range.value = []
+  handleClick()
+}
+const changeTime = (e) => {}
 onLoad((options) => {
   taskId.value = options!.taskId
   studentId.value = options!.studentId
@@ -155,17 +169,6 @@ onLoad((options) => {
 
     <uni-forms label-align="left" :model="params" :rules="rules" ref="formRef">
       <view class="top">
-        <uni-forms-item label="训练队:" labelWidth="60" name="teamId">
-          <up-picker
-            :show="teamType"
-            :columns="teamColumns"
-            @cancel="teamType = false"
-            @confirm="confirm"
-            keyName="label"
-          />
-          <up-button @click="teamType = true">{{ teamName ? teamName : '选择训练队' }}</up-button>
-        </uni-forms-item>
-
         <uni-forms-item label="时间:" labelWidth="40" name="dateTime">
           <uni-datetime-picker
             type="date"
@@ -174,14 +177,23 @@ onLoad((options) => {
             v-model="params.dateTime"
           />
         </uni-forms-item>
-        <uni-forms-item label="次数:" labelWidth="40" name="number">
+        <uni-forms-item label="训练队:" labelWidth="60" name="teamId">
           <uni-data-select
-            ref="selectRef"
-            v-model="params.number"
-            :localdata="range"
-            @click="handleClick"
-            @change="(e) => (params.number = e)"
+            v-model="params.teamId"
+            class="select"
+            @change="changeTeam"
+            :localdata="teamColumns"
           ></uni-data-select>
+        </uni-forms-item>
+        <uni-forms-item label="次数" labelWidth="40" name="stuTime">
+          <uni-data-picker
+            placeholder="请选择学生"
+            popup-title="请选择训练次数"
+            :localdata="range"
+            @change="changeTime"
+            class="casacarPick"
+            v-model="params.stuTime"
+          ></uni-data-picker>
         </uni-forms-item>
         <view>
           <uni-forms-item>
@@ -376,5 +388,22 @@ onLoad((options) => {
       box-shadow: 0rpx 0rpx 6rpx 0rpx rgba(0, 0, 0, 0.1);
     }
   }
+}
+.casacarPick {
+  width: 120rpx !important;
+}
+::v-deep .selected-area {
+  // flex: 0.1;
+  max-height: 30rpx;
+}
+::v-deep .selected-area .uni-scroll-view-content {
+  display: flex;
+  align-items: center;
+}
+::v-deep .icon-clear::before {
+  display: none;
+}
+.select {
+  width: 100rpx !important;
 }
 </style>
