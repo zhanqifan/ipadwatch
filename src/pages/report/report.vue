@@ -83,7 +83,7 @@ const toDetail = (item: reportResponse) => {
   })
 }
 
-onMounted(() => {
+onShow(() => {
   getTeam()
   getTrain()
   getReportList()
@@ -132,6 +132,7 @@ onMounted(() => {
         ></view>
       </view>
       <view v-if="reportList?.length">
+		  <view class="list">
         <view class="card_box">
           <view class="card" v-for="(item, index) in reportList" :key="index">
             <view class="card_content">
@@ -141,8 +142,9 @@ onMounted(() => {
             </view>
             <view class="detail" @click="toDetail(item)">查看详情</view>
           </view>
+		  </view>
         </view>
-        <uni-pagination
+      <uni-pagination
           class="pagination"
           :total="total"
           title="标题文字"
@@ -161,12 +163,14 @@ onMounted(() => {
   display: flex;
   gap: 30rpx;
 }
+.list{
+	min-height:93vh ;
+}
 .card_box {
   display: grid;
   padding: 10rpx;
   grid-template-columns: repeat(2, 1fr);
   gap: 10rpx;
-
   .card {
     border-radius: 10rpx;
     background-color: #f7f8fa;
@@ -196,14 +200,13 @@ onMounted(() => {
   }
 }
 .pagination {
-  position: absolute;
   bottom: 0%;
-  left: 35%;
+  left: -30rpx;
 }
 ::v-deep.u-cell__title-text {
   color: #fdf0f0;
 }
-::v-deep .uni-pagination__num-tag{
-	min-width: 30px;
+::v-deep .uni-pagination__num-tag {
+  min-width: 30px;
 }
 </style>
