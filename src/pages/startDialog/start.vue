@@ -268,7 +268,7 @@ onMounted(() => {
         color: #387ff2;
 
         white-space: nowrap; /* 防止文字换行 */
-        text-align: center; /* 文字居中 */
+        text-align: left; /* 文字居中 */
       }
     }
   }

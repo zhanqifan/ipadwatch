@@ -113,7 +113,7 @@ defineExpose({
           <up-form-item label="训练人员" labelWidth="80" class="peo">
             <scroll-view
               scroll-y
-              style="height: 130rpx"
+              style="height: 148rpx"
               v-if="studentList.length"
               @scrolltolower="upToLower"
             >

@@ -52,13 +52,16 @@ const reset = () => {
 const search = () => {
   formRef.value.validate().then((valid: Boolean) => {
     if (valid) {
-      getReportStu({
+      console.log(params.value)
+      const data = {
         ...params.value,
         studentId: params.value.stuTime[0],
         number: params.value.stuTime[1],
         startTime: dayjs(params.value.dateTime).startOf('day').format('YYYY-MM-DD HH:mm:ss'),
         endTime: dayjs(params.value.dateTime).endOf('day').format('YYYY-MM-DD HH:mm:ss'),
-      })
+      }
+      console.log(data)
+      getReportStu(data)
     }
   })
 }
@@ -150,12 +153,16 @@ const getTeam = async () => {
     }
   })
 }
+// 队伍变化触发次数接口重调
 const changeTeam = () => {
   params.value.stuTime = []
   range.value = []
   handleClick()
 }
-const changeTime = (e) => {}
+// 修改训练次数
+const changeTime = ({ detail }: { detail: any }) => {
+  params.value.stuTime = [detail.value[0].value, detail.value[1].value]
+}
 onLoad((options) => {
   taskId.value = options!.taskId
   studentId.value = options!.studentId

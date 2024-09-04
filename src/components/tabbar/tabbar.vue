@@ -4,10 +4,10 @@ const props = defineProps({
     type: Number,
     default: 0,
   },
-    backUrl: {
-      url: String,
-      default: '',
-    },
+  backUrl: {
+    url: String,
+    default: '',
+  },
 })
 
 type itemType = {
@@ -26,10 +26,10 @@ const sidebarItems = ref<
 ])
 const app = uni.getSystemInfoSync()
 const pageHeight = ref('100vh') // 初始化页面高度
-onMounted(()=>{
- const safeAreaTop = app.safeAreaInsets?.top || 0
+onMounted(() => {
+  const safeAreaTop = app.safeAreaInsets?.top || 0
   const vh = uni.getWindowInfo().windowHeight //获取屏幕用宽度
-  const calculatedHeight = vh 
+  const calculatedHeight = vh
   pageHeight.value = `${calculatedHeight}px` // 动态计算高度并设置
 })
 let { selected } = toRefs(props)
@@ -48,11 +48,27 @@ const back = () => {
     uni.navigateBack({ delta: 1 })
   }
 }
+onLaunch(() => {
+  uni.hideTabBar()
+  console.log('App Launch')
+})
+onShow(() => {
+  uni.hideTabBar()
+  console.log('App Show')
+})
+onHide(() => {
+  console.log('App Hide')
+})
 </script>
 <template>
-  <view class="sidebar-container" :style="{ paddingTop: app.safeAreaInsets?.top + 'rpx', height: '100vh'}">
+  <view
+    class="sidebar-container"
+    :style="{ paddingTop: app.safeAreaInsets?.top + 'rpx', height: '100vh' }"
+  >
     <view class="sidebar">
-      <view class="sidebar-header"><image src="@/static/images/stu.png" mode="scaleToFill"  @click="back"/></view>
+      <view class="sidebar-header"
+        ><image src="@/static/images/stu.png" mode="scaleToFill" @click="back"
+      /></view>
       <view class="sidebar-menu">
         <view
           class="sidebar-item"
@@ -68,8 +84,8 @@ const back = () => {
         </view>
       </view>
     </view>
-    <view class="main-content" >
-      <scroll-view scroll-y >
+    <view class="main-content">
+      <scroll-view scroll-y>
         <slot />
       </scroll-view>
     </view>
@@ -77,12 +93,11 @@ const back = () => {
 </template>
 
 <style lang="scss" scoped>
-	.page {
-	height: 100%;
-	}
+.page {
+  height: 100%;
+}
 .sidebar-container {
   display: flex;
-
 }
 .sidebar {
   border-radius: 10rpx;
