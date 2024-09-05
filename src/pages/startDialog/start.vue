@@ -90,14 +90,14 @@ onMounted(() => {
   <tabBar :selected="0">
     <view class="sprot_box">
       <!-- 步骤条 -->
-      <up-steps current="0" style="margin-bottom: 50rpx">
+      <up-steps current="0" class="step" >
         <up-steps-item title="选择训练"> </up-steps-item>
         <up-steps-item title="开始训练"></up-steps-item>
         <up-steps-item title="训练报告"></up-steps-item>
       </up-steps>
       <!-- 选择项目 -->
       <view class="select_one">
-        <view class="project">选择队伍 </view>
+        <view class="project">训练类型 </view>
         <view class="btn_group">
           <scroll-view scroll-x style="height: 70rpx">
             <view class="project_group" v-if="radiolist1.length">
@@ -197,7 +197,6 @@ onMounted(() => {
   position: relative;
   padding-left: 15rpx; // 给伪元素留出空间
   font-size: 12rpx;
-  font-weight: bold;
   margin-bottom: 10rpx;
   .add {
     border: 1rpx solid #387ff2;
@@ -241,7 +240,43 @@ onMounted(() => {
 .sprot_box {
   padding-top: 10rpx;
   margin-left: 20rpx;
+
 }
+  .step{
+	  margin-bottom: 50rpx
+  }
+  .start_btn {
+    width: 180rpx;
+    height: 60rpx;
+    border-radius: 7rpx;
+    margin-top: 25rpx;
+    background-color: #387ff2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #f9f9f9;
+    position: absolute;
+    left: 39%;
+  }
+@media screen and (max-height:710px){
+	 .step{
+	  margin-bottom: 30rpx
+	}
+	.start_btn {
+	  width: 180rpx;
+	  height: 60rpx;
+	  border-radius: 7rpx;
+	  margin-top: 15rpx;
+	  background-color: #387ff2;
+	  display: flex;
+	  align-items: center;
+	  justify-content: center;
+	  color: #f9f9f9;
+	  position: absolute;
+	  left: 39%;
+	}
+}
+
 .Cur_people {
   background-color: #f9f9f9;
   padding: 20rpx 15rpx;
@@ -273,19 +308,7 @@ onMounted(() => {
     }
   }
 }
-.start_btn {
-  width: 180rpx;
-  height: 60rpx;
-  border-radius: 7rpx;
-  margin-top: 25rpx;
-  background-color: #387ff2;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #f9f9f9;
-  position: absolute;
-  left: 39%;
-}
+
 ::v-deep .u-radio-group--column {
   display: flex;
   flex-direction: row;

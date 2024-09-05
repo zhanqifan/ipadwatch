@@ -12,6 +12,7 @@ import type {
 export const getReport = (data: reportData): reportType => {
   return request({
     url: '/teacher/training/report/page',
+	// url:'https://apifoxmock.com/m2/3773810-3405678-default/211997071',
     method: 'GET',
     data,
   })

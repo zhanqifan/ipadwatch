@@ -61,6 +61,14 @@ const search = () => {
   getReportList()
 }
 const reset = () => {
+	uni.getSystemInfo({
+	  success: function (res) {
+	    const width = res.windowWidth;
+	    const height = res.windowHeight;
+	    const aspectRatio = width / height;
+	    console.log(`当前设备宽高比: ${aspectRatio}`);
+	  }
+	});
   params.value = initialValue()
   getReportList()
 }
@@ -84,6 +92,7 @@ const toDetail = (item: reportResponse) => {
 }
 
 onShow(() => {
+	
   getTeam()
   getTrain()
   getReportList()
@@ -164,8 +173,14 @@ onShow(() => {
   gap: 30rpx;
 }
 .list{
-	min-height:93vh ;
+		min-height:440rpx;
+	}
+@media screen and (max-height:710px){
+	.list{
+		min-height:360rpx;
+	}
 }
+
 .card_box {
   display: grid;
   padding: 10rpx;

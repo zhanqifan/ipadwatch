@@ -25,12 +25,15 @@ const sidebarItems = ref<
   { icon: 'account-fill', url: '/pages/my/my' },
 ])
 const app = uni.getSystemInfoSync()
-const pageHeight = ref('100vh') // 初始化页面高度
 onMounted(() => {
-  const safeAreaTop = app.safeAreaInsets?.top || 0
-  const vh = uni.getWindowInfo().windowHeight //获取屏幕用宽度
-  const calculatedHeight = vh
-  pageHeight.value = `${calculatedHeight}px` // 动态计算高度并设置
+ uni.getSystemInfo({
+   success: function (res) {
+     const width = res.windowWidth;
+     const height = res.windowHeight;
+	 const hw = width / height
+     console.log(`当前设备宽高比: ${hw}`);
+   }
+ });
 })
 let { selected } = toRefs(props)
 const itemClick = (item: itemType) => {
@@ -53,6 +56,8 @@ onLaunch(() => {
   console.log('App Launch')
 })
 onShow(() => {
+	
+
   uni.hideTabBar()
   console.log('App Show')
 })
@@ -133,5 +138,13 @@ onHide(() => {
   padding: 14rpx;
   font-size: 15rpx;
   max-height: max-content;
+}
+@media screen and (max-height:704px){
+.main-content {
+  flex: 1;
+  padding: 6rpx;
+  font-size: 15rpx;
+  max-height: max-content;
+}
 }
 </style>

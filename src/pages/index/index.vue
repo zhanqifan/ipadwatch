@@ -53,10 +53,8 @@ const immediateWatch = async () => {
         (newItem) => newItem.studentName === item.studentName,
       )
       if (existItem) {
-        console.log('存在')
         return { ...existItem, status: 1 }
       } else {
-        console.log('不存在')
         return { ...item, status: 0 }
       }
     })
@@ -101,7 +99,7 @@ onBeforeUnmount(() => {
   <tabBar :selected="0">
     <view class="index">
       <!-- 顶部 -->
-      <view class="flexBox top">
+      <view class="flexBox tops">
         <!-- 头像 -->
         <view class="flexBox">
           <up-avatar :src="src" shape="circle" />
@@ -160,7 +158,7 @@ onBeforeUnmount(() => {
               <!-- 在线卡片#fff -->
               <view v-show="item?.status === 1">
                 <view class="top">
-                  <view style="display: flex; align-items: center; font-size: 10rpx">
+                  <view class="stu_name" >
                     <image src="@/static/images/stu.png" class="User_img" />{{ item.studentName }}
                     <!-- 速度状态 -->
                     <text class="status">{{ getStyleByType('statusColor', item.heartRate) }} </text>
@@ -209,7 +207,7 @@ onBeforeUnmount(() => {
               <!-- 离线卡片 -->
               <view v-show="item?.status === 0">
                 <view class="top">
-                  <view style="display: flex; align-items: center; font-size: 10rpx">
+                  <view class="stu_name" >
                     <image src="@/static/images/stu.png" class="User_img" />{{ item.studentName }}
                     <!-- 速度状态 -->
                     <text class="offLine">离线</text>
@@ -249,7 +247,7 @@ onBeforeUnmount(() => {
 </template>
 
 <style lang="scss" scoped>
-.top {
+.tops {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -300,6 +298,9 @@ onBeforeUnmount(() => {
         margin-top: 10rpx;
         justify-content: space-between;
         padding: 0rpx 13rpx;
+		.stu_name{
+			display: flex; align-items: center; font-size: 10rpx
+		}
         .User_img {
           width: 20rpx;
           border-radius: 20rpx;
@@ -353,4 +354,99 @@ onBeforeUnmount(() => {
     }
   }
 }
+
+@media screen and (min-aspect-ratio: 143/100) {
+	.main {
+	  background-color: #f5f9fa;
+	  border-radius: 10rpx;
+	  padding: 2%;
+	  margin-top: 10rpx;
+	  min-height: 80vh;
+	
+	  .card_group {
+	    display: grid;
+	    justify-content: center;
+	    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+		grid-auto-rows: minmax(110rpx, auto); // 保证卡片的高度统一
+
+	    gap: 5rpx 10rpx; // 控制卡片之间的间距
+	
+	    .card_item {
+	      background-color: #fff;
+	      border-radius: 8rpx;
+	      box-shadow: 0 0 2rpx rgba(0, 0, 0, 0.1);
+	      .offLine {
+	        font-size: 11rpx;
+	        margin-left: 5rpx;
+	      }
+	      .status {
+	        font-size: 12px;
+	        color: #4abc7a;
+	        margin-left: 5rpx;
+	      }
+	      .top {
+	        display: flex;
+	        align-items: center;
+	        margin-top: 10rpx;
+	        justify-content: space-between;
+	        padding: 0rpx 13rpx;
+			.stu_name{
+				display: flex; align-items: center; font-size: 10rpx
+			}
+	        .User_img {
+	          width: 20rpx;
+	          border-radius: 20rpx;
+	          height: 20rpx;
+	        }
+	        .battery-container {
+	          width: 30rpx;
+	          height: 15rpx;
+	          border: 2rpx solid #3bc968;
+	          border-radius: 4rpx;
+	          position: relative;
+	          transform: scale(0.7);
+	          transform-origin: left top;
+	          &:after {
+	            content: '';
+	            display: block;
+	            height: 8rpx;
+	            width: 4rpx;
+	            position: absolute;
+	            background: #3bc968;
+	            right: -5rpx;
+	            top: 0;
+	            bottom: 0;
+	            margin: auto 0;
+	          }
+	
+	          .shell {
+	            width: 100%;
+	            height: 100%;
+	            box-sizing: border-box;
+	            padding: 2rpx;
+	            background: #f8fafc;
+	            .block {
+	              width: 100%;
+	              height: 100%;
+	            }
+	          }
+	        }
+	      }
+	      .heart_main {
+	        display: flex;
+	        align-items: center;
+	        justify-content: space-between;
+	      }
+	      .heart {
+	        padding: 3rpx 16rpx;
+	        .heart_rate {
+	          font-size: 30rpx;
+	        }
+	      }
+	    }
+	  }
+	}
+}
+
+
 </style>
