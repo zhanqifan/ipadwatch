@@ -63,11 +63,12 @@ export const request = <T>(option: UniApp.RequestOptions) => {
             mask: true,
           })
         } else {
-          uni.showToast({
-            title: data.msg || '请求错误',
-            icon: 'none',
-            mask: true,
-          })
+          // uni.showToast({
+          //   title: data.msg || '请求错误',
+          //   icon: 'none',
+          //   mask: true,
+          // })
+          console.log(data.msg)
           reject(result)
         }
       },

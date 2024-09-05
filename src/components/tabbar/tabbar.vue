@@ -26,14 +26,14 @@ const sidebarItems = ref<
 ])
 const app = uni.getSystemInfoSync()
 onMounted(() => {
- uni.getSystemInfo({
-   success: function (res) {
-     const width = res.windowWidth;
-     const height = res.windowHeight;
-	 const hw = width / height
-     console.log(`当前设备宽高比: ${hw}`);
-   }
- });
+  uni.getSystemInfo({
+    success: function (res) {
+      const width = res.windowWidth
+      const height = res.windowHeight
+      const hw = width / height
+      //  console.log(`当前设备宽高比: ${hw}`);
+    },
+  })
 })
 let { selected } = toRefs(props)
 const itemClick = (item: itemType) => {
@@ -53,16 +53,14 @@ const back = () => {
 }
 onLaunch(() => {
   uni.hideTabBar()
-  console.log('App Launch')
+  // console.log('App Launch')
 })
 onShow(() => {
-	
-
   uni.hideTabBar()
-  console.log('App Show')
+  // console.log('App Show')
 })
 onHide(() => {
-  console.log('App Hide')
+  // console.log('App Hide')
 })
 </script>
 <template>
@@ -139,12 +137,12 @@ onHide(() => {
   font-size: 15rpx;
   max-height: max-content;
 }
-@media screen and (max-height:704px){
-.main-content {
-  flex: 1;
-  padding: 6rpx;
-  font-size: 15rpx;
-  max-height: max-content;
-}
+@media screen and (max-height: 704px) {
+  .main-content {
+    flex: 1;
+    padding: 6rpx;
+    font-size: 15rpx;
+    max-height: max-content;
+  }
 }
 </style>

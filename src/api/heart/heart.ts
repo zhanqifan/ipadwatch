@@ -25,3 +25,10 @@ export const updateTask = (data: updataData) => {
     data,
   })
 }
+// 删除未开始的任务
+export const delTask = (taskId: string) => {
+  return request({
+    url: `/teacher/trainingTask/${taskId}`,
+    method: 'DELETE',
+  })
+}
