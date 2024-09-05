@@ -8,6 +8,10 @@ const props = defineProps({
     url: String,
     default: '',
   },
+  stop: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 type itemType = {
@@ -38,10 +42,12 @@ onMounted(() => {
 let { selected } = toRefs(props)
 const itemClick = (item: itemType) => {
   // 处理侧边栏菜单项点击事件
+
   uni.switchTab({
     url: item.url,
   })
 }
+
 const back = () => {
   if (props.backUrl) {
     uni.navigateTo({

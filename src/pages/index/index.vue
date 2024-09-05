@@ -71,7 +71,7 @@ const control = async (type: 'start' | 'end') => {
   if (type === 'start') {
     btnShow.value = false
     startParams.value.isRecord = true //开始记录
-    check.value = false //用户开始锻炼 没选择离开不删除报告
+    check.value = false //用户开始锻炼离开不删除报告
     clock.startTimer() //开启计时器
   } else {
     btnShow.value = true
@@ -100,8 +100,7 @@ onLoad((options) => {
 })
 // 未开始锻炼离开页面 删除此次任务
 const delNullTask = async () => {
-  if (check) {
-    console.log('执行了')
+  if (check.value) {
     await delTask(startParams.value.taskId)
   }
 }

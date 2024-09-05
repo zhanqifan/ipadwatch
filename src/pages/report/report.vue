@@ -61,14 +61,14 @@ const search = () => {
   getReportList()
 }
 const reset = () => {
-	uni.getSystemInfo({
-	  success: function (res) {
-	    const width = res.windowWidth;
-	    const height = res.windowHeight;
-	    const aspectRatio = width / height;
-	    console.log(`当前设备宽高比: ${aspectRatio}`);
-	  }
-	});
+  uni.getSystemInfo({
+    success: function (res) {
+      const width = res.windowWidth
+      const height = res.windowHeight
+      const aspectRatio = width / height
+      console.log(`当前设备宽高比: ${aspectRatio}`)
+    },
+  })
   params.value = initialValue()
   getReportList()
 }
@@ -92,7 +92,6 @@ const toDetail = (item: reportResponse) => {
 }
 
 onShow(() => {
-	
   getTeam()
   getTrain()
   getReportList()
@@ -141,19 +140,19 @@ onShow(() => {
         ></view>
       </view>
       <view v-if="reportList?.length">
-		  <view class="list">
-        <view class="card_box">
-          <view class="card" v-for="(item, index) in reportList" :key="index">
-            <view class="card_content">
-              <view class="title">{{ item.taskName }}</view>
-              <view class="type">运动类型:{{ item.exerciseTypeName }}</view>
-              <view class="type">{{ item.createTime }}</view>
+        <view class="list">
+          <view class="card_box">
+            <view class="card" v-for="(item, index) in reportList" :key="index">
+              <view class="card_content">
+                <view class="title">{{ item.taskName }}</view>
+                <view class="type">运动类型:{{ item.exerciseTypeName }}</view>
+                <view class="type">{{ item.createTime }}</view>
+              </view>
+              <view class="detail" @click="toDetail(item)">查看详情</view>
             </view>
-            <view class="detail" @click="toDetail(item)">查看详情</view>
           </view>
-		  </view>
         </view>
-      <uni-pagination
+        <uni-pagination
           class="pagination"
           :total="total"
           title="标题文字"
@@ -172,13 +171,13 @@ onShow(() => {
   display: flex;
   gap: 30rpx;
 }
-.list{
-		min-height:440rpx;
-	}
-@media screen and (max-height:710px){
-	.list{
-		min-height:360rpx;
-	}
+.list {
+  min-height: 440rpx;
+}
+@media screen and (max-height: 710px) {
+  .list {
+    min-height: 360rpx;
+  }
 }
 
 .card_box {
