@@ -61,14 +61,6 @@ const search = () => {
   getReportList()
 }
 const reset = () => {
-  uni.getSystemInfo({
-    success: function (res) {
-      const width = res.windowWidth
-      const height = res.windowHeight
-      const aspectRatio = width / height
-      console.log(`当前设备宽高比: ${aspectRatio}`)
-    },
-  })
   params.value = initialValue()
   getReportList()
 }

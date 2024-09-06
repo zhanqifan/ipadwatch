@@ -16,6 +16,7 @@ const watchOnline = ref({
   braceletsOnlineNum: 0,
   braceletsTotalNum: 0,
 })
+const toastRef = ref()
 const check = ref(true)
 // 开始记录传参
 const startParams = ref<startData>({
@@ -71,10 +72,10 @@ const control = async (type: 'start' | 'end') => {
   if (type === 'start') {
     btnShow.value = false
     startParams.value.isRecord = true //开始记录
-    check.value = false //用户开始锻炼离开不删除报告
     clock.startTimer() //开启计时器
   } else {
     btnShow.value = true
+    check.value = false //用户结束锻炼 保留报告
     startParams.value.isRecord = false //开始记录
     clearInterval(intervalId.value!) //关闭记录
     clock.stopTimer() //关闭计时器
@@ -84,8 +85,12 @@ const control = async (type: 'start' | 'end') => {
         url: `/pages/report/reportdetail?taskId=${startParams.value.taskId}`,
       })
     } catch (error) {
-      // 用户空数据 删除报告 并返回(由于删除报告不存在 强制用户重新选择训练)
+      // 用户空数据 删除报告 并返回 让用户返回选择训练
       await delTask(startParams.value.taskId)
+      uni.showToast({
+        title: '当前暂无人员训练',
+        icon: 'error',
+      })
       uni.switchTab({
         url: '/pages/startDialog/start',
       })
@@ -276,6 +281,7 @@ onBeforeUnmount(() => {
   height: 40rpx;
   border: none;
   margin: 0;
+
   width: 150rpx;
   background: #58cca5;
   border-radius: 8rpx;
