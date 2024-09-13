@@ -15,5 +15,5 @@
     // experimentalRuntimeMode 已废弃，现调整为 nativeTags，请升级 Volar 插件至最新版本
     "nativeTags": ["block", "component", "template", "slot"]
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue","types/auto-imports"]
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue","types/auto-imports", "src/utils/directives/index.ts", "src/utils/directives/index.ts", "src/utils/directives/longPress.ts", "src/utils/directives/longPress.ts"]
 }

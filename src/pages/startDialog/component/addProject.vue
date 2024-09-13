@@ -38,9 +38,7 @@ const commit = () => {
         }
       }
     })
-    .catch(() => {
-      console.log('33')
-    })
+    .catch(() => {})
 }
 defineExpose({
   open,

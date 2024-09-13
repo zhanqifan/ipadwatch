@@ -23,7 +23,6 @@ const deleteTeam = ref(false)
 // 获取项目
 const getTrain = async () => {
   const res = await getTrainType()
-  console.log(res)
   radiolist1.value = res.data.map((item) => {
     return {
       exerciseTypeId: item.id,
@@ -94,12 +93,12 @@ const open = (type: 'pro' | 'team') => {
 const closeShake = () => {
   deleteType.value = false
   deleteTeam.value = false
-  console.log('触发')
 }
 
 // 定义 deleteFn 函数类型
 type DeleteFunction = (id: string) => Promise<any>
 
+// 删除类型或队伍
 const deleteItem = (deleteFn: DeleteFunction, refresh: () => void, id: string, name: string) => {
   uni.showModal({
     title: `是否删除${name}训练类型`,
@@ -108,12 +107,19 @@ const deleteItem = (deleteFn: DeleteFunction, refresh: () => void, id: string, n
       if (res.confirm) {
         await deleteFn(id)
         refresh()
-      } else if (res.cancel) {
-        console.log('用户点击取消')
       }
     },
   })
 }
+// 统一长按处理函数
+const handleLongPress = (type: 'type' | 'team') => {
+  if (type === 'type') {
+    deleteType.value = true
+  } else if (type === 'team') {
+    deleteTeam.value = true
+  }
+}
+
 onLoad(() => {
   getTrain()
   getTeam()
@@ -136,13 +142,13 @@ onLoad(() => {
             <view class="project_group">
               <up-radio-group
                 v-model="exerciseTypeId"
-                @longpress="() => (deleteType = true)"
+                v-longpress="{ fn: () => handleLongPress('type'), time: 1000 }"
                 placement="column"
               >
                 <view
                   @click.stop
                   class="project_item"
-                  v-for="(item, index) in radiolist1"
+                  v-for="item in radiolist1"
                   :class="deleteType ? 'v-shake' : ''"
                   :key="item.exerciseTypeId"
                 >
@@ -197,8 +203,8 @@ onLoad(() => {
               <up-radio-group v-model="trainingTeamId" scroll-left placement="column">
                 <view
                   class="project_item"
-                  v-for="(item, index) in radiolist2"
-                  @longpress="() => (deleteTeam = true)"
+                  v-for="item in radiolist2"
+                  v-longpress="{ fn: () => handleLongPress('team'), time: 1000 }"
                   @click.stop
                   :key="item.trainingTeamId"
                   :class="deleteTeam ? 'v-shake' : ''"
@@ -406,24 +412,7 @@ onLoad(() => {
   text-align: center;
   width: 100%;
 }
-.fade-move,
-.fade-enter-active,
-.fade-leave-active {
-  transition: all 0.5s cubic-bezier(0.55, 0, 0.1, 1);
-}
 
-/* 2. 声明进入和离开的状态 */
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-  transform: scaleY(0.01) translate(30px, 0);
-}
-
-/* 3. 确保离开的项目被移除出了布局流
-      以便正确地计算移动时的动画效果。 */
-.fade-leave-active {
-  position: absolute;
-}
 .project_item {
   position: relative;
 }

@@ -67,9 +67,7 @@ const commit = () => {
         }
       }
     })
-    .catch(() => {
-      console.log('33')
-    })
+    .catch(() => {})
 }
 // 触底获取更多学生
 const upToLower = async () => {
@@ -79,7 +77,6 @@ const upToLower = async () => {
     studentList.value = [...studentList.value, ...res.rows]
   } else {
     status.value = 'nomore'
-    console.log(status.value)
   }
 }
 const formatTeamName = () => {
