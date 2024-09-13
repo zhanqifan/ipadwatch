@@ -11,7 +11,7 @@ import type {
   trainingTask,
 } from './startType'
 
-// 查询训练项目
+// 查询训练类型
 export const getTrainType = () => {
   return request<TrainType[]>({
     method: 'GET',
@@ -62,5 +62,20 @@ export const addExercise = (data: trainingTask) => {
     url: '/teacher/trainingTask/add',
     method: 'POST',
     data,
+  })
+}
+// 删除训练类型
+export const deletExerciseType = (idList: string) => {
+  return request({
+    url: `/teacher/exerciseType/delete?idList=${idList}`,
+    method: 'DELETE',
+  })
+}
+
+// 删除队伍
+export const delTrainingTeam = (id: string) => {
+  return request({
+    url: '/teacher/trainingTeam/delete/' + id,
+    method: 'DELETE',
   })
 }

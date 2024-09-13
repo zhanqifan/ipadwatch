@@ -1,5 +1,12 @@
 <script setup lang="ts">
-import { getTeamList, getTrainType, getTrainingTeam, addExercise } from '@/api/start/start'
+import {
+  getTeamList,
+  getTrainType,
+  getTrainingTeam,
+  addExercise,
+  deletExerciseType,
+  delTrainingTeam,
+} from '@/api/start/start'
 import type { Team, Train, StudentList } from '@/api/start/startType.d.ts'
 import addTeam from './component/addTeam.vue'
 import addProject from './component/addProject.vue'
@@ -11,6 +18,8 @@ const radiolist1 = ref<Train[]>([])
 const studentList = ref<StudentList[]>()
 const addProjectRef = ref()
 const addTeamRef = ref()
+const deleteType = ref(false)
+const deleteTeam = ref(false)
 // 获取项目
 const getTrain = async () => {
   const res = await getTrainType()
@@ -80,13 +89,38 @@ const open = (type: 'pro' | 'team') => {
     addTeamRef.value.open()
   }
 }
-onMounted(() => {
+
+// 点击空白区域时关闭抖动模式
+const closeShake = () => {
+  deleteType.value = false
+  deleteTeam.value = false
+  console.log('触发')
+}
+
+// 定义 deleteFn 函数类型
+type DeleteFunction = (id: string) => Promise<any>
+
+const deleteItem = (deleteFn: DeleteFunction, refresh: () => void, id: string, name: string) => {
+  uni.showModal({
+    title: `是否删除${name}训练类型`,
+    content: '删除后将移出列表',
+    success: async function (res) {
+      if (res.confirm) {
+        await deleteFn(id)
+        refresh()
+      } else if (res.cancel) {
+        console.log('用户点击取消')
+      }
+    },
+  })
+}
+onLoad(() => {
   getTrain()
   getTeam()
 })
 </script>
 <template>
-  <tabBar :selected="0">
+  <tabBar :selected="0" @click="closeShake">
     <view class="sprot_box">
       <!-- 步骤条 -->
       <up-steps current="0" class="step">
@@ -99,33 +133,58 @@ onMounted(() => {
         <view class="project">训练类型 </view>
         <view class="btn_group">
           <scroll-view scroll-x style="height: 70rpx">
-            <view class="project_group" v-if="radiolist1.length">
-              <up-radio-group v-model="exerciseTypeId" placement="column">
-                <up-radio
+            <view class="project_group">
+              <up-radio-group
+                v-model="exerciseTypeId"
+                @longpress="() => (deleteType = true)"
+                placement="column"
+              >
+                <view
+                  @click.stop
+                  class="project_item"
                   v-for="(item, index) in radiolist1"
-                  :customStyle="{
-                    marginRight: '20rpx',
-                    minWidth: '90rpx',
-                    borderRadius: '5rpx',
-                    background: item.exerciseTypeId == exerciseTypeId ? '#387ff2' : '',
-                    border:
-                      item.exerciseTypeId == exerciseTypeId
-                        ? '1rpx solid #387ff2'
-                        : '1rpx solid #e6e6e6',
-                  }"
-                  :labelColor="item.exerciseTypeId == exerciseTypeId ? '#fff' : 'black'"
-                  :key="index"
-                  :label="item.exerciseTypeName"
-                  :name="item.exerciseTypeId"
-                  @change="(e) => groupChange(e, 'pro', item.exerciseTypeName)"
+                  :class="deleteType ? 'v-shake' : ''"
+                  :key="item.exerciseTypeId"
                 >
-                </up-radio>
-                <view class="add" @click="open('pro')"
+                  <up-radio
+                    :disabled="deleteType"
+                    :customStyle="{
+                      marginRight: '20rpx',
+                      minWidth: '90rpx',
+                      borderRadius: '5rpx',
+                      position: 'relative',
+                      background: item.exerciseTypeId == exerciseTypeId ? '#387ff2' : '',
+                      border:
+                        item.exerciseTypeId == exerciseTypeId
+                          ? '1rpx solid #387ff2'
+                          : '1rpx solid #e6e6e6',
+                    }"
+                    :labelColor="item.exerciseTypeId == exerciseTypeId ? '#fff' : 'black'"
+                    :label="item.exerciseTypeName"
+                    :name="item.exerciseTypeId"
+                    @change="(e) => groupChange(e, 'pro', item.exerciseTypeName)"
+                  >
+                  </up-radio>
+                  <image
+                    @click="
+                      deleteItem(
+                        deletExerciseType,
+                        getTrain,
+                        item.exerciseTypeId,
+                        item.exerciseTypeName,
+                      )
+                    "
+                    v-show="deleteType"
+                    src="@/static/images/delete.png"
+                    class="delIcon"
+                    mode="scaleToFill"
+                  />
+                </view>
+                <view class="add" v-show="!deleteType" @click="open('pro')"
                   ><up-icon name="plus-circle-fill" size="25" color="#2979ff"
                 /></view>
               </up-radio-group>
             </view>
-            <view v-else> 暂无训练项目请先添加 </view>
           </scroll-view>
         </view>
       </view>
@@ -136,26 +195,49 @@ onMounted(() => {
           <scroll-view scroll-x style="width: 68vw">
             <view class="project_group" v-if="radiolist2.length">
               <up-radio-group v-model="trainingTeamId" scroll-left placement="column">
-                <up-radio
+                <view
+                  class="project_item"
                   v-for="(item, index) in radiolist2"
-                  :customStyle="{
-                    border:
-                      item.trainingTeamId == trainingTeamId
-                        ? '1rpx solid #387ff2'
-                        : '1rpx solid #e6e6e6',
-                    width: '110rpx',
-                    background: item.trainingTeamId == trainingTeamId ? '#387ff2' : '',
-                    marginRight: '20rpx',
-                    borderRadius: '5rpx',
-                  }"
-                  :labelColor="item.trainingTeamId == trainingTeamId ? '#fff' : 'black'"
-                  @change="(e) => groupChange(e, 'team', item.trainingTeamName)"
-                  :key="index"
-                  :label="item.trainingTeamName"
-                  :name="item.trainingTeamId"
+                  @longpress="() => (deleteTeam = true)"
+                  @click.stop
+                  :key="item.trainingTeamId"
+                  :class="deleteTeam ? 'v-shake' : ''"
                 >
-                </up-radio>
-                <view class="add" @click="open('team')"
+                  <up-radio
+                    :disabled="deleteTeam"
+                    :customStyle="{
+                      border:
+                        item.trainingTeamId == trainingTeamId
+                          ? '1rpx solid #387ff2'
+                          : '1rpx solid #e6e6e6',
+
+                      width: '110rpx',
+                      background: item.trainingTeamId == trainingTeamId ? '#387ff2' : '',
+                      marginRight: '20rpx',
+                      borderRadius: '5rpx',
+                    }"
+                    :labelColor="item.trainingTeamId == trainingTeamId ? '#fff' : 'black'"
+                    @change="(e) => groupChange(e, 'team', item.trainingTeamName)"
+                    :label="item.trainingTeamName"
+                    :name="item.trainingTeamId"
+                  >
+                  </up-radio>
+                  <image
+                    @click="
+                      deleteItem(
+                        delTrainingTeam,
+                        getTeam,
+                        item.trainingTeamId,
+                        item.trainingTeamName,
+                      )
+                    "
+                    v-show="deleteTeam"
+                    src="@/static/images/delete.png"
+                    class="delIcon"
+                    mode="scaleToFill"
+                  />
+                </view>
+                <view class="add" v-show="!deleteTeam" @click="open('team')"
                   ><up-icon name="plus-circle-fill" size="25" color="#2979ff"
                 /></view>
               </up-radio-group>
@@ -316,11 +398,41 @@ onMounted(() => {
     // border: 1rpx solid #387ff2;
   }
 }
+
 ::v-deep .u-radio__icon-wrap--circle {
   display: none;
 }
 ::v-deep .u-radio__text {
   text-align: center;
   width: 100%;
+}
+.fade-move,
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.5s cubic-bezier(0.55, 0, 0.1, 1);
+}
+
+/* 2. 声明进入和离开的状态 */
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transform: scaleY(0.01) translate(30px, 0);
+}
+
+/* 3. 确保离开的项目被移除出了布局流
+      以便正确地计算移动时的动画效果。 */
+.fade-leave-active {
+  position: absolute;
+}
+.project_item {
+  position: relative;
+}
+.delIcon {
+  width: 12rpx;
+  top: 0;
+  right: 18rpx;
+  position: absolute;
+  font-size: 10rpx;
+  height: 12rpx;
 }
 </style>

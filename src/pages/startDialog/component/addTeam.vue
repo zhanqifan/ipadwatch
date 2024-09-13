@@ -25,6 +25,12 @@ const rules = ref({
     message: '运动项目不为空',
     trigger: 'blur',
   },
+  studentIds: {
+    required: true,
+    type: 'array',
+    message: '请选择学生',
+    trigger: 'blur',
+  },
 })
 const pageParams = reactive({
   pageNum: 1,
@@ -110,10 +116,10 @@ defineExpose({
           <up-form-item label="队伍名称" labelWidth="80" prop="teamName" borderBottom ref="item1">
             <up-input v-model="form.teamName" placeholder="请输入队伍名称"></up-input>
           </up-form-item>
-          <up-form-item label="训练人员" labelWidth="80" class="peo">
+          <up-form-item label="训练人员" labelWidth="80" class="peo" prop="studentIds">
             <scroll-view
               scroll-y
-              style="height: 148rpx"
+              style="max-height: 148rpx"
               v-if="studentList.length"
               @scrolltolower="upToLower"
             >

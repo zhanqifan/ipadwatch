@@ -25,7 +25,7 @@ export interface TeamList extends common {
   teamName: string
 }
 // 训练队类型 返回
-export interface TrainType {
+export interface TrainType extends common {
   id: string
   exerciseName: string
   number: number
