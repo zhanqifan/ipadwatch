@@ -4,19 +4,19 @@ import { taskBaseInfo, detectionData, updateTask, delTask } from '@/api/heart/he
 import type { startData } from '@/api/heart/heartType'
 import type { MergedInterface } from '@/api/heart/heartType'
 import { useTimer } from './utils/Timer'
-import { useMemberStore } from '@/stores'
+import { useMemberStore, reportStore } from '@/stores'
 const src = ref('https://cdn.uviewui.com/uview/album/1.jpg')
 const BaseInfo = ref<MergedInterface>() //基础学生卡片信息
 const btnShow = ref(true) //按钮开关状态
 const intervalId = ref<number | null>(null) //定时器id
 const user = useMemberStore()
 const clock = useTimer()
+let taskDeleted = ref(false)
 const watchOnline = ref({
   //手表在线信息
   braceletsOnlineNum: 0,
   braceletsTotalNum: 0,
 })
-const toastRef = ref()
 const check = ref(true)
 // 开始记录传参
 const startParams = ref<startData>({
@@ -25,6 +25,7 @@ const startParams = ref<startData>({
   isRecord: false,
   number: 0,
 })
+const reportStores = reportStore()
 // 获取学生列表
 const getHeartList = async (taskId: string) => {
   const res = await taskBaseInfo(taskId)
@@ -87,6 +88,7 @@ const control = async (type: 'start' | 'end') => {
     } catch (error) {
       // 用户空数据 删除报告 并返回 让用户返回选择训练
       await delTask(startParams.value.taskId)
+      reportStores.setReport('') //清空这条任务id
       uni.showToast({
         title: '当前暂无人员训练',
         icon: 'error',
@@ -99,14 +101,18 @@ const control = async (type: 'start' | 'end') => {
 }
 onLoad((options) => {
   startParams.value.taskId = options!.taskId
+  reportStores.setReport(options!.taskId) //存储这条任务id
   getHeartList(options!.taskId)
   immediateWatch() //立即执行一次
   startInterval()
 })
+
 // 未开始锻炼离开页面 删除此次任务
 const delNullTask = async () => {
-  if (check.value) {
+  if (check.value && !taskDeleted.value) {
+    taskDeleted.value = true
     await delTask(startParams.value.taskId)
+    reportStores.setReport('') //清空这条任务id
   }
 }
 
@@ -116,6 +122,7 @@ onBeforeUnmount(() => {
   clearInterval(intervalId.value as number)
   intervalId.value = null
   check.value = true
+  taskDeleted.value = false
 })
 </script>
 

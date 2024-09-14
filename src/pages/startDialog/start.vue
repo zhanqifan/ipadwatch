@@ -7,10 +7,12 @@ import {
   deletExerciseType,
   delTrainingTeam,
 } from '@/api/start/start'
+import { delTask } from '@/api/heart/heart'
 import type { Team, Train, StudentList } from '@/api/start/startType.d.ts'
 import addTeam from './component/addTeam.vue'
+import model from '@/components/model/model.vue'
 import addProject from './component/addProject.vue'
-import { useMemberStore } from '@/stores'
+import { useMemberStore, reportStore } from '@/stores'
 const user = useMemberStore()
 const exerciseTypeId = ref<string | number>() //训练项目类型id
 const exerciseTypeName = ref<string>('')
@@ -20,6 +22,8 @@ const addProjectRef = ref()
 const addTeamRef = ref()
 const deleteType = ref(false)
 const deleteTeam = ref(false)
+const modelRef = ref()
+const reportStores = reportStore()
 // 获取项目
 const getTrain = async () => {
   const res = await getTrainType()
@@ -82,11 +86,7 @@ const nextStep = async () => {
 }
 
 const open = (type: 'pro' | 'team') => {
-  if (type === 'pro') {
-    addProjectRef.value.open()
-  } else {
-    addTeamRef.value.open()
-  }
+  type === 'pro' ? addProjectRef.value.open() : addTeamRef.value.open()
 }
 
 // 点击空白区域时关闭抖动模式
@@ -95,31 +95,47 @@ const closeShake = () => {
   deleteTeam.value = false
 }
 
-// 定义 deleteFn 函数类型
-type DeleteFunction = (id: string) => Promise<any>
-
-// 删除类型或队伍
-const deleteItem = (deleteFn: DeleteFunction, refresh: () => void, id: string, name: string) => {
-  uni.showModal({
-    title: `是否删除${name}训练类型`,
-    content: '删除后将移出列表',
-    success: async function (res) {
-      if (res.confirm) {
-        await deleteFn(id)
-        refresh()
-      }
-    },
-  })
+// // 删除类型或队伍
+// const deleteItem = (
+//   deleteFn: (id: string) => Promise<any>,
+//   refresh: () => void,
+//   id: string,
+//   name: string,
+// ) => {
+//   uni.showModal({
+//     title: `是否删除${name}`,
+//     content: '删除后将移出列表',
+//     success: async function (res) {
+//       if (res.confirm) {
+//         await deleteFn(id)
+//         refresh()
+//       }
+//     },
+//   })
+// }
+const deleteItem = (
+  deleteFn: (id: string) => Promise<any>,
+  refresh: () => void,
+  id: string,
+  name: string,
+) => {
+  modelRef.value.open()
 }
 // 统一长按处理函数
 const handleLongPress = (type: 'type' | 'team') => {
-  if (type === 'type') {
-    deleteType.value = true
-  } else if (type === 'team') {
-    deleteTeam.value = true
-  }
+  type === 'type' ? (deleteType.value = true) : (deleteTeam.value = true)
 }
 
+// 意外关闭页面导致产生空报告 进入页面删除报告
+const delNullReport = async () => {
+  if (reportStores.reportId) {
+    await delTask(reportStores.reportId)
+    reportStores.setReport('')
+  }
+}
+onMounted(() => {
+  delNullReport()
+})
 onLoad(() => {
   getTrain()
   getTeam()
@@ -165,7 +181,7 @@ onLoad(() => {
                           ? '1rpx solid #387ff2'
                           : '1rpx solid #e6e6e6',
                     }"
-                    :labelColor="item.exerciseTypeId == exerciseTypeId ? '#fff' : 'black'"
+                    :labelColor="item.exerciseTypeId == exerciseTypeId ? '#fff!important' : 'black'"
                     :label="item.exerciseTypeName"
                     :name="item.exerciseTypeId"
                     @change="(e) => groupChange(e, 'pro', item.exerciseTypeName)"
@@ -222,7 +238,7 @@ onLoad(() => {
                       marginRight: '20rpx',
                       borderRadius: '5rpx',
                     }"
-                    :labelColor="item.trainingTeamId == trainingTeamId ? '#fff' : 'black'"
+                    :labelColor="item.trainingTeamId == trainingTeamId ? '#fff!important' : 'black'"
                     @change="(e) => groupChange(e, 'team', item.trainingTeamName)"
                     :label="item.trainingTeamName"
                     :name="item.trainingTeamId"
@@ -277,6 +293,7 @@ onLoad(() => {
       <addTeam ref="addTeamRef" @success="() => getTeam()" />
     </view>
   </tabBar>
+  <model ref="modelRef" content="删除后将移出列表" title="是否删除" />
 </template>
 
 <style lang="scss" scoped>
@@ -411,6 +428,7 @@ onLoad(() => {
 ::v-deep .u-radio__text {
   text-align: center;
   width: 100%;
+  color: unset !important;
 }
 
 .project_item {

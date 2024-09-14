@@ -4,14 +4,16 @@ import { ref } from 'vue'
 export const reportStore = defineStore(
   'reportStore',
   () => {
-    const next = ref(true)
+    //当页面被意外关闭 来不及删除空报告时 重新打开app或者页面时候 检查数组是否存在 存在则删除
+    const reportId = ref('')
 
-    const setNext = (isNext: boolean) => {
-      next.value = isNext
+    const setReport = (item: string) => {
+      reportId.value = item //存储报告id或者清空
     }
     // 记得 return
     return {
-      setNext,
+      setReport,
+      reportId,
     }
   },
   // TODO: 持久化

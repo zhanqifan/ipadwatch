@@ -95,6 +95,10 @@ const getReportStu = async (data: SportParams) => {
     getSportMap(res.data.heartRateDistributionVOList)
     getHeartCompare(res.data.realTimeHeartRate)
   } catch (error) {
+    uni.showToast({
+      title: '暂无该学生数据',
+      icon: 'error',
+    })
     isShow.value = false
   }
 }
