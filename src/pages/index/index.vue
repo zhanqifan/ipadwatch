@@ -11,7 +11,6 @@ const btnShow = ref(true) //按钮开关状态
 const intervalId = ref<number | null>(null) //定时器id
 const user = useMemberStore()
 const clock = useTimer()
-let taskDeleted = ref(false)
 const watchOnline = ref({
   //手表在线信息
   braceletsOnlineNum: 0,
@@ -109,8 +108,7 @@ onLoad((options) => {
 
 // 未开始锻炼离开页面 删除此次任务
 const delNullTask = async () => {
-  if (check.value && !taskDeleted.value) {
-    taskDeleted.value = true
+  if (check.value) {
     await delTask(startParams.value.taskId)
     reportStores.setReport('') //清空这条任务id
   }
@@ -122,7 +120,6 @@ onBeforeUnmount(() => {
   clearInterval(intervalId.value as number)
   intervalId.value = null
   check.value = true
-  taskDeleted.value = false
 })
 </script>
 
