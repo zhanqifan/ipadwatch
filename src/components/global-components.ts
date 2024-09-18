@@ -6,12 +6,13 @@ import tabBar from '@/components/tabbar/tabbar.vue'
 import toast from '@/components/Toast/toast.vue'
 import emptyBox from '@/components/emptyBox/index.vue'
 import model from '@/components/model/model.vue'
-
+import floatpop from '@/components/floatPop/floatpop.vue'
 const components: Component = {
   tabBar,
   toast,
   emptyBox,
   model,
+  floatpop,
 }
 // 创建 install 方法用于全局注册
 export default {

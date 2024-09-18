@@ -74,14 +74,18 @@ const getTeamStudent = async () => {
 // 开始训练
 const nextStep = async () => {
   if (exerciseTypeId.value && trainingTeamId.value) {
-    const res = await addExercise({
-      trainingTeamId: trainingTeamId.value,
-      trainingTeamName: trainingTeamName.value!,
-      exerciseTypeName: exerciseTypeName.value,
-      number: 0,
-      teacherName: user.profile!.nickName,
-    })
-    uni.navigateTo({ url: `/pages/index/index?taskId=${res.data.id}` })
+    try {
+      const res = await addExercise({
+        trainingTeamId: trainingTeamId.value,
+        trainingTeamName: trainingTeamName.value!,
+        exerciseTypeName: exerciseTypeName.value,
+        number: 0,
+        teacherName: user.profile!.nickName,
+      })
+      uni.navigateTo({ url: `/pages/index/index?taskId=${res.data.id}` })
+    } catch (error) {
+      console.log(error)
+    }
   }
 }
 
@@ -95,37 +99,31 @@ const closeShake = () => {
   deleteTeam.value = false
 }
 
-// // 删除类型或队伍
-// const deleteItem = (
-//   deleteFn: (id: string) => Promise<any>,
-//   refresh: () => void,
-//   id: string,
-//   name: string,
-// ) => {
-//   uni.showModal({
-//     title: `是否删除${name}`,
-//     content: '删除后将移出列表',
-//     success: async function (res) {
-//       if (res.confirm) {
-//         await deleteFn(id)
-//         refresh()
-//       }
-//     },
-//   })
-// }
 const deleteItem = (
-  deleteFn: (id: string) => Promise<any>,
+  ExecuteFn: (id: string) => Promise<any>,
   refresh: () => void,
   id: string,
   name: string,
 ) => {
-  modelRef.value.open()
+  modelRef.value.open({
+    title: `是否删除${name}`,
+    content: '删除后将移出列表',
+    ExecuteFn: () => ExecuteFn(id),
+    freshFn: refresh,
+  })
 }
+
 // 统一长按处理函数
 const handleLongPress = (type: 'type' | 'team') => {
   type === 'type' ? (deleteType.value = true) : (deleteTeam.value = true)
 }
-
+// 进入删除模式样式变化
+const colorChange = (selectId: string, id: string, delType: boolean) => {
+  if (selectId == id && !delType) {
+    return true
+  }
+  return false
+}
 // 意外关闭页面导致产生空报告 进入页面删除报告
 const delNullReport = async () => {
   if (reportStores.reportId) {
@@ -146,7 +144,7 @@ onLoad(() => {
     <view class="sprot_box">
       <!-- 步骤条 -->
       <up-steps current="0" class="step">
-        <up-steps-item title="选择训练"> </up-steps-item>
+        <up-steps-item title="选择训练"></up-steps-item>
         <up-steps-item title="开始训练"></up-steps-item>
         <up-steps-item title="训练报告"></up-steps-item>
       </up-steps>
@@ -158,6 +156,7 @@ onLoad(() => {
             <view class="project_group">
               <up-radio-group
                 v-model="exerciseTypeId"
+                :disabled="deleteType"
                 v-longpress="{ fn: () => handleLongPress('type'), time: 1000 }"
                 placement="column"
               >
@@ -169,20 +168,20 @@ onLoad(() => {
                   :key="item.exerciseTypeId"
                 >
                   <up-radio
-                    :disabled="deleteType"
                     :customStyle="{
                       marginRight: '20rpx',
                       minWidth: '90rpx',
                       borderRadius: '5rpx',
                       position: 'relative',
-                      background: item.exerciseTypeId == exerciseTypeId ? '#387ff2' : '',
+                      background:colorChange(item.exerciseTypeId,exerciseTypeId as string,deleteType) ? '#387ff2' : '',
                       border:
-                        item.exerciseTypeId == exerciseTypeId
+                      colorChange(item.exerciseTypeId,exerciseTypeId as string,deleteType)
                           ? '1rpx solid #387ff2'
                           : '1rpx solid #e6e6e6',
                     }"
                     :labelColor="item.exerciseTypeId == exerciseTypeId ? '#fff!important' : 'black'"
                     :label="item.exerciseTypeName"
+                    inactiveColor="black"
                     :name="item.exerciseTypeId"
                     @change="(e) => groupChange(e, 'pro', item.exerciseTypeName)"
                   >
@@ -229,16 +228,17 @@ onLoad(() => {
                     :disabled="deleteTeam"
                     :customStyle="{
                       border:
-                        item.trainingTeamId == trainingTeamId
+                      colorChange(item.trainingTeamId,trainingTeamId as string,deleteTeam)
                           ? '1rpx solid #387ff2'
                           : '1rpx solid #e6e6e6',
 
                       width: '110rpx',
-                      background: item.trainingTeamId == trainingTeamId ? '#387ff2' : '',
+                      background:  colorChange(item.trainingTeamId,trainingTeamId as string,deleteTeam) ? '#387ff2' : '',
                       marginRight: '20rpx',
                       borderRadius: '5rpx',
                     }"
                     :labelColor="item.trainingTeamId == trainingTeamId ? '#fff!important' : 'black'"
+                    inactiveColor="black"
                     @change="(e) => groupChange(e, 'team', item.trainingTeamName)"
                     :label="item.trainingTeamName"
                     :name="item.trainingTeamId"
@@ -293,7 +293,7 @@ onLoad(() => {
       <addTeam ref="addTeamRef" @success="() => getTeam()" />
     </view>
   </tabBar>
-  <model ref="modelRef" content="删除后将移出列表" title="是否删除" />
+  <model ref="modelRef" :isFresh="true" />
 </template>
 
 <style lang="scss" scoped>

@@ -1,19 +1,5 @@
 <script setup lang="ts">
 const props = defineProps({
-  fn: {
-    type: Function,
-    default: () => {
-      return () => {}
-    },
-  },
-  title: {
-    type: String,
-    default: '提示',
-  },
-  content: {
-    type: String,
-    default: '内容',
-  },
   modelWidth: {
     type: String,
     default: '300rpx',
@@ -22,17 +8,38 @@ const props = defineProps({
     type: String,
     default: 'center',
   },
+  isFresh: {
+    type: Boolean,
+    default: false,
+  },
+  isSlot: {
+    type: Boolean,
+    default: false,
+  },
 })
 // 创建响应式数据
 const show = ref(false)
+const title = ref()
+const content = ref()
+const currentFn = ref()
+const freshFn = ref()
+// 监听函数变化
 
 // 方法
-const open = () => {
+const open = (data: any) => {
   show.value = true
+  title.value = data.title
+  content.value = data.content
+  currentFn.value = data.ExecuteFn
+  freshFn.value = data.freshFn
 }
 
 const confirm = async () => {
-  await props.fn()
+  console.log(currentFn.value)
+  await currentFn.value()
+  if (props.isFresh) {
+    freshFn.value()
+  }
   show.value = false
 }
 const close = () => {
@@ -52,7 +59,13 @@ defineExpose({
     :width="modelWidth"
     :showCancelButton="true"
     :contentTextAlign="contentTextAlign"
-  ></up-modal>
+    ><view v-if="isSlot" class="slot-content"></view>
+  </up-modal>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+::v-deep .u-modal__title {
+  font-weight: 100;
+  font-size: 15rpx;
+}
+</style>

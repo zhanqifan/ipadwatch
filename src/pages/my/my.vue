@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useMemberStore } from '@/stores'
+
 const user = useMemberStore()
 const exit = () => {
   user.clearProfile()
@@ -33,7 +34,9 @@ const exit = () => {
   align-items: center;
   height: 100%;
 }
-
+.floatpop {
+  position: fixed;
+}
 .card {
   width: 30vw;
   .teacher {

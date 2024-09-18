@@ -4,7 +4,7 @@ import { ref } from 'vue'
 export const reportStore = defineStore(
   'reportStore',
   () => {
-    //当页面被意外关闭 来不及删除空报告时 重新打开app或者页面时候 检查数组是否存在 存在则删除
+    //当页面被意外关闭 来不及删除空报告时 重新打开app或者页面时候 检查id是否存在 存在则删除
     const reportId = ref('')
 
     const setReport = (item: string) => {
