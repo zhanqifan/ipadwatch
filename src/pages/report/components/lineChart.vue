@@ -37,6 +37,7 @@ const option = ref({
   grid: {
     top: '1%',
     left: '1%', // Increase left margin
+
     bottom: '3%',
     containLabel: true,
   },

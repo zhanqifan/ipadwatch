@@ -60,7 +60,6 @@ const search = () => {
         startTime: dayjs(params.value.dateTime).startOf('day').format('YYYY-MM-DD HH:mm:ss'),
         endTime: dayjs(params.value.dateTime).endOf('day').format('YYYY-MM-DD HH:mm:ss'),
       }
-      console.log(data)
       getReportStu(data)
     }
   })
@@ -94,6 +93,7 @@ const getReportStu = async (data: SportParams) => {
     sportComplate.value = res.data.sportAchievementVO
     getSportMap(res.data.heartRateDistributionVOList)
     getHeartCompare(res.data.realTimeHeartRate)
+    isShow.value = true
   } catch (error) {
     uni.showToast({
       title: '暂无该学生数据',
@@ -165,6 +165,7 @@ const changeTeam = () => {
 }
 // 修改训练次数
 const changeTime = ({ detail }: { detail: any }) => {
+  console.log(detail)
   params.value.stuTime = [detail.value[0].value, detail.value[1].value]
 }
 onLoad((options) => {

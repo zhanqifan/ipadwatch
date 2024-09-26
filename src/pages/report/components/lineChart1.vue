@@ -18,14 +18,23 @@ const props = defineProps<{
 const chartRef = ref<any>(null)
 const isShow = ref(true)
 const xAxis = computed(() => {
-  return props.heartCompare.map((item) => item.time)
+  return newData.value.map((item) => item.time)
 })
 const max = computed(() => {
-  return props.heartCompare.map((item) => item.maxHeartRate)
+  return newData.value.map((item) => item.maxHeartRate)
 })
 const min = computed(() => {
-  return props.heartCompare.map((item) => item.minHeartRate)
+  return newData.value.map((item) => item.minHeartRate)
 })
+const newData = ref<TrainingRealTimeHeartRate[]>([])
+const formatData = () => {
+  newData.value = props.heartCompare.sort((a, b) => {
+    let timeA = a.time.split(':').map(Number)
+    let timeB = b.time.split(':').map(Number)
+    return timeA[0] - timeB[0] || timeA[1] - timeB[1]
+  })
+}
+
 const option = ref({
   animationDuration: 3000,
   tooltip: {
@@ -34,6 +43,7 @@ const option = ref({
   grid: {
     left: '1%', // Increase left margin
     bottom: '3%',
+    right: '3%',
     containLabel: true,
   },
   legend: {
@@ -84,10 +94,10 @@ const getData = async () => {
   myChart.setOption(option.value)
   isShow.value = true
 }
-
 watch(
   () => props.heartCompare,
   () => {
+    formatData()
     getData()
   },
 )
@@ -95,6 +105,7 @@ watch(
 onMounted(() => {
   // 组件能被调用必须是组件的节点已经被渲染到页面上
   getData()
+  console.log(formatData())
 })
 </script>
 
