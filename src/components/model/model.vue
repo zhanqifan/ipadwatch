@@ -8,10 +8,7 @@ const props = defineProps({
     type: String,
     default: 'center',
   },
-  isFresh: {
-    type: Boolean,
-    default: false,
-  },
+
   isSlot: {
     type: Boolean,
     default: false,
@@ -21,8 +18,8 @@ const props = defineProps({
 const show = ref(false)
 const title = ref()
 const content = ref()
-const currentFn = ref()
-const freshFn = ref()
+const currentFn = ref() //确认按钮要执行的函数
+// const freshFn = ref() //执行完调用刷新接口
 // 监听函数变化
 
 // 方法
@@ -31,15 +28,11 @@ const open = (data: any) => {
   title.value = data.title
   content.value = data.content
   currentFn.value = data.ExecuteFn
-  freshFn.value = data.freshFn
 }
 
 const confirm = async () => {
-  console.log(currentFn.value)
   await currentFn.value()
-  if (props.isFresh) {
-    freshFn.value()
-  }
+
   show.value = false
 }
 const close = () => {

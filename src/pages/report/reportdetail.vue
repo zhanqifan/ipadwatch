@@ -208,6 +208,7 @@ onLoad((options) => {
               ref="selectRef"
               v-model="params.number"
               :localdata="range"
+              class="casacarPick"
               @click="handleClick"
               @change="(e) => (params.number = e)"
             ></uni-data-select>
@@ -320,7 +321,9 @@ onLoad((options) => {
     }
   }
 }
-
+.casacarPick {
+  width: 50rpx !important;
+}
 .main {
   padding: 3rpx;
   .main_top {

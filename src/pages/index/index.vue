@@ -4,13 +4,14 @@ import { taskBaseInfo, detectionData, updateTask, delTask } from '@/api/heart/he
 import type { startData } from '@/api/heart/heartType'
 import type { MergedInterface } from '@/api/heart/heartType'
 import { useTimer } from './utils/Timer'
-import { useMemberStore, reportStore } from '@/stores'
+import { useMemberStore, reportStore, exceriseStore } from '@/stores'
 const src = ref('https://cdn.uviewui.com/uview/album/1.jpg')
 const BaseInfo = ref<MergedInterface>() //基础学生卡片信息
 const btnShow = ref(true) //按钮开关状态
 const intervalId = ref<number | null>(null) //定时器id
 const user = useMemberStore()
 const clock = useTimer()
+const excerise = exceriseStore()
 const watchOnline = ref({
   //手表在线信息
   braceletsOnlineNum: 0,
@@ -72,6 +73,7 @@ const control = async (type: 'start' | 'end') => {
   if (type === 'start') {
     btnShow.value = false
     startParams.value.isRecord = true //开始记录
+    excerise.changeSport(true)
     clock.startTimer() //开启计时器
   } else {
     btnShow.value = true
@@ -79,6 +81,7 @@ const control = async (type: 'start' | 'end') => {
     startParams.value.isRecord = false //开始记录
     clearInterval(intervalId.value!) //关闭记录
     clock.stopTimer() //关闭计时器
+    excerise.changeSport(false)
     try {
       await updateTask({ id: startParams.value.taskId, trainingTime: clock.timer.value })
       uni.redirectTo({

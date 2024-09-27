@@ -17,7 +17,8 @@ import { getStuReport, getInpNumber } from '@/api/report/report'
 const initialValue = () => {
   return {
     teamId: '', //训练队名称
-    stuTime: [],
+    studentId: '',
+    number: '',
     dateTime: dayjs().format('YYYY-MM-DD'),
   }
 }
@@ -35,10 +36,11 @@ const sportComplate = ref<SportAchievementVO>() //运动达成情况
 const studentList = ref<StudentNameList>() //学生列表
 const isShow = ref(true)
 const range = ref<any>([])
-
+const range1 = ref<any>([])
 const rules = {
   teamId: { rules: [{ required: true, errorMessage: '选择训练队', trigger: 'change' }] },
-  stuTime: { rules: [{ required: true, errorMessage: '请输入输入次数', trigger: 'change' }] },
+  studentId: { rules: [{ required: true, errorMessage: '请选择学生', trigger: 'change' }] },
+  number: { rules: [{ required: true, errorMessage: '请选择训练次数', trigger: 'change' }] },
   dateTime: { rules: [{ required: true, errorMessage: '请输入输入时间', trigger: 'change' }] },
 }
 const reset = () => {
@@ -52,15 +54,14 @@ const reset = () => {
 const search = () => {
   formRef.value.validate().then((valid: Boolean) => {
     if (valid) {
-      console.log(params.value)
       const data = {
         ...params.value,
-        studentId: params.value.stuTime[0],
-        number: params.value.stuTime[1],
+        studentId: params.value.studentId,
+        number: params.value.number,
         startTime: dayjs(params.value.dateTime).startOf('day').format('YYYY-MM-DD HH:mm:ss'),
         endTime: dayjs(params.value.dateTime).endOf('day').format('YYYY-MM-DD HH:mm:ss'),
       }
-      getReportStu(data, true)
+      getReportStu(data)
     }
   })
 }
@@ -78,7 +79,7 @@ const getSportMap = async (data: TrainingReportGrade[]) => {
   heartMap.value = categorySort(data, 'grade', customOrder)
 }
 // 获取学生详情
-const getReportStu = async (data: SportParams, search: boolean = false) => {
+const getReportStu = async (data: SportParams) => {
   try {
     const res = await getStuReport(data)
     if (checkResponse(res.data)) {
@@ -87,10 +88,9 @@ const getReportStu = async (data: SportParams, search: boolean = false) => {
     }
     params.value.dateTime = dayjs(res.data.trainingTime).format('YYYY-MM-DD')
     params.value.teamId = res.data.teamId
-    if (!search) {
-      handleClick()
-    }
-    params.value.stuTime = [res.data.studentInfo.id, res.data.trainingTimes]
+    handleClick()
+    params.value.studentId = res.data.studentInfo.id
+    params.value.number = res.data.trainingTimes
 
     studentList.value = res.data.studentInfo
     sportComplate.value = res.data.sportAchievementVO
@@ -133,12 +133,12 @@ const handleClick = async () => {
       startTime: dayjs(params.value.dateTime).startOf('day').format('YYYY-MM-DD HH:mm:ss'),
       endTime: dayjs(params.value.dateTime).endOf('day').format('YYYY-MM-DD HH:mm:ss'),
     })
-    const children = res.data.trainingTimes.map((item) => ({ text: item, value: item }))
+
     range.value = res.data.studentInfoVoList.map((item) => ({
       value: item.id,
       text: item.name,
-      children,
     }))
+    range1.value = res.data.trainingTimes.map((item) => ({ text: item, value: item }))
   } else {
     selectRef.value.showSelector = false
     toastRef.value.showToast({
@@ -167,17 +167,17 @@ const changeTeam = () => {
   range.value = []
   handleClick()
 }
+const changeStu = ({ detail }: { detail: any }) => {
+  params.value.studentId = detail.value[0].value
+}
 // 修改训练次数
 const changeTime = ({ detail }: { detail: any }) => {
-  console.log(detail)
-  params.value.stuTime = [detail.value[0].value, detail.value[1].value]
+  params.value.number = detail.value[0].value
 }
-const pickerRef = ref()
 
 onLoad((options) => {
   taskId.value = options!.taskId
   studentId.value = options!.studentId
-
   getTeam()
   getReportStu({ studentId: options!.studentId, taskId: options!.taskId })
 })
@@ -204,15 +204,24 @@ onLoad((options) => {
             :localdata="teamColumns"
           ></uni-data-select>
         </uni-forms-item>
-        <uni-forms-item label="次数" labelWidth="40" name="stuTime">
+        <uni-forms-item label="学生" labelWidth="40" name="studentId">
           <uni-data-picker
             placeholder="请选择学生"
-            popup-title="请选择训练次数"
+            popup-title="请选择学生"
             :localdata="range"
+            @change="changeStu"
+            class="casacarPick"
+            v-model="params.studentId"
+          ></uni-data-picker>
+        </uni-forms-item>
+        <uni-forms-item label="次数" labelWidth="40" name="number">
+          <uni-data-picker
+            placeholder="请选择训练次数"
+            popup-title="请选择训练次数"
+            :localdata="range1"
             @change="changeTime"
             class="casacarPick"
-            ref="pickerRef"
-            v-model="params.stuTime"
+            v-model="params.number"
           ></uni-data-picker>
         </uni-forms-item>
         <view>
@@ -410,7 +419,7 @@ onLoad((options) => {
   }
 }
 .casacarPick {
-  width: 120rpx !important;
+  width: 70rpx !important;
 }
 ::v-deep .selected-area {
   // flex: 0.1;

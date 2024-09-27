@@ -101,15 +101,17 @@ const closeShake = () => {
 
 const deleteItem = (
   ExecuteFn: (id: string) => Promise<any>,
-  refresh: () => void,
+  refresh: () => Promise<any>,
   id: string,
   name: string,
 ) => {
   modelRef.value.open({
     title: `是否删除${name}`,
     content: '删除后将移出列表',
-    ExecuteFn: () => ExecuteFn(id),
-    freshFn: refresh,
+    ExecuteFn: async () => {
+      await ExecuteFn(id) //删除
+      await refresh() //刷新
+    },
   })
 }
 
@@ -293,7 +295,7 @@ onLoad(() => {
       <addTeam ref="addTeamRef" @success="() => getTeam()" />
     </view>
   </tabBar>
-  <model ref="modelRef" :isFresh="true" />
+  <model ref="modelRef" />
 </template>
 
 <style lang="scss" scoped>

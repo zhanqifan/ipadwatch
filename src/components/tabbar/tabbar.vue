@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { exceriseStore } from '@/stores'
 const props = defineProps({
   selected: {
     type: Number,
@@ -29,6 +30,8 @@ const sidebarItems = ref<
   { icon: 'account-fill', url: '/pages/my/my' },
 ])
 const app = uni.getSystemInfoSync()
+const excerise = exceriseStore()
+const modelRef = ref()
 onMounted(() => {
   uni.getSystemInfo({
     success: function (res) {
@@ -42,10 +45,38 @@ onMounted(() => {
 let { selected } = toRefs(props)
 const itemClick = (item: itemType) => {
   // 处理侧边栏菜单项点击事件
-
-  uni.switchTab({
-    url: item.url,
-  })
+  if (excerise.isSport) {
+    //训练拦截
+    modelRef.value.open({
+      title: '退出训练',
+      content: '正在训练中,离开页面此次训练数据将被清除',
+      ExecuteFn: () => {
+        excerise.changeSport(false)
+        uni.switchTab({
+          url: item.url,
+        })
+      },
+    })
+    // uni.showModal({
+    //   title: '训练进行中',
+    //   content: '正在训练中,离开页面此次训练数据将被清除',
+    //   success(res) {
+    //     if (res.confirm) {
+    //       console.log('点击了确定按钮')
+    //       excerise.changeSport(false)
+    //       uni.switchTab({
+    //         url: item.url,
+    //       })
+    //     } else {
+    //       return
+    //     }
+    //   },
+    // })
+  } else {
+    uni.switchTab({
+      url: item.url,
+    })
+  }
 }
 
 const back = () => {
@@ -64,9 +95,6 @@ onLaunch(() => {
 onShow(() => {
   uni.hideTabBar()
   // console.log('App Show')
-})
-onHide(() => {
-  // console.log('App Hide')
 })
 </script>
 <template>
@@ -96,6 +124,7 @@ onHide(() => {
     <view class="main-content">
       <scroll-view scroll-y>
         <slot />
+        <model ref="modelRef" />
       </scroll-view>
     </view>
   </view>
