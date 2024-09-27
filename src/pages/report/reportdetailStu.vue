@@ -60,7 +60,7 @@ const search = () => {
         startTime: dayjs(params.value.dateTime).startOf('day').format('YYYY-MM-DD HH:mm:ss'),
         endTime: dayjs(params.value.dateTime).endOf('day').format('YYYY-MM-DD HH:mm:ss'),
       }
-      getReportStu(data)
+      getReportStu(data, true)
     }
   })
 }
@@ -78,7 +78,7 @@ const getSportMap = async (data: TrainingReportGrade[]) => {
   heartMap.value = categorySort(data, 'grade', customOrder)
 }
 // 获取学生详情
-const getReportStu = async (data: SportParams) => {
+const getReportStu = async (data: SportParams, search: boolean = false) => {
   try {
     const res = await getStuReport(data)
     if (checkResponse(res.data)) {
@@ -87,12 +87,16 @@ const getReportStu = async (data: SportParams) => {
     }
     params.value.dateTime = dayjs(res.data.trainingTime).format('YYYY-MM-DD')
     params.value.teamId = res.data.teamId
-    handleClick()
-    params.value.stuTime = [studentId.value, res.data.trainingTimes]
+    if (!search) {
+      handleClick()
+    }
+    params.value.stuTime = [res.data.studentInfo.id, res.data.trainingTimes]
+
     studentList.value = res.data.studentInfo
     sportComplate.value = res.data.sportAchievementVO
     getSportMap(res.data.heartRateDistributionVOList)
     getHeartCompare(res.data.realTimeHeartRate)
+
     isShow.value = true
   } catch (error) {
     uni.showToast({
@@ -168,9 +172,12 @@ const changeTime = ({ detail }: { detail: any }) => {
   console.log(detail)
   params.value.stuTime = [detail.value[0].value, detail.value[1].value]
 }
+const pickerRef = ref()
+
 onLoad((options) => {
   taskId.value = options!.taskId
   studentId.value = options!.studentId
+
   getTeam()
   getReportStu({ studentId: options!.studentId, taskId: options!.taskId })
 })
@@ -204,6 +211,7 @@ onLoad((options) => {
             :localdata="range"
             @change="changeTime"
             class="casacarPick"
+            ref="pickerRef"
             v-model="params.stuTime"
           ></uni-data-picker>
         </uni-forms-item>

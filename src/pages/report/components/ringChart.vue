@@ -17,7 +17,6 @@ const UncompletionNum = computed(() => {
 })
 const pxToRpx = (px: any) => {
   const screenWidth = uni.getSystemInfoSync().screenWidth
-  console.log((px / 750) * screenWidth)
   return (px / 750) * screenWidth
 }
 const option = ref({
@@ -26,7 +25,7 @@ const option = ref({
     left: '0%', // 设置图例距离右侧的距离
     itemWidth: pxToRpx(7), // 设置图例图标的宽度
     itemHeight: pxToRpx(7), // 设置图例图标的高度
-	itemGap: pxToRpx(12), // 设置图例项之间的间距，可以根据需求调整
+    itemGap: pxToRpx(12), // 设置图例项之间的间距，可以根据需求调整
 
     textStyle: {
       fontSize: pxToRpx(6), // 设置图例文字的大小
@@ -73,7 +72,6 @@ const option = ref({
               return
             }
           },
-
         },
       },
       labelLine: {

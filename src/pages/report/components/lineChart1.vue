@@ -28,7 +28,8 @@ const min = computed(() => {
 })
 const newData = ref<TrainingRealTimeHeartRate[]>([])
 const formatData = () => {
-  newData.value = props.heartCompare.sort((a, b) => {
+  const { heartCompare } = props
+  newData.value = heartCompare.sort((a, b) => {
     let timeA = a.time.split(':').map(Number)
     let timeB = b.time.split(':').map(Number)
     return timeA[0] - timeB[0] || timeA[1] - timeB[1]
