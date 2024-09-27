@@ -165,8 +165,9 @@ onLoad(() => {
                 <view
                   @click.stop
                   class="project_item"
-                  v-for="item in radiolist1"
+                  v-for="(item, index) in radiolist1"
                   :class="deleteType ? 'v-shake' : ''"
+                  :style="{ 'animation-delay': index * 0.05 + 's' }"
                   :key="item.exerciseTypeId"
                 >
                   <up-radio
@@ -225,6 +226,7 @@ onLoad(() => {
                   @click.stop
                   :key="item.trainingTeamId"
                   :class="deleteTeam ? 'v-shake' : ''"
+                  :style="{ 'animation-delay': index * 0.05 + 's' }"
                 >
                   <up-radio
                     :disabled="deleteTeam"
